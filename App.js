@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { StatusBar } from "expo-status-bar";
 import { encode } from "base-64";
 
 export default function App() {
@@ -131,6 +132,7 @@ export default function App() {
               onBarCodeScanned={scanned ? undefined : processResult}
               style={StyleSheet.absoluteFillObject}
             />
+            <StatusBar style="light" />
           </View>
         </>
       )}
