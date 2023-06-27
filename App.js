@@ -10,26 +10,6 @@ export default function App() {
   const [showDialog, setShowDialog] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  // const [result, setResult] = useState({
-  //   data: {
-  //     Genre: "Masculin",
-  //     "Liste des prénoms": ["NICOLAS"],
-  //     Nationalité: "FR",
-  //     "Nom de famille": "CHALANSET",
-  //     "Numéro de la pièce d’identité": "MZ402D1Y2",
-  //     "Pays de naissance": "FR",
-  //     "Type de pièce d'identité": "Carte nationale d'identité",
-  //   },
-  //   header: {
-  //     "Date de création de la signature": "2021-09-09",
-  //     "Date d’émission du document": "2021-09-09",
-  //     Pays: "FR",
-  //     Périmètre: "01",
-  //     "Type de document": "Titre d'identité",
-  //     Version: "4",
-  //   },
-  //   signer: "Agence Nationale des Titres Sécurisés",
-  // });
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
