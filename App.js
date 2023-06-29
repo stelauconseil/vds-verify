@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, StyleSheet } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { StatusBar } from "expo-status-bar";
 import { encode } from "base-64";
+import { Text, Button } from "@rneui/themed";
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -20,18 +20,13 @@ export default function App() {
     getBarCodeScannerPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  };
-
   const processResult = async ({ type, data }) => {
     setScanned(true);
     console.log(`loaded data`, data);
     const b64encodedvds = encode(data);
     try {
       console.log(`b64encodedvds`, b64encodedvds);
-      const response = await fetch(`http://192.168.50.12:8000/api/v1/decode`, {
+      const response = await fetch(`http://172.20.10.8:8000/api/v1/decode`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -46,7 +41,6 @@ export default function App() {
       if (success === true) {
         setResult(vds);
         // alert(`${vds}`);
-        setShowDialog(true);
       } else {
         throw new Error(message);
       }
@@ -65,39 +59,51 @@ export default function App() {
 
   return (
     <>
-      {console.log("showDialog", showDialog)}
-      {showDialog ? (
+      {scanned ? (
         <>
           {!!result && (
-            // Object.keys(result).length(
-            <View className="flex-1 items-center justify-center bg-white">
-              <Text key="title">VDS Type</Text>
-              <Text key="type">VDS</Text>
+            <SafeAreaView style={{flex:1, backgroundColor:'white'}}>
+              <Text h1={true} h1Style={{color:"#841584", alignSelf:'center', marginBottom:20}}>{result.header["Type de document"]}</Text>
+              <ScrollView style={{paddingHorizontal:'10%'}}>
               {!!result.data
-                ? Object.keys(result.data).map((key, index) => {
-                    return (
-                      <>
-                        {console.log(key, result.data[key])}
-                        <Text key={key}>
-                          {key} : {result.data[key]}
-                        </Text>
-                      </>
-                    );
-                  })
-                : ""}
+              ? Object.keys(result).map((part, index) => {
+                console.log(`key`, result.part);
+                  return (
+                    <>
+                      <Text h3={true} h3Style={{color:"#841584", marginBottom:10}}>{part}</Text>
+                      {Object.keys(result[part]).map((key, index) => {
+                        return (
+                          <>
+                            <Text>
+                              {key} : {result[part][key]}
+                            </Text>
+                          </>
+                        );
+                      })}
+                    </>
+                  );
+                })
+              : ""}
+              </ScrollView>
               <Button
+                title="Scan Again"
+                buttonStyle={{
+                  backgroundColor: '#841584',
+                  borderWidth: 2,
+                  borderColor: 'white',
+                  borderRadius: 30,
+                }}
+                containerStyle={{
+                  marginHorizontal: '25%',
+                }}
+                titleStyle={{ fontWeight: 'bold' }}
                 onPress={() => {
                   setResult(null);
                   setErrorMessage(null);
-                  setShowDialog(false);
                   setScanned(false);
-                  // setProcessing(false);
                 }}
-                title="Scan Again"
-                color="#841584"
-                accessibilityLabel="Close"
               />
-            </View>
+            </SafeAreaView>
           )}
         </>
       ) : (
