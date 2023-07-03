@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { getLocales } from "expo-localization";
 import { StatusBar } from "expo-status-bar";
 import { encode } from "base-64";
 import { Text, Button } from "@rneui/themed";
@@ -11,7 +12,7 @@ export default function App() {
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [lang, setLang] = useState("en");
+  const [locale, setLocale] = useState(React.useState(getLocales() || "en"));
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -22,7 +23,12 @@ export default function App() {
     getBarCodeScannerPermissions();
   }, []);
 
-  const getLabel = (key) => label[lang][key];
+  const getLabel = (key) => {
+    if (label[locale[0][0].languageCode]) {
+      return label[locale[0][0].languageCode][key];
+    }
+    return label.en[key];
+  };
 
   const processResult = async ({ type, data }) => {
     setScanned(true);
@@ -82,24 +88,48 @@ export default function App() {
               <ScrollView style={{ paddingHorizontal: "10%" }}>
                 {!!result.data
                   ? Object.keys(result).map((part, index) => {
-                      console.log(`key`, result[part]);
                       return (
                         <>
                           <Text
                             h3={true}
-                            h3Style={{ color: "#0a51a1", marginBottom: 10 }}
+                            h3Style={{
+                              color: "black",
+                              marginTop: 10,
+                              marginBottom: 5,
+                            }}
                           >
                             {getLabel(part)}
                           </Text>
-                          {Object.keys(result[part]).map((key, index) => {
-                            return (
-                              <>
-                                <Text>
-                                  {key} : {result[part][key]}
-                                </Text>
-                              </>
-                            );
-                          })}
+                          {typeof result[part] !== "string" ? (
+                            Object.keys(result[part]).map((key, index) => {
+                              return (
+                                <>
+                                  <Text
+                                    key={index}
+                                    style={{
+                                      color: "#0a51a1",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {key} :
+                                  </Text>
+                                  <Text>{result[part][key]}</Text>
+                                </>
+                              );
+                            })
+                          ) : (
+                            <>
+                              <Text
+                                key="signer"
+                                style={{
+                                  color: "#0a51a1",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                ✅ {result[part]}
+                              </Text>
+                            </>
+                          )}
                         </>
                       );
                     })
@@ -135,15 +165,16 @@ export default function App() {
                   marginBottom: 20,
                 }}
               >
-                {getLabel("error")}
+                ⚠️ {getLabel("error")}
               </Text>
-              <Text>{errorMessage}</Text>
+              <Text style={{ color: "#0a51a1" }}>{errorMessage}</Text>
               <Button
                 title={getLabel("scanagain")}
                 buttonStyle={{
+                  textcolor: "white",
                   backgroundColor: "#0a51a1",
-                  borderWidth: 2,
-                  borderColor: "white",
+                  // borderWidth: 0,
+                  // borderColor: "#0a51a1",
                   borderRadius: 30,
                 }}
                 containerStyle={{
