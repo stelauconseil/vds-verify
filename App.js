@@ -30,27 +30,29 @@ export default function App() {
     const b64encodedvds = encode(data);
     try {
       console.log(`b64encodedvds`, b64encodedvds);
-      const response = await fetch(`http://192.168.23.192:8000/api/v1/decode`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          vds: b64encodedvds,
-        }),
-      });
+      const response = await fetch(
+        `https://vds-verify.stelau.com/api/v1/decode`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            vds: b64encodedvds,
+          }),
+        }
+      );
       const { success, message, vds } = await response.json();
       console.log(`success, message, vds`, success, message, vds);
       if (success === true) {
         setResult(vds);
-        // alert(`${vds}`);
       } else {
         throw new Error(message);
       }
     } catch (error) {
       console.log(`error`, error);
-      setErrorMessage(error);
+      setErrorMessage(error.message);
     }
   };
 
@@ -103,6 +105,39 @@ export default function App() {
                     })
                   : ""}
               </ScrollView>
+              <Button
+                title={getLabel("scanagain")}
+                buttonStyle={{
+                  backgroundColor: "#0a51a1",
+                  borderWidth: 2,
+                  borderColor: "white",
+                  borderRadius: 30,
+                }}
+                containerStyle={{
+                  marginHorizontal: "25%",
+                }}
+                titleStyle={{ fontWeight: "bold", color: "white" }}
+                onPress={() => {
+                  setResult(null);
+                  setErrorMessage(null);
+                  setScanned(false);
+                }}
+              />
+            </SafeAreaView>
+          )}
+          {!!errorMessage && (
+            <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+              <Text
+                h1={true}
+                h1Style={{
+                  color: "#0a51a1",
+                  alignSelf: "center",
+                  marginBottom: 20,
+                }}
+              >
+                {getLabel("error")}
+              </Text>
+              <Text>{errorMessage}</Text>
               <Button
                 title={getLabel("scanagain")}
                 buttonStyle={{
