@@ -4,12 +4,14 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { StatusBar } from "expo-status-bar";
 import { encode } from "base-64";
 import { Text, Button } from "@rneui/themed";
+import label from "./Label";
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -20,13 +22,15 @@ export default function App() {
     getBarCodeScannerPermissions();
   }, []);
 
+  const getLabel = (key) => label[lang][key];
+
   const processResult = async ({ type, data }) => {
     setScanned(true);
     console.log(`loaded data`, data);
     const b64encodedvds = encode(data);
     try {
       console.log(`b64encodedvds`, b64encodedvds);
-      const response = await fetch(`http://172.20.10.8:8000/api/v1/decode`, {
+      const response = await fetch(`http://192.168.23.192:8000/api/v1/decode`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -62,41 +66,55 @@ export default function App() {
       {scanned ? (
         <>
           {!!result && (
-            <SafeAreaView style={{flex:1, backgroundColor:'white'}}>
-              <Text h1={true} h1Style={{color:"#841584", alignSelf:'center', marginBottom:20}}>{result.header["Type de document"]}</Text>
-              <ScrollView style={{paddingHorizontal:'10%'}}>
-              {!!result.data
-              ? Object.keys(result).map((part, index) => {
-                console.log(`key`, result.part);
-                  return (
-                    <>
-                      <Text h3={true} h3Style={{color:"#841584", marginBottom:10}}>{part}</Text>
-                      {Object.keys(result[part]).map((key, index) => {
-                        return (
-                          <>
-                            <Text>
-                              {key} : {result[part][key]}
-                            </Text>
-                          </>
-                        );
-                      })}
-                    </>
-                  );
-                })
-              : ""}
+            <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+              <Text
+                h1={true}
+                h1Style={{
+                  color: "#0a51a1",
+                  alignSelf: "center",
+                  marginBottom: 20,
+                }}
+              >
+                {getLabel(result.header["Type de document"])}
+              </Text>
+              <ScrollView style={{ paddingHorizontal: "10%" }}>
+                {!!result.data
+                  ? Object.keys(result).map((part, index) => {
+                      console.log(`key`, result[part]);
+                      return (
+                        <>
+                          <Text
+                            h3={true}
+                            h3Style={{ color: "#0a51a1", marginBottom: 10 }}
+                          >
+                            {getLabel(part)}
+                          </Text>
+                          {Object.keys(result[part]).map((key, index) => {
+                            return (
+                              <>
+                                <Text>
+                                  {key} : {result[part][key]}
+                                </Text>
+                              </>
+                            );
+                          })}
+                        </>
+                      );
+                    })
+                  : ""}
               </ScrollView>
               <Button
-                title="Scan Again"
+                title={getLabel("scanagain")}
                 buttonStyle={{
-                  backgroundColor: '#841584',
+                  backgroundColor: "#0a51a1",
                   borderWidth: 2,
-                  borderColor: 'white',
+                  borderColor: "white",
                   borderRadius: 30,
                 }}
                 containerStyle={{
-                  marginHorizontal: '25%',
+                  marginHorizontal: "25%",
                 }}
-                titleStyle={{ fontWeight: 'bold' }}
+                titleStyle={{ fontWeight: "bold", color: "white" }}
                 onPress={() => {
                   setResult(null);
                   setErrorMessage(null);
