@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "VDS Verify",
-    "slug": "VDS Verify",
+    "slug": "vds-verify",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,17 +15,26 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      },
+      "bundleIdentifier": "com.stelau.vdsverify"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a51a1"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
+      "package": "com.stelau.vdsverify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }, 
+    },
     "plugins": [
       [
         "expo-barcode-scanner",
@@ -33,6 +42,12 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2f5314e0-d7e8-4b1d-96bc-8c10bcb2e53d"
+      }
+    },
+    "owner": "nicocha"
   }
 }
