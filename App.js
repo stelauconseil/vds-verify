@@ -37,7 +37,7 @@ export default function App() {
     try {
       console.log(`b64encodedvds`, b64encodedvds);
       const response = await fetch(
-        `https://vds-verify.stelau.com/api/v1/decode`,
+        `https://api.vds-verify.stelau.com/api/v1/decode`,
         {
           method: "POST",
           headers: {
