@@ -75,23 +75,24 @@ export default function App() {
         <>
           {!!result && (
             <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-              <Text
-                h1={true}
-                h1Style={{
-                  color: "#0a51a1",
-                  alignSelf: "center",
-                  marginBottom: 20,
-                }}
-              >
-                {getLabel(result.header["Type de document"])}
-              </Text>
               <ScrollView style={{ paddingHorizontal: "10%" }}>
+                <Text
+                  h1={true}
+                  h1Style={{
+                    color: "#0a51a1",
+                    alignSelf: "center",
+                    marginBottom: 20,
+                  }}
+                >
+                  {getLabel(result.header["Type de document"])}
+                </Text>
                 {!!result.data
                   ? Object.keys(result).map((part, index) => {
                       return (
                         <>
                           <Text
                             h3={true}
+                            key={index}
                             h3Style={{
                               color: "black",
                               marginTop: 10,
@@ -101,11 +102,11 @@ export default function App() {
                             {getLabel(part)}
                           </Text>
                           {typeof result[part] !== "string" ? (
-                            Object.keys(result[part]).map((key, index) => {
+                            Object.keys(result[part]).map((key, i) => {
                               return (
                                 <>
                                   <Text
-                                    key={index}
+                                    key={i}
                                     style={{
                                       color: "#0a51a1",
                                       fontWeight: "bold",
@@ -120,7 +121,7 @@ export default function App() {
                           ) : (
                             <>
                               <Text
-                                key="signer"
+                                key={index + 1}
                                 style={{
                                   color: "#0a51a1",
                                   fontWeight: "bold",
