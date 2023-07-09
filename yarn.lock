@@ -3285,6 +3285,13 @@ expo-modules-core@1.5.4:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-splash-screen@~0.20.4:
+  version "0.20.4"
+  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.20.4.tgz#abe77d7a9612627f7048d885cfc5a696e3d3ee3d"
+  integrity sha512-JMfVqkb3Fbt9mdrWfSkTxaIkjd2RMJmQ19/JN+4Gk2MVEP4L1yzTQLomneH5+z/N5x48Tk3ZN+bFhtUXIlfjzg==
+  dependencies:
+    "@expo/prebuild-config" "6.2.6"
+
 expo-status-bar@~1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.6.0.tgz#e79ffdb9a84d2e0ec9a0dc7392d9ab364fefa9cf"

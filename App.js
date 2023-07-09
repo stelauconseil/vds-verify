@@ -7,6 +7,11 @@ import { encode } from "base-64";
 import { Text, Button } from "@rneui/themed";
 import label from "./Label";
 
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
+setTimeout(SplashScreen.hideAsync, 2000);
+
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
