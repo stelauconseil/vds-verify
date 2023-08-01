@@ -35,19 +35,29 @@ export default function App() {
     return label.en[key];
   };
 
-  const formatDate = (str) => {
+  const formatData = (data) => {
     try {
-      newdate = Date.parse(str);
-      if (newdate > 1000) {
-        const d = new Date(newdate);
-        return d.toString() !== "Invalid Date"
-          ? d.toLocaleDateString(getLabel("code"))
-          : str;
+      if (Array.isArray(data)) {
+        return data.join(" ");
       } else {
-        throw new Error("not a date");
+        newdate = Date.parse(data);
+        if (newdate > 1000) {
+          const d = new Date(newdate);
+          if (d.toString() !== "Invalid Date") {
+            const dateString = d.toLocaleDateString(getLabel("code"));
+            console.log(d.toUTCString());
+            if (!d.toUTCString().includes("00:00:00")) {
+              return dateString + " " + d.toLocaleTimeString(getLabel("code"));
+            }
+            return dateString;
+          }
+          return data;
+        } else {
+          throw new Error("not a date");
+        }
       }
     } catch (error) {
-      return str;
+      return data;
     }
   };
 
@@ -135,8 +145,7 @@ export default function App() {
                                       fontSize: 16,
                                     }}
                                   >
-                                    {/* {formatDate(result[part][key])} */}
-                                    {result[part][key]}
+                                    {formatData(result[part][key])}
                                   </Text>
                                 </>
                               );
