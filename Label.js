@@ -1,6 +1,7 @@
 const label = {};
 
 label.fr = {
+  code: "fr-FR",
   data: "Données",
   header: "En-tête",
   signer: "Signataire",
@@ -10,6 +11,7 @@ label.fr = {
 };
 
 label.en = {
+  code: "en-US",
   data: "Data",
   header: "Header",
   signer: "Signer",

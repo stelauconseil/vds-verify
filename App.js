@@ -35,6 +35,22 @@ export default function App() {
     return label.en[key];
   };
 
+  const formatDate = (str) => {
+    try {
+      newdate = Date.parse(str);
+      if (newdate > 1000) {
+        const d = new Date(newdate);
+        return d.toString() !== "Invalid Date"
+          ? d.toLocaleDateString(getLabel("code"))
+          : str;
+      } else {
+        throw new Error("not a date");
+      }
+    } catch (error) {
+      return str;
+    }
+  };
+
   const processResult = async ({ type, data }) => {
     setScanned(true);
     console.log(`loaded data`, data);
@@ -110,16 +126,18 @@ export default function App() {
                             Object.keys(result[part]).map((key, i) => {
                               return (
                                 <>
+                                  <Text key={i}>{key} :</Text>
                                   <Text
-                                    key={i}
                                     style={{
                                       color: "#0a51a1",
                                       fontWeight: "bold",
+                                      marginBottom: 5,
+                                      fontSize: 16,
                                     }}
                                   >
-                                    {key} :
+                                    {/* {formatDate(result[part][key])} */}
+                                    {result[part][key]}
                                   </Text>
-                                  <Text>{result[part][key]}</Text>
                                 </>
                               );
                             })
@@ -146,13 +164,14 @@ export default function App() {
                 buttonStyle={{
                   backgroundColor: "#0a51a1",
                   borderWidth: 2,
-                  borderColor: "white",
-                  borderRadius: 30,
+                  borderColor: "#0a51a1",
+                  width: "100%",
                 }}
                 containerStyle={{
-                  marginHorizontal: "25%",
+                  paddingTop: 5,
+                  paddingBottom: 0,
                 }}
-                titleStyle={{ fontWeight: "bold", color: "white" }}
+                titleStyle={{ color: "white" }}
                 onPress={() => {
                   setResult(null);
                   setErrorMessage(null);
@@ -168,12 +187,14 @@ export default function App() {
                 h1Style={{
                   color: "#0a51a1",
                   alignSelf: "center",
-                  marginBottom: 20,
+                  marginBottom: 50,
                 }}
               >
                 ⚠️ {getLabel("error")}
               </Text>
-              <Text style={{ color: "#0a51a1" }}>{errorMessage}</Text>
+              <Text style={{ color: "#0a51a1", alignSelf: "center" }}>
+                {errorMessage}
+              </Text>
               <Button
                 title={getLabel("scanagain")}
                 buttonStyle={{
