@@ -22,3 +22,11 @@ Update the API URL in the fetch request in App.js to point to the local server.
 yarn
 yarn start
 ```
+
+# To build
+
+```sh
+eas build --platform ios
+eas build --platform android
+eas submit
+```
