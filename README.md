@@ -15,7 +15,7 @@ It can decode
 
 # ⚙️ Setup
 
-Update the API URL in the fetch request in App.js to point to the local server.
+Update the API URL (environment variable) to point to the VDS verify server.
 
 # ✍️ To start
 
