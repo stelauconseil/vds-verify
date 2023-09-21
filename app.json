@@ -3,6 +3,7 @@
     "name": "VDS Verify",
     "slug": "vds-verify",
     "version": "1.0.0",
+    "build": "2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
