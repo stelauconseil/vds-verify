@@ -3,11 +3,10 @@ import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { getLocales } from "expo-localization";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { encode } from "base-64";
 import { Text, Button } from "@rneui/themed";
 import label from "./Label";
-
-import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 2000);
@@ -24,7 +23,6 @@ export default function App() {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
     };
-
     getBarCodeScannerPermissions();
   }, []);
 
@@ -40,12 +38,11 @@ export default function App() {
       if (Array.isArray(data)) {
         return data.join(" ");
       } else {
-        newdate = Date.parse(data);
+        let newdate = Date.parse(data);
         if (newdate > 1000) {
           const d = new Date(newdate);
           if (d.toString() !== "Invalid Date") {
             const dateString = d.toLocaleDateString(getLabel("code"));
-            console.log(d.toUTCString());
             if (!d.toUTCString().includes("00:00:00")) {
               return dateString + " " + d.toLocaleTimeString(getLabel("code"));
             }
@@ -62,24 +59,22 @@ export default function App() {
   };
 
   const processResult = async ({ type, data }) => {
+    const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
     setScanned(true);
     console.log(`loaded data`, data);
     const b64encodedvds = encode(data);
     try {
       console.log(`b64encodedvds`, b64encodedvds);
-      const response = await fetch(
-        `https://api.vds-verify.stelau.com/api/v1/decode`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            vds: b64encodedvds,
-          }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/v1/decode`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          vds: b64encodedvds,
+        }),
+      });
       const { success, message, vds } = await response.json();
       console.log(`success, message, vds`, success, message, vds);
       if (success === true) {
