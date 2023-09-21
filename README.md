@@ -9,7 +9,8 @@ Data is not stored in any way, not even temporarily.
 
 It can decode
 
-- VDS/CEV according to the [AFNOR xp-z42105 specification](https://www.boutique.afnor.org/fr-fr/norme/xp-z42105/specifications-relatives-a-la-mise-en-oeuvre-du-cachet-electronique-visible/fa199910/238577)
+- VDS/CEV according to the [ISO 22376:2023](https://www.iso.org/fr/standard/50278.html)
+  VDS/CEV according to the [AFNOR xp-z42105 specification](https://www.boutique.afnor.org/fr-fr/norme/xp-z42105/specifications-relatives-a-la-mise-en-oeuvre-du-cachet-electronique-visible/fa199910/238577)
 - 2D-DOC according to the [ANTS 2D-DOC specification](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc)
 
 # ⚙️ Setup
