@@ -3,7 +3,6 @@
     "name": "VDS Verify",
     "slug": "vds-verify",
     "version": "1.0.0",
-    "buildnumber": "2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,6 +15,7 @@
       "**/*"
     ],
     "ios": {
+      "buildNumber": "2",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
