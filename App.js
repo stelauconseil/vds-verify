@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  View,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { getLocales } from "expo-localization";
 import { StatusBar } from "expo-status-bar";
@@ -11,7 +19,8 @@ import label from "./Label";
 SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 2000);
 
-export default function App() {
+// export default
+function Scan() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
@@ -96,30 +105,31 @@ export default function App() {
   }
 
   return (
-    <>
+    <View style={styles.container}>
       {scanned ? (
         <>
           {!!result && (
             <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-              <ScrollView style={{ paddingHorizontal: "10%" }}>
+              <ScrollView style={{ paddingHorizontal: "5%" }}>
                 <Text
-                  h1={true}
-                  h1Style={{
+                  h3={true}
+                  h3Style={{
                     color: "#0a51a1",
-                    alignSelf: "center",
-                    marginBottom: 20,
+                    alignSelf: "left",
+                    marginBottom: 10,
+                    marginBottom: 5,
                   }}
                 >
-                  {getLabel(result.header["Type de document"])}
+                  {result.header["Type de document"]}
                 </Text>
                 {!!result.data
                   ? Object.keys(result).map((part, index) => {
                       return (
                         <>
                           <Text
-                            h3={true}
+                            h4={true}
                             key={index}
-                            h3Style={{
+                            h4Style={{
                               color: "black",
                               marginTop: 10,
                               marginBottom: 5,
@@ -223,7 +233,6 @@ export default function App() {
         </>
       ) : (
         <>
-          {console.log("camera", hasPermission)}
           <View style={styles.container}>
             <BarCodeScanner
               barCodeTypes={[
@@ -237,7 +246,68 @@ export default function App() {
           </View>
         </>
       )}
-    </>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+function HomeScreen({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <Text>Open up App.tsx to start working on your app!</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate("Info")}
+      />
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Scan VDS"
+          component={Scan}
+          options={{ headerTitle: () => <HeaderLogo /> }}
+        />
+        <Stack.Screen name="Info" component={InfoScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function InfoScreen() {
+  return (
+    <View style={styles.container}>
+      <Text>You are seeing details!</Text>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+function HeaderLogo() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
+      }}
+    >
+      <Image
+        style={{ width: 30, height: 30 }}
+        source={require("./assets/icon.png")}
+      />
+      <Text style={{ color: "#0a51a1", padding: 5, fontSize: 22 }}>
+        VDS Verify
+      </Text>
+    </View>
   );
 }
 
