@@ -141,7 +141,7 @@ function Scan() {
                             Object.keys(result[part]).map((key, i) => {
                               return (
                                 <>
-                                  <Text key={i}>{key} :</Text>
+                                  <Text key={i}>{key}</Text>
                                   <Text
                                     style={{
                                       color: "#0a51a1",
