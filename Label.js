@@ -8,6 +8,7 @@ label.fr = {
   "Type de document": "Type de document",
   scanagain: "Scanner à nouveau",
   error: "Erreur",
+  "Network request failed": "Erreur réseau",
 };
 
 label.en = {
@@ -18,6 +19,7 @@ label.en = {
   "Type de document": "Document type",
   scanagain: "Scan again",
   error: "Error",
+  "Network request failed": "Network error",
 };
 
 export default label;

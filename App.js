@@ -207,7 +207,7 @@ function Scan() {
                 ⚠️ {getLabel("error")}
               </Text>
               <Text style={{ color: "#0a51a1", alignSelf: "center" }}>
-                {errorMessage}
+                {getLabel(errorMessage)}
               </Text>
               <Button
                 title={getLabel("scanagain")}
