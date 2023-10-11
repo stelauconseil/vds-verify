@@ -197,19 +197,29 @@ function Scan({ navigation }) {
           )}
           {!!errorMessage && (
             <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-              <Text
-                h1={true}
-                h1Style={{
-                  color: "#0a51a1",
-                  alignSelf: "center",
-                  marginBottom: 50,
-                }}
-              >
-                ⚠️ {getLabel("error")}
-              </Text>
-              <Text style={{ color: "#0a51a1", alignSelf: "center" }}>
-                {getLabel(errorMessage)}
-              </Text>
+              <ScrollView style={{ paddingHorizontal: "5%" }}>
+                <Text
+                  h1={true}
+                  h1Style={{
+                    color: "#0a51a1",
+                    alignSelf: "center",
+                    marginTop: 50,
+                    marginBottom: 50,
+                  }}
+                >
+                  ⚠️ {getLabel("error")}
+                </Text>
+
+                <Text
+                  style={{
+                    color: "#0a51a1",
+                    alignSelf: "center",
+                    fontSize: 20,
+                  }}
+                >
+                  {getLabel(errorMessage)}
+                </Text>
+              </ScrollView>
               <Button
                 title={getLabel("scanagain")}
                 buttonStyle={{
