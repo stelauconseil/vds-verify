@@ -20,7 +20,7 @@ SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 2000);
 
 // export default
-function Scan() {
+function Scan({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
@@ -70,10 +70,10 @@ function Scan() {
   const processResult = async ({ type, data }) => {
     const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
     setScanned(true);
-    console.log(`loaded data`, data);
+    // console.log(`loaded data`, data);
     const b64encodedvds = encode(data);
     try {
-      console.log(`b64encodedvds`, b64encodedvds);
+      // console.log(`b64encodedvds`, b64encodedvds);
       const response = await fetch(`${apiUrl}/api/v1/decode`, {
         method: "POST",
         headers: {
@@ -85,14 +85,14 @@ function Scan() {
         }),
       });
       const { success, message, vds } = await response.json();
-      console.log(`success, message, vds`, success, message, vds);
+      // console.log(`success, message, vds`, success, message, vds);
       if (success === true) {
         setResult(vds);
       } else {
         throw new Error(message);
       }
     } catch (error) {
-      console.log(`error`, error);
+      // console.log(`error`, error);
       setErrorMessage(error.message);
     }
   };
@@ -115,9 +115,8 @@ function Scan() {
                   h3={true}
                   h3Style={{
                     color: "#0a51a1",
-                    alignSelf: "left",
+                    // alignSelf: "left",
                     marginBottom: 10,
-                    marginBottom: 5,
                   }}
                 >
                   {result.header["Type de document"]}
@@ -141,7 +140,9 @@ function Scan() {
                             Object.keys(result[part]).map((key, i) => {
                               return (
                                 <>
-                                  <Text key={i}>{key}</Text>
+                                  <Text key={i}>
+                                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                                  </Text>
                                   <Text
                                     style={{
                                       color: "#0a51a1",
@@ -273,7 +274,10 @@ export default function App() {
         <Stack.Screen
           name="Scan VDS"
           component={Scan}
-          options={{ headerTitle: () => <HeaderLogo /> }}
+          options={{
+            headerTitle: () => <HeaderLogo />,
+            // headerRight: () => <SettingsLogo />,
+          }}
         />
         <Stack.Screen name="Info" component={InfoScreen} />
       </Stack.Navigator>
@@ -307,6 +311,14 @@ function HeaderLogo() {
       <Text style={{ color: "#0a51a1", padding: 5, fontSize: 22 }}>
         VDS Verify
       </Text>
+    </View>
+  );
+}
+
+function SettingsLogo() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Settings!</Text>
     </View>
   );
 }
