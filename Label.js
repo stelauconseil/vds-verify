@@ -8,6 +8,7 @@ label.fr = {
   "Type de document": "Type de document",
   scanagain: "Scanner à nouveau",
   error: "Erreur",
+  "Le CEV n'est pas authentique": "Le CEV n'est pas authentique",
   "Network request failed": "Erreur réseau",
 };
 
@@ -19,6 +20,7 @@ label.en = {
   "Type de document": "Document type",
   scanagain: "Scan again",
   error: "Error",
+  "Le CEV n'est pas authentique": "VDS is not authentic",
   "Network request failed": "Network error",
 };
 
