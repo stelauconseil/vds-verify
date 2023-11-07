@@ -89,10 +89,10 @@ function Scan({ navigation }) {
       if (success === true) {
         setResult(vds);
       } else {
-        throw new Error(message);
+        setErrorMessage(message);
       }
     } catch (error) {
-      // console.log(`error`, error);
+      console.log(`error`, error);
       setErrorMessage(error.message);
     }
   };
