@@ -12,8 +12,10 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { getLocales } from "expo-localization";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
+import Constants from "expo-constants";
 import { encode } from "base-64";
 import { Text, Button } from "@rneui/themed";
+import ScannerView from "./ScannerView";
 import label from "./Label";
 
 SplashScreen.preventAutoHideAsync();
@@ -105,11 +107,29 @@ function Scan({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      {scanned ? (
+    <SafeAreaView style={styles.container}>
+      {!scanned && hasPermission ? (
+        <View style={{ flex: 1 }}>
+          <BarCodeScanner
+            barCodeTypes={[
+              BarCodeScanner.Constants.BarCodeType.qr,
+              BarCodeScanner.Constants.BarCodeType.datamatrix,
+            ]}
+            onBarCodeScanned={scanned ? undefined : processResult}
+            style={StyleSheet.absoluteFillObject}
+          />
+          <StatusBar style="light" />
+          <View style={styles.helpTextWrapper}>
+            <Text style={styles.helpText}>{getLabel("helpscan")}</Text>
+          </View>
+          <View style={styles.content}>
+            <ScannerView scanned={scanned} />
+          </View>
+        </View>
+      ) : (
         <>
           {!!result && (
-            <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+            <View style={{ flex: 1, backgroundColor: "white" }}>
               <ScrollView style={{ paddingHorizontal: "5%" }}>
                 <Text
                   h3={true}
@@ -121,7 +141,7 @@ function Scan({ navigation }) {
                 >
                   {result.header["Type de document"]}
                 </Text>
-                {!!result.data
+                {result.data
                   ? Object.keys(result).map((part, index) => {
                       return (
                         <>
@@ -157,17 +177,15 @@ function Scan({ navigation }) {
                               );
                             })
                           ) : (
-                            <>
-                              <Text
-                                key={index + 1}
-                                style={{
-                                  color: "#0a51a1",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                ✅ {result[part]}
-                              </Text>
-                            </>
+                            <Text
+                              key={index + 1}
+                              style={{
+                                color: "#0a51a1",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              ✅ {result[part]}
+                            </Text>
                           )}
                         </>
                       );
@@ -193,10 +211,10 @@ function Scan({ navigation }) {
                   setScanned(false);
                 }}
               />
-            </SafeAreaView>
+            </View>
           )}
           {!!errorMessage && (
-            <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+            <View style={{ flex: 1, backgroundColor: "white" }}>
               <ScrollView style={{ paddingHorizontal: "5%" }}>
                 <Text
                   h1={true}
@@ -239,26 +257,12 @@ function Scan({ navigation }) {
                   setScanned(false);
                 }}
               />
-            </SafeAreaView>
+            </View>
           )}
-        </>
-      ) : (
-        <>
-          <View style={styles.container}>
-            <BarCodeScanner
-              barCodeTypes={[
-                BarCodeScanner.Constants.BarCodeType.qr,
-                BarCodeScanner.Constants.BarCodeType.datamatrix,
-              ]}
-              onBarCodeScanned={scanned ? undefined : processResult}
-              style={StyleSheet.absoluteFillObject}
-            />
-            <StatusBar style="light" />
-          </View>
         </>
       )}
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -289,7 +293,15 @@ export default function App() {
             // headerRight: () => <SettingsLogo />,
           }}
         />
-        <Stack.Screen name="Info" component={InfoScreen} />
+        {/* <Stack.Screen name="Info" component={InfoScreen} /> */}
+        {/* <Stack.Screen
+          name="Settings"
+          component={Settings}
+          options={{
+            headerTitle: () => <SettingsLogo />,
+            // headerRight: () => <SettingsLogo />,
+          }}
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -304,6 +316,15 @@ function InfoScreen() {
   );
 }
 
+function Settings() {
+  return (
+    <View style={styles.container}>
+      <Text>You are seeing Settings!</Text>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
 function HeaderLogo() {
   return (
     <View
@@ -311,6 +332,7 @@ function HeaderLogo() {
         flex: 1,
         flexDirection: "row",
         flexWrap: "wrap",
+        justifyContent: "flex-start",
         alignItems: "center",
       }}
     >
@@ -321,6 +343,7 @@ function HeaderLogo() {
       <Text style={{ color: "#0a51a1", padding: 5, fontSize: 22 }}>
         VDS Verify
       </Text>
+      {/* <Text style={{ marginLeft: "auto" }}>Settings</Text> */}
     </View>
   );
 }
@@ -336,7 +359,24 @@ function SettingsLogo() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: "#ffffff",
+  },
+  content: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  helpTextWrapper: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+  helpText: {
+    color: "#fff",
   },
 });
