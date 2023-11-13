@@ -19,7 +19,9 @@ import ScannerView from "./ScannerView";
 import label from "./Label";
 
 SplashScreen.preventAutoHideAsync();
-setTimeout(SplashScreen.hideAsync, 2000);
+setTimeout(() => {
+  SplashScreen.hideAsync();
+}, 2000);
 
 // export default
 function Scan({ navigation }) {
