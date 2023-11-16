@@ -1,5 +1,5 @@
 <h1 align="center">
-  VDS Reader<br />
+  VDS Verify<br />
 </h1>
 <p align="center"><a href="https://www.stelau.com"> 
 <img src="https://img.shields.io/badge/HOMEPAGE-gray?style=for-the-badge"></a>&nbsp;</p>

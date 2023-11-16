@@ -12,7 +12,7 @@ label.fr = {
   "Le CEV n'est pas authentique": "Le CEV n'est pas authentique.",
   "Network request failed": "Erreur réseau.",
   "Une erreur est survenue lors du décodage du CEV":
-    "QR code non géré ou erreur lors du décodage.",
+    "Le type de code n'est pas reconnu ou une erreur est survenue lors du décodage.",
 };
 
 label.en = {
