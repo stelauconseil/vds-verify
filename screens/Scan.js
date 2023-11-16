@@ -8,12 +8,12 @@ import { Text, Button } from "@rneui/themed";
 import ScannerView from "../ScannerView";
 import label from "../Label";
 
-const Scan = ({ navigation }) => {
+const Scan = ({ navigation, useScan }) => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  const [scanned, setScanned] = useState(useScan);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [locale, setLocale] = useState(React.useState(getLocales() || "en"));
+  const [locale, setLocale] = useState(useState(getLocales() || "en"));
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {

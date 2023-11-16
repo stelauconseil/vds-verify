@@ -10,8 +10,6 @@ const HeaderLogoText = () => {
         flexWrap: "wrap",
         justifyContent: "flex-start",
         alignItems: "center",
-        alignContent: "flex-start",
-        alignSelf: "flex-start",
       }}
     >
       <Image
@@ -20,7 +18,6 @@ const HeaderLogoText = () => {
       />
       <Text
         style={{
-          // textAlign: "left",
           color: "#0a51a1",
           padding: 5,
           fontSize: 22,
