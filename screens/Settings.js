@@ -1,41 +1,31 @@
-import React, { useStage } from "react";
-import { getLocales } from "expo-localization";
+import React from "react";
+import PropTypes from "prop-types";
 import { View, StyleSheet, Text } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
+import { getLabel, saveLang } from "../components/Label";
 
-const Settings = () => {
-  const getLang = () => {
-    const l = getLocales();
-    return l[0].languageCode;
-  };
-
-  const [locale, setLocale] = React.useState(React.useState(getLang()));
-
-  console.log(locale);
+const Settings = ({ settings }) => {
   return (
     <View style={styles.center}>
-      <Text style={styles.title}>Language</Text>
+      <Text style={styles.title}>{getLabel(settings.lang, "language")}</Text>
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
-        selectedValue={locale}
-        onValueChange={(itemValue, itemIndex) => setLocale(itemValue)}
+        selectedValue={settings.lang}
+        onValueChange={(itemValue, itemIndex) => {
+          settings.setLang(itemValue);
+          saveLang(itemValue);
+        }}
       >
         <Picker.Item label="English" value="en" />
         <Picker.Item label="Français" value="fr" />
       </Picker>
-      <Text>The option you have selected is {locale}</Text>
     </View>
   );
 };
 
-const storeData = async (value) => {
-  try {
-    await AsyncStorage.setItem("my-key", value);
-  } catch (e) {
-    // saving error
-  }
+Settings.propTypes = {
+  settings: PropTypes.object.isRequired,
 };
 
 const styles = StyleSheet.create({

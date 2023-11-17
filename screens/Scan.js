@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { getLocales } from "expo-localization";
 import { encode } from "base-64";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
 import ScannerView from "../ScannerView";
-import label from "../Label";
+import { getLabel } from "../components/Label";
+import PropTypes from "prop-types";
 
-const Scan = ({ navigation, useScan }) => {
+const Scan = ({ useScan, settings }) => {
+  // const Scan = () => {
+  const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(useScan);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [locale, setLocale] = useState(useState(getLocales() || "en"));
-
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -22,13 +23,6 @@ const Scan = ({ navigation, useScan }) => {
     };
     getBarCodeScannerPermissions();
   }, []);
-
-  const getLabel = (key) => {
-    if (label[locale[0][0].languageCode]) {
-      return label[locale[0][0].languageCode][key];
-    }
-    return label.en[key];
-  };
 
   const formatData = (data) => {
     try {
@@ -39,9 +33,13 @@ const Scan = ({ navigation, useScan }) => {
         if (newdate > 1000) {
           const d = new Date(newdate);
           if (d.toString() !== "Invalid Date") {
-            const dateString = d.toLocaleDateString(getLabel("code"));
+            const dateString = d.toLocaleDateString(
+              getLabel(settings.lang, "languageTag")
+            );
             if (!d.toUTCString().includes("00:00:00")) {
-              return dateString + " " + d.toLocaleTimeString(getLabel("code"));
+              return `${dateString} ${d.toLocaleTimeString(
+                getLabel(settings.lang, "languageTag")
+              )}`;
             }
             return dateString;
           }
@@ -86,10 +84,10 @@ const Scan = ({ navigation, useScan }) => {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Text>{getLabel(settings.lang, "camerapermission")}</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text>{getLabel(settings.lang, "cameraerror")}</Text>;
   }
 
   return (
@@ -105,7 +103,9 @@ const Scan = ({ navigation, useScan }) => {
             style={StyleSheet.absoluteFillObject}
           />
           <View style={styles.helpTextWrapper}>
-            <Text style={styles.helpText}>{getLabel("helpscan")}</Text>
+            <Text style={styles.helpText}>
+              {getLabel(settings.lang, "helpscan")}
+            </Text>
           </View>
           <View style={styles.content}>
             <ScannerView scanned={scanned} />
@@ -139,7 +139,7 @@ const Scan = ({ navigation, useScan }) => {
                               marginBottom: 5,
                             }}
                           >
-                            {getLabel(part)}
+                            {getLabel(settings.lang, part)}
                           </Text>
                           {typeof result[part] !== "string" ? (
                             Object.keys(result[part]).map((key, i) => {
@@ -178,7 +178,7 @@ const Scan = ({ navigation, useScan }) => {
                   : ""}
               </ScrollView>
               <Button
-                title={getLabel("scanagain")}
+                title={getLabel(settings.lang, "scanagain")}
                 buttonStyle={{
                   backgroundColor: "#0a51a1",
                   borderWidth: 2,
@@ -211,7 +211,7 @@ const Scan = ({ navigation, useScan }) => {
                     marginBottom: 50,
                   }}
                 >
-                  ⚠️ {getLabel("error")}
+                  ⚠️ {getLabel(settings.lang, "error")}
                 </Text>
 
                 <Text
@@ -221,11 +221,11 @@ const Scan = ({ navigation, useScan }) => {
                     fontSize: 20,
                   }}
                 >
-                  {getLabel(errorMessage)}
+                  {getLabel(settings.lang, errorMessage)}
                 </Text>
               </ScrollView>
               <Button
-                title={getLabel("scanagain")}
+                title={getLabel(settings.lang, "scanagain")}
                 buttonStyle={{
                   backgroundColor: "#0a51a1",
                   borderWidth: 2,
@@ -249,6 +249,11 @@ const Scan = ({ navigation, useScan }) => {
       )}
     </SafeAreaView>
   );
+};
+
+Scan.propTypes = {
+  // useScan: PropTypes.bool.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 
 const styles = StyleSheet.create({
