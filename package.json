@@ -16,7 +16,7 @@
     "@rneui/base": "4.0.0-rc.8",
     "@rneui/themed": "4.0.0-rc.8",
     "base-64": "^1.0.0",
-    "expo": "^49.0.18",
+    "expo": "^49.0.19",
     "expo-barcode-scanner": "~12.5.3",
     "expo-constants": "^14.4.2",
     "expo-localization": "~14.3.0",
@@ -30,5 +30,5 @@
     "react-native-vector-icons": "^10.0.2"
   },
   "devDependencies": {},
-  "private": true
+  "private": false
 }

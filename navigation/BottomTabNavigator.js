@@ -41,6 +41,7 @@ const BottomTabNavigator = () => {
         // listeners={{ focus: () => setuseScan(false) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
+          title: getLabel(lang, "scan"),
         }}
       >
         {() => (
@@ -54,6 +55,7 @@ const BottomTabNavigator = () => {
         name="Settings" // listeners={{ focus: () => setuseScan(true) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
+          title: getLabel(lang, "settings"),
         }}
       >
         {() => (
