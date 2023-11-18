@@ -19,10 +19,10 @@ label.fr = {
   error: "Erreur",
   cameraerror: "No access to camera",
   camerapermission: "Requesting for camera permission",
-  "Le CEV n'est pas authentique": "Le CEV n'est pas authentique.",
-  "Network request failed": "Erreur réseau.",
+  "Le CEV n'est pas authentique": "Le CEV n'est pas authentique",
+  "Network request failed": "Erreur réseau",
   "Une erreur est survenue lors du décodage du CEV":
-    "Le type de code n'est pas reconnu ou une erreur est survenue lors du décodage.",
+    "Le type de code n'est pas reconnu ou une erreur est survenue lors du décodage",
 };
 
 label.en = {
@@ -37,14 +37,14 @@ label.en = {
   signer: "Signer",
   "Type de document": "Document type",
   scanagain: "Scan again",
-  helpscan: "Find VDS to scan",
+  helpscan: "Find a VDS to scan",
   error: "Error",
   cameraerror: "No access to camera",
   camerapermission: "Requesting for camera permission",
-  "Le CEV n'est pas authentique": "VDS is not authentic.",
-  "Network request failed": "Network error.",
+  "Le CEV n'est pas authentique": "VDS is not authentic",
+  "Network request failed": "Network error",
   "Une erreur est survenue lors du décodage du CEV":
-    "Unknown QR code format or error during decoding.",
+    "Unknown QR code format or error during decoding",
 };
 
 const getLabel = (lang, key) => {
