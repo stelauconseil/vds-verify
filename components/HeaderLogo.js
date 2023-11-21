@@ -1,5 +1,6 @@
 import { View, Image } from "react-native";
 import { Text } from "@rneui/themed";
+import vdsreaderLogo from "../assets/icon.png";
 
 const HeaderLogoText = () => {
   return (
@@ -7,15 +8,15 @@ const HeaderLogoText = () => {
       style={{
         flex: 1,
         flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "flex-start",
+        // flexWrap: "wrap",
+        // justifyContent: "flex-start",
         alignItems: "center",
+        // alignContent: "center",
+        // alignSelf: "center",
+        textAlign: "center",
       }}
     >
-      <Image
-        style={{ width: 30, height: 30 }}
-        source={require("../assets/icon.png")}
-      />
+      <Image style={{ width: 30, height: 30 }} source={vdsreaderLogo} />
       <Text
         style={{
           color: "#0a51a1",

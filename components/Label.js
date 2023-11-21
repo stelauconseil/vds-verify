@@ -10,6 +10,9 @@ label.fr = {
   language: "Langue",
   about: "À propos",
   close: "Fermer",
+  privacypolicy: "Politique de confidentialité",
+  usepolicy: "Conditions d'utilisation",
+  information: "Information",
   scan: "Scanner",
   settings: "Paramètres",
   data: "Données",
@@ -34,6 +37,9 @@ label.en = {
   language: "Language",
   about: "About",
   close: "Close",
+  privacypolicy: "Privacy policy",
+  usepolicy: "Terms of use",
+  information: "Information",
   scan: "Scan",
   settings: "Settings",
   data: "Data",
@@ -65,7 +71,7 @@ const getLang = async () => {
       return value;
     } else throw new Error("no lang");
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     const l = getLocales();
     return l[0].languageCode;
   }

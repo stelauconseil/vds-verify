@@ -1,15 +1,16 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { Icon } from "@rneui/themed";
+import { getLabel, getLang } from "../components/Label";
 import HeaderLogoText from "../components/HeaderLogo";
 import Scan from "../screens/Scan";
-import Settings from "../screens/Settings";
-import { getLabel, getLang } from "../components/Label";
+import InfoStack from "./InfoStack";
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => {
+const MainTabNavigator = () => {
   const [lang, setLang] = React.useState(null);
+  // const [useScan, setUseScan] = React.useState(false);
 
   React.useEffect(() => {
     const getLangAsync = async () => {
@@ -19,26 +20,27 @@ const BottomTabNavigator = () => {
     getLangAsync();
   }, []);
 
-  // const [useScan, setUseScan] = React.useState(false);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === "Scan") {
+          if (route.name === "scan") {
             iconName = focused ? "qr-code-outline" : "qr-code";
-          } else if (route.name === "Settings") {
+          } else if (route.name === "options") {
             iconName = focused ? "settings" : "settings-outline";
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <Icon type="ionicon" name={iconName} size={size} color={color} />
+          );
         },
         tabBarActiveTintColor: "#0a51a1",
         tabBarInactiveTintColor: "gray",
       })}
     >
       <Tab.Screen
-        name="Scan"
-        // listeners={{ focus: () => setuseScan(false) }}
+        name="scan"
+        // listeners={{ focus: () => setUseScan(false) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
           title: getLabel(lang, "scan"),
@@ -47,21 +49,21 @@ const BottomTabNavigator = () => {
         {() => (
           <Scan
             // useScan={useScan}
-            settings={{ lang }}
+            {...{ lang }}
           />
         )}
       </Tab.Screen>
       <Tab.Screen
-        name="Settings" // listeners={{ focus: () => setuseScan(true) }}
+        name="options" // listeners={{ focus: () => setuseScan(true) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
           title: getLabel(lang, "settings"),
         }}
       >
         {() => (
-          <Settings
+          <InfoStack
             // useScan={useScan}
-            settings={{ lang, setLang }}
+            {...{ lang, setLang }}
           />
         )}
       </Tab.Screen>
@@ -69,4 +71,4 @@ const BottomTabNavigator = () => {
   );
 };
 
-export default BottomTabNavigator;
+export default MainTabNavigator;
