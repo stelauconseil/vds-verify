@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { encode } from "base-64";
 import Constants from "expo-constants";
@@ -10,17 +10,18 @@ import { getLabel } from "../components/Label";
 
 const Scan = ({ lang }) => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
+    (async () => {
+      setScanned(false);
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
-    };
-    getBarCodeScannerPermissions();
+    })();
   }, []);
 
   const formatData = (data) => {
@@ -93,14 +94,16 @@ const Scan = ({ lang }) => {
     <SafeAreaView style={styles.container}>
       {!scanned && hasPermission ? (
         <View style={{ flex: 1 }}>
-          <BarCodeScanner
-            barCodeTypes={[
-              BarCodeScanner.Constants.BarCodeType.qr,
-              BarCodeScanner.Constants.BarCodeType.datamatrix,
-            ]}
-            onBarCodeScanned={scanned ? undefined : processResult}
-            style={StyleSheet.absoluteFillObject}
-          />
+          {isFocused ? (
+            <BarCodeScanner
+              barCodeTypes={[
+                BarCodeScanner.Constants.BarCodeType.qr,
+                BarCodeScanner.Constants.BarCodeType.datamatrix,
+              ]}
+              onBarCodeScanned={scanned ? undefined : processResult}
+              style={StyleSheet.absoluteFillObject}
+            />
+          ) : null}
           <View style={styles.helpTextWrapper}>
             <Text style={styles.helpText}>{getLabel(lang, "helpscan")}</Text>
           </View>

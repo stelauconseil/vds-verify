@@ -8,11 +8,11 @@ const HeaderLogoText = () => {
       style={{
         flex: 1,
         flexDirection: "row",
-        // flexWrap: "wrap",
-        // justifyContent: "flex-start",
+        flexWrap: "wrap",
+        justifyContent: "flex-start",
         alignItems: "center",
-        // alignContent: "center",
-        // alignSelf: "center",
+        alignContent: "center",
+        alignSelf: "center",
         textAlign: "center",
       }}
     >

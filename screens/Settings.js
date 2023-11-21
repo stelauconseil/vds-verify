@@ -1,37 +1,8 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Button, ListItem, Icon } from "@rneui/themed";
+import { View, StyleSheet } from "react-native";
+import { Text, ListItem, Icon } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
 import { getLabel, saveLang } from "../components/Label";
-
-const renderRow = ({ item }) => {
-  return (
-    <ListItem.Swipeable
-      onPress={log}
-      bottomDivider
-      leftContent={
-        <Button
-          title="Info"
-          icon={{ name: "info", color: "white" }}
-          buttonStyle={{ minHeight: "100%" }}
-        />
-      }
-      rightContent={
-        <Button
-          title="Delete"
-          icon={{ name: "delete", color: "white" }}
-          buttonStyle={{ minHeight: "100%", backgroundColor: "red" }}
-        />
-      }
-    >
-      <Icon name={item.icon} />
-      <ListItem.Content>
-        <ListItem.Title>{item.title}</ListItem.Title>
-      </ListItem.Content>
-      <ListItem.Chevron />
-    </ListItem.Swipeable>
-  );
-};
 
 const Settings = ({ navigation, lang, setLang }) => {
   return (

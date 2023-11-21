@@ -10,7 +10,6 @@ const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
   const [lang, setLang] = React.useState(null);
-  // const [useScan, setUseScan] = React.useState(false);
 
   React.useEffect(() => {
     const getLangAsync = async () => {
@@ -43,6 +42,7 @@ const MainTabNavigator = () => {
         // listeners={{ focus: () => setUseScan(false) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
+          headerTitleAlign: "center",
           title: getLabel(lang, "scan"),
         }}
       >
@@ -57,6 +57,7 @@ const MainTabNavigator = () => {
         name="options" // listeners={{ focus: () => setuseScan(true) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
+          headerTitleAlign: "center",
           title: getLabel(lang, "settings"),
         }}
       >

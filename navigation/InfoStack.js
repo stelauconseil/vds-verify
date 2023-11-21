@@ -1,8 +1,7 @@
-// import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+// import { Button } from "react-native";
+// import { useNavigation } from "@react-navigation/native";
 import Settings from "../screens/Settings";
 import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
@@ -12,20 +11,22 @@ import { getLabel } from "../components/Label";
 const Stack = createNativeStackNavigator();
 
 const InfoStack = ({ lang, setLang }) => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   return (
     <Stack.Navigator
       initialRouteName="settings"
-      // screenOptions={{
-      //   headerTintColor: "white",
-      //   headerStyle: { backgroundColor: "#0a51a1" },
-      // }}
+      screenOptions={{
+        headerTitleAlign: "center",
+        // headerTintColor: "white",
+        // headerStyle: { backgroundColor: "#0a51a1" },
+      }}
     >
       <Stack.Screen
         name="about"
         options={{
           headerTitle: getLabel(lang, "about"),
+          headerTitleAlign: "center",
           // headerRight: () => (
           //   <Button
           //     onPress={() => navigation.goBack(null)}
@@ -49,6 +50,7 @@ const InfoStack = ({ lang, setLang }) => {
         name="usepolicy"
         options={{
           headerTitle: getLabel(lang, "usepolicy"),
+          headerTitleAlign: "center",
           // headerRight: () => (
           //   <Button
           //     onPress={() => navigation.goBack(null)}
@@ -64,6 +66,7 @@ const InfoStack = ({ lang, setLang }) => {
         name="privacypolicy"
         options={{
           headerTitle: getLabel(lang, "privacypolicy"),
+          headerTitleAlign: "center",
           // headerRight: () => (
           //   <Button
           //     onPress={() => navigation.goBack(null)}
