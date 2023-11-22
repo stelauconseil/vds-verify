@@ -32,4 +32,4 @@ Nous nous réservons le droit de modifier cette politique de confidentialité à
 
 ## Contact
 
-Si vous avez des questions ou des préoccupations concernant notre politique de confidentialité, veuillez nous contacter à [privacy@stelau.com].
+Si vous avez des questions ou des préoccupations concernant notre politique de confidentialité, veuillez nous contacter à [privacy at stelau.com].

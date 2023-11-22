@@ -32,4 +32,4 @@ We reserve the right to modify this privacy policy at any time. Any changes will
 
 ## Contact
 
-If you have questions or concerns regarding our privacy policy, please contact us at [contact email address].
+If you have questions or concerns regarding our privacy policy, please contact us at [privacy at stelau.com].
