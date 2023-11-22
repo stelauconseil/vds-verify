@@ -1,6 +1,6 @@
 # Politique de Confidentialité de VDS-Verify
 
-*Date d'effet : [22/11/2023]*
+_Date d'effet : [22/11/2023]_
 
 ## Collecte et Utilisation des Informations
 

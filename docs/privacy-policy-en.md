@@ -1,6 +1,6 @@
-# QR Code Decoding Service Privacy Policy
+# VDS Verify Privacy Policy
 
-*Effective Date: [2023/11/22]*
+_Effective Date: [2023/11/22]_
 
 ## Collection and Use of Information
 
