@@ -4,7 +4,7 @@ import { WebView } from "react-native-webview";
 const PrivacyPolicy = ({ lang }) => {
   return (
     <WebView
-      source={{ uri: `https://vds-verify.stelau.com/usepolicy-${lang}` }}
+      source={{ uri: `https://vds-verify.stelau.com/privacy-policy-${lang}` }}
     />
   );
 };
