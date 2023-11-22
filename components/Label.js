@@ -12,7 +12,7 @@ label.fr = {
   close: "Fermer",
   privacypolicy: "Politique de confidentialité",
   usepolicy: "Conditions d'utilisation",
-  information: "Information",
+  information: "Informations",
   scan: "Scanner",
   settings: "Paramètres",
   data: "Données",
