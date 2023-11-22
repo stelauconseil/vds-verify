@@ -1,6 +1,6 @@
 # QR Code Decoding Service Privacy Policy
 
-_Effective Date: [2023/11/22]_
+*Effective Date: [2023/11/22]*
 
 ## Collection and Use of Information
 
