@@ -12,7 +12,7 @@ We do not gather any personally identifiable information when you use our VDS Ve
 
 ### No Storage of User Data
 
-We do not store any information related to the QR Codes you decrypt using our VDS Verify service. All data contained in the QR Codes you submit is processed in real-time, and no trace is retained after the operation.
+We do not store any information related to the VDS you decode using our VDS Verify service. All data contained in the VDS you submit is processed in real-time, and no trace is retained after the operation.
 
 ## Technical Data and Cookies
 

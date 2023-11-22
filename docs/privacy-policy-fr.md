@@ -12,7 +12,7 @@ Nous ne recueillons pas d'informations personnelles identifiables lorsque vous u
 
 ### Aucun Stockage des Données Utilisateurs
 
-Nous n'enregistrons aucune information relative aux QR Codes que vous décryptez à l'aide de notre service VDS Verify. Toutes les données contenues dans les QR Codes que vous soumettez sont traitées en temps réel, et aucune trace n'est conservée après l'opération.
+Nous n'enregistrons aucune information relative aux CEV que vous décodez à l'aide de notre service VDS Verify. Toutes les données contenues dans les CEV que vous soumettez sont traitées en temps réel, et aucune trace n'est conservée après l'opération.
 
 ## Données Techniques et Cookies
 
