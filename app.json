@@ -15,7 +15,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "12",
+      "buildNumber": "14",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
@@ -24,7 +24,7 @@
       "bundleIdentifier": "com.stelau.vdsverify"
     },
     "android": {
-      "versionCode": "12",
+      "versionCode": "14",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a51a1"
