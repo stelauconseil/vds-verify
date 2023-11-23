@@ -27,5 +27,10 @@ yarn-error.log*
 .env
 pc-api-7507057973859638017-998-e9dd35e8b4ec.json
 
+# dev
 ios/
 android/
+
+# github pages
+docs/_site/*
+docs/.sass-cache/*
