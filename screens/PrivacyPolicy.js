@@ -5,7 +5,7 @@ const PrivacyPolicy = ({ lang }) => {
   return (
     <WebView
       source={{
-        uri: `https://vds-verify.stelau.com/docs/privacy-policy-${lang}.html`,
+        uri: `https://vds-verify.stelau.com/privacy-policy-${lang}.html`,
       }}
     />
   );
