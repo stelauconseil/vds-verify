@@ -19,7 +19,7 @@ const HeaderLogoText = () => {
       <Image style={{ width: 30, height: 30 }} source={vdsreaderLogo} />
       <Text
         style={{
-          color: "#0a51a1",
+          color: "#0069b4",
           padding: 5,
           fontSize: 22,
         }}

@@ -119,7 +119,7 @@ const Scan = ({ lang }) => {
                 <Text
                   h3={true}
                   h3Style={{
-                    color: "#0a51a1",
+                    color: "#0069b4",
                     // alignSelf: "left",
                     marginBottom: 10,
                   }}
@@ -150,7 +150,7 @@ const Scan = ({ lang }) => {
                                   </Text>
                                   <Text
                                     style={{
-                                      color: "#0a51a1",
+                                      color: "#0069b4",
                                       fontWeight: "bold",
                                       marginBottom: 5,
                                       fontSize: 16,
@@ -165,7 +165,7 @@ const Scan = ({ lang }) => {
                             <Text
                               key={index + 1}
                               style={{
-                                color: "#0a51a1",
+                                color: "#0069b4",
                                 fontWeight: "bold",
                               }}
                             >
@@ -180,9 +180,9 @@ const Scan = ({ lang }) => {
               <Button
                 title={getLabel(lang, "scanagain")}
                 buttonStyle={{
-                  backgroundColor: "#0a51a1",
+                  backgroundColor: "#0069b4",
                   borderWidth: 2,
-                  borderColor: "#0a51a1",
+                  borderColor: "#0069b4",
                   width: "100%",
                 }}
                 containerStyle={{
@@ -205,7 +205,7 @@ const Scan = ({ lang }) => {
                 <Text
                   h1={true}
                   h1Style={{
-                    color: "#0a51a1",
+                    color: "#0069b4",
                     alignSelf: "center",
                     marginTop: 50,
                     marginBottom: 50,
@@ -216,7 +216,7 @@ const Scan = ({ lang }) => {
 
                 <Text
                   style={{
-                    color: "#0a51a1",
+                    color: "#0069b4",
                     alignSelf: "center",
                     fontSize: 20,
                   }}
@@ -227,9 +227,9 @@ const Scan = ({ lang }) => {
               <Button
                 title={getLabel(lang, "scanagain")}
                 buttonStyle={{
-                  backgroundColor: "#0a51a1",
+                  backgroundColor: "#0069b4",
                   borderWidth: 2,
-                  borderColor: "#0a51a1",
+                  borderColor: "#0069b4",
                   width: "100%",
                 }}
                 containerStyle={{

@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
     // alignItems: "center",
     textAlign: "center",
-    // color: "#0a51a1",
+    // color: "#0069b4",
   },
   title: {
     fontSize: 16,
