@@ -1,6 +1,6 @@
 title: VDS Verify
 logo: assets/icon-512.png
-description: Visible Digital Seal Reader is an app that allows you to read and verify the information contained in a VDS (Visible Digital Seal). It sends the QRcode or datamatrix to our API to read, decode and verify the information and display it in a human readable format.
+description: [FR] VDS Verify est une application de décodage et vérification de Cachet Electronique Visible (CEV) au format QR Code et Datamatrix. Le CEV est transmis à notre API qui assure le décodage et la vérification et qui transmet le résultat afin de l'afficher dans l'app.\n[EN] VDS Verify is an app that allows you to read and verify the information contained in a VDS (Visible Digital Seal). It sends the QRcode or datamatrix to our API to read, decode and verify the information and display it in a human readable format.
 show_downloads: false
 google_analytics:
 theme: jekyll-theme-minimal
