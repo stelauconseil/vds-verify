@@ -1,4 +1,4 @@
-# Politique d'Utilisation du Service de Décodage de QR Code
+# Politique d'Utilisation de VDS Verify
 
 _Date d'effet : [22/11/2023]_
 
