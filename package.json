@@ -18,7 +18,7 @@
     "@rneui/base": "4.0.0-rc.8",
     "@rneui/themed": "4.0.0-rc.8",
     "base-64": "^1.0.0",
-    "expo": "^49.0.20",
+    "expo": "^49.0.21",
     "expo-barcode-scanner": "~12.5.3",
     "expo-constants": "^14.4.2",
     "expo-localization": "~14.3.0",
