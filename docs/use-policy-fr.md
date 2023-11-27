@@ -30,8 +30,4 @@ Nous nous réservons le droit de modifier cette politique d'utilisation à tout 
 
 ## Contact
 
-Si vous avez des questions ou des préoccupations concernant l'utilisation de notre service, veuillez nous contacter à [adresse e-mail de contact].
-
----
-
-_Remarque : Remplacez [Date] et [adresse e-mail de contact] par les informations appropriées._
+Si vous avez des questions ou des préoccupations concernant l'utilisation de notre service, veuillez nous contacter à [contact at stelau.com]
