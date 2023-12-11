@@ -6,15 +6,15 @@
 
 - 2D-Doc (ANTS)
 
-  `https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc`
+  [https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc)
 
 - CEV ISO 22376:2023
 
-  `https://www.iso.org/standard/50278.html`
+  [https://www.iso.org/standard/50278.html](https://www.iso.org/standard/50278.html)
 
 - CEV AFNOR XP Z42-105
 
-  `https://www.boutique.afnor.org/fr-fr/norme/xp-z42105/specifications-relatives-a-la-mise-en-oeuvre-du-cachet-electronique-visible/fa199910/238577`
+  [https://www.boutique.afnor.org/fr-fr/norme/xp-z42105/specifications-relatives-a-la-mise-en-oeuvre-du-cachet-electronique-visible/fa199910/238577](https://www.boutique.afnor.org/fr-fr/norme/xp-z42105/specifications-relatives-a-la-mise-en-oeuvre-du-cachet-electronique-visible/fa199910/238577)
 
 ## Notre solution de création de CEV
 
