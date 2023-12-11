@@ -1,5 +1,5 @@
 title: VDS Verify
-logo: assets/icon-540.png
+logo: assets/icon.png
 description: (FR) VDS Verify est une application de décodage et vérification de Cachet Electronique Visible (CEV). Elle interagit avec notre API de fabrication, signature, décodage et vérification.<br /><br />(EN) VDS Verify is an app to read and verify VDS (Visible Digital Seal). It sends the encoded data to our encode, sign, decode and verify API.
 show_downloads: false
 google_analytics:
