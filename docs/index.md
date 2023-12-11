@@ -1,122 +1,37 @@
----
-layout: default
----
+# VDS Verify
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
+## Nos app mobiles
 
-[Link to another page](./another-page.html).
+`VDS Verify` est une application mobile (Android et iOS) de décodage et de vérification de Cachet Electronique Visible (CEV). Elle permet de décoder/vérifier les CEV (datamatrix et QR Code) selon les spécifications :
 
-There should be whitespace between paragraphs.
+- 2D-Doc (ANTS)
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+  `https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc`
 
-# Header 1
+- CEV ISO 22376:2023
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
+  `https://www.iso.org/standard/50278.html`
 
-## Header 2
+- CEV AFNOR XP Z42-105
 
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
+  `https://www.boutique.afnor.org/fr-fr/norme/xp-z42105/specifications-relatives-a-la-mise-en-oeuvre-du-cachet-electronique-visible/fa199910/238577`
 
-### Header 3
+## Notre solution de création de CEV
 
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require("./lang/" + l);
-  return true;
-};
-```
+L'application mobile s'appuie sur notre API de création / encodage / signature et de décodage / vérification de CEV. Elle permet notamment de démontrer les capacités de notre API de décoder et vérifier les CEV créés par notre Solution de création de CEV.
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
+### Ils l'utilisent
 
-#### Header 4
+Notre solution de création, encodage et signature de CEV (AFNOR et ISO) est la seule utilisée aujourd'hui en production. Elle est mise en oeuvre par le Ministère de l'Intérieur pour la création des CEV apposés sur le [justificatif d'identité](https://france-identite.gouv.fr/justificatif/) de l'application [France Identité](https://france-identite.gouv.fr/)
 
-- This is an unordered list following a header.
-- This is an unordered list following a header.
-- This is an unordered list following a header.
+Elle est en cours de déploiement pour la création des CEV apposés sur les attestations issues de Mon FranceConnect
 
-##### Header 5
+### Fonctionnalités avancées
 
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
+Notre solution de création de CEV permet de créer des CEV selon les _manifests_ définis et de les signer avec un certificat électronique qualifié.
 
-###### Header 6
-
-| head1        | head two          | three |
-| :----------- | :---------------- | :---- |
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
----
-
-### Here is an unordered list:
-
-- Item foo
-- Item bar
-- Item baz
-- Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
-
-```
-The final element.
-```
+- Conformité au standard ISO 22376:2023
+- Conformité au standard AFNOR XP Z42-105
+- Gestion des manifest
+- Gestion des certificats et des clés de signature électronique
+- Compatibilité avec les HSM (Hardware Security Module)
