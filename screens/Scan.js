@@ -6,6 +6,7 @@ import { encode } from "base-64";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
 import ScannerView from "../ScannerView";
+import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 
 const Scan = ({ lang }) => {
@@ -23,35 +24,6 @@ const Scan = ({ lang }) => {
       setHasPermission(status === "granted");
     })();
   }, []);
-
-  const formatData = (data) => {
-    try {
-      if (Array.isArray(data)) {
-        return data.join(" ");
-      } else {
-        let newdate = Date.parse(data);
-        if (newdate > 1000) {
-          const d = new Date(newdate);
-          if (d.toString() !== "Invalid Date") {
-            const dateString = d.toLocaleDateString(
-              getLabel(lang, "languageTag")
-            );
-            if (!d.toUTCString().includes("00:00:00")) {
-              return `${dateString} ${d.toLocaleTimeString(
-                getLabel(lang, "languageTag")
-              )}`;
-            }
-            return dateString;
-          }
-          return data;
-        } else {
-          throw new Error("not a date");
-        }
-      }
-    } catch (error) {
-      return data;
-    }
-  };
 
   const processResult = async ({ type, data }) => {
     const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
@@ -113,92 +85,14 @@ const Scan = ({ lang }) => {
         </View>
       ) : (
         <>
-          {!!result && (
-            <View style={{ flex: 1, backgroundColor: "white" }}>
-              <ScrollView style={{ paddingHorizontal: "5%" }}>
-                <Text
-                  h3={true}
-                  h3Style={{
-                    color: "#0069b4",
-                    // alignSelf: "left",
-                    marginBottom: 10,
-                  }}
-                >
-                  {result.header["Type de document"]}
-                </Text>
-                {result.data
-                  ? Object.keys(result).map((part, index) => {
-                      return (
-                        <>
-                          <Text
-                            h4={true}
-                            key={index}
-                            h4Style={{
-                              color: "black",
-                              marginTop: 10,
-                              marginBottom: 5,
-                            }}
-                          >
-                            {getLabel(lang, part)}
-                          </Text>
-                          {typeof result[part] !== "string" ? (
-                            Object.keys(result[part]).map((key, i) => {
-                              return (
-                                <>
-                                  <Text key={i}>
-                                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      color: "#0069b4",
-                                      fontWeight: "bold",
-                                      marginBottom: 5,
-                                      fontSize: 16,
-                                    }}
-                                  >
-                                    {formatData(result[part][key])}
-                                  </Text>
-                                </>
-                              );
-                            })
-                          ) : (
-                            <Text
-                              key={index + 1}
-                              style={{
-                                color: "#0069b4",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              ✅ {result[part]}
-                            </Text>
-                          )}
-                        </>
-                      );
-                    })
-                  : ""}
-              </ScrollView>
-              <Button
-                title={getLabel(lang, "scanagain")}
-                buttonStyle={{
-                  backgroundColor: "#0069b4",
-                  borderWidth: 2,
-                  borderColor: "#0069b4",
-                  width: "100%",
-                }}
-                containerStyle={{
-                  paddingTop: 5,
-                  paddingBottom: 0,
-                }}
-                titleStyle={{ color: "white" }}
-                onPress={() => {
-                  setResult(null);
-                  setErrorMessage(null);
-                  setScanned(false);
-                  navigation.navigate("scan");
-                }}
-              />
-            </View>
-          )}
+          {result &&
+            ResultScreen({
+              result,
+              lang,
+              setResult,
+              setErrorMessage,
+              setScanned,
+            })}
           {!!errorMessage && (
             <View style={{ flex: 1, backgroundColor: "white" }}>
               <ScrollView style={{ paddingHorizontal: "5%" }}>
