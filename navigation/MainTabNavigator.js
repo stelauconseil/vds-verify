@@ -46,12 +46,7 @@ const MainTabNavigator = () => {
           title: getLabel(lang, "scan"),
         }}
       >
-        {() => (
-          <Scan
-            // useScan={useScan}
-            {...{ lang }}
-          />
-        )}
+        {() => <Scan {...{ lang }} />}
       </Tab.Screen>
       <Tab.Screen
         name="options" // listeners={{ focus: () => setuseScan(true) }}
@@ -61,12 +56,7 @@ const MainTabNavigator = () => {
           title: getLabel(lang, "settings"),
         }}
       >
-        {() => (
-          <InfoStack
-            // useScan={useScan}
-            {...{ lang, setLang }}
-          />
-        )}
+        {() => <InfoStack {...{ lang, setLang }} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

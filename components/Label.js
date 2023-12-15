@@ -17,7 +17,10 @@ label.fr = {
   settings: "Paramètres",
   data: "Données",
   header: "En-tête",
-  signer: "Signataire",
+  signer: "Signature",
+  valid: "CEV Valide",
+  standard: "Norme",
+  compliance: "Conformité",
   "Type de document": "Type de document",
   scanagain: "Scanner à nouveau",
   helpscan: "Chercher un CEV à scanner",
@@ -44,7 +47,10 @@ label.en = {
   settings: "Settings",
   data: "Data",
   header: "Header",
-  signer: "Signer",
+  signer: "Signature",
+  valid: "Valid VDS",
+  standard: "Standard",
+  compliance: "Compliance",
   "Type de document": "Document type",
   scanagain: "Scan again",
   helpscan: "Find a VDS to scan",
@@ -85,4 +91,30 @@ const saveLang = async (lang) => {
   }
 };
 
-export { getLang, saveLang, getLabel };
+const formatData = (data, lang) => {
+  try {
+    const languageTag = getLabel(lang, "languageTag");
+    if (Array.isArray(data)) {
+      return data.join(" ");
+    } else {
+      let newdate = Date.parse(data);
+      if (newdate > 1000) {
+        const d = new Date(newdate);
+        if (d.toString() !== "Invalid Date") {
+          const dateString = d.toLocaleDateString(languageTag);
+          if (!d.toUTCString().includes("00:00:00")) {
+            return `${dateString} ${d.toLocaleTimeString(languageTag)}`;
+          }
+          return dateString;
+        }
+        return data;
+      } else {
+        throw new Error("not a date");
+      }
+    }
+  } catch (error) {
+    return data;
+  }
+};
+
+export { getLang, saveLang, getLabel, formatData };
