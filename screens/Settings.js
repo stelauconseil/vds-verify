@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: "grey",
     margin: 20,
-    fontVariant: ["small-caps"],
+    fontVariant: "small-caps",
   },
   listMiddle: {
     width: "90%",
