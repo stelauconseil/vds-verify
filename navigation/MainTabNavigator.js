@@ -33,7 +33,7 @@ const MainTabNavigator = () => {
             <Icon type="ionicon" name={iconName} size={size} color={color} />
           );
         },
-        tabBarActiveTintColor: "#0a51a1",
+        tabBarActiveTintColor: "#0069b4",
         tabBarInactiveTintColor: "gray",
       })}
     >

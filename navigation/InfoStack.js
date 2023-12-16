@@ -19,7 +19,7 @@ const InfoStack = ({ lang, setLang }) => {
       screenOptions={{
         headerTitleAlign: "center",
         // headerTintColor: "white",
-        // headerStyle: { backgroundColor: "#0a51a1" },
+        // headerStyle: { backgroundColor: "#0069b4" },
       }}
     >
       <Stack.Screen

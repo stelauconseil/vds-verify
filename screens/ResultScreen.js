@@ -54,7 +54,7 @@ const ResultScreen = ({
         </Text>
         {Object.keys(result.data).map((key, i) => (
           <View key={i}>
-            <Text style={{ color: "grey", fontSize: 14 }}>
+            <Text style={{ color: "gray", fontSize: 14 }}>
               {key.charAt(0).toUpperCase() + key.slice(1)}
             </Text>
             <Text

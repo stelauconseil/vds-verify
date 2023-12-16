@@ -9,13 +9,13 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0a51a1"
+      "backgroundColor": "#0069b4"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "buildNumber": "16",
+      "buildNumber": "17",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
@@ -24,10 +24,10 @@
       "bundleIdentifier": "com.stelau.vdsverify"
     },
     "android": {
-      "versionCode": "16",
+      "versionCode": "17",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0a51a1"
+        "backgroundColor": "#0069b4"
       },
       "permissions": [
         "android.permission.CAMERA"

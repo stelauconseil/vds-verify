@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { encode } from "base-64";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
-import ScannerView from "../ScannerView";
+import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 
 const Scan = ({ lang }) => {
-  const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -28,10 +28,8 @@ const Scan = ({ lang }) => {
   const processResult = async ({ type, data }) => {
     const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
     setScanned(true);
-    // console.log(`loaded data`, data);
     const b64encodedvds = encode(data);
     try {
-      // console.log(`b64encodedvds`, b64encodedvds);
       const response = await fetch(`${apiUrl}/api/v1/decode`, {
         method: "POST",
         headers: {
@@ -43,7 +41,6 @@ const Scan = ({ lang }) => {
         }),
       });
       const { success, message, vds } = await response.json();
-      // console.log(`success, message, vds`, success, message, vds);
       if (success === true) {
         setResult(vds);
       } else {
@@ -92,6 +89,8 @@ const Scan = ({ lang }) => {
               setResult,
               setErrorMessage,
               setScanned,
+              modalVisible,
+              setModalVisible,
             })}
           {!!errorMessage && (
             <View style={{ flex: 1, backgroundColor: "white" }}>

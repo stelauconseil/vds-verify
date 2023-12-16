@@ -2,6 +2,7 @@ import React from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const SecurityDetails = ({ result, lang, closeModal }) => {
   return (
@@ -15,27 +16,34 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               color: "black",
               marginVertical: 10,
             }}
-            style={{ fontVariant: "small-caps" }}
+            style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
+            <Icon
+              name="checkmark-circle-outline"
+              type="ionicon"
+              // size={15}
+              color="green"
+              style={{ marginRight: 10 }}
+            />
             {getLabel(lang, "signer")}
           </Text>
           {Object.keys(result.signer).map((key, i) => {
             return (
-              <>
-                <Text key={i}>
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
+              <React.Fragment key={key}>
+                <Text style={{ marginBottom: 5 }}>
+                  {getLabel(lang, key)} :{" "}
+                  <Text
+                    style={{
+                      color: "#0069b4",
+                      fontWeight: "bold",
+                      fontSize: 14,
+                      lineHeight: 30,
+                    }}
+                  >
+                    {formatData(result.signer[key], lang)}
+                  </Text>
                 </Text>
-                <Text
-                  style={{
-                    color: "#0069b4",
-                    fontWeight: "bold",
-                    marginBottom: 5,
-                    fontSize: 16,
-                  }}
-                >
-                  {formatData(result.signer[key], lang)}
-                </Text>
-              </>
+              </React.Fragment>
             );
           })}
           <Divider style={{ marginVertical: 10 }} />
@@ -47,27 +55,34 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               marginTop: 10,
               marginBottom: 5,
             }}
-            style={{ fontVariant: "small-caps" }}
+            style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
+            <Icon
+              name="browsers-outline"
+              type="ionicon"
+              // size={15}
+              color="gray"
+              style={{ marginRight: 10 }}
+            />
             {getLabel(lang, "header")}
           </Text>
           {Object.keys(result.header).map((key, i) => {
             return (
-              <>
-                <Text key={i}>
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
+              <React.Fragment key={key}>
+                <Text style={{ marginBottom: 5 }}>
+                  {key.charAt(0).toUpperCase() + key.slice(1)} :{" "}
+                  <Text
+                    style={{
+                      color: "#0069b4",
+                      fontWeight: "bold",
+                      fontSize: 14,
+                      lineHeight: 30,
+                    }}
+                  >
+                    {formatData(result.header[key], lang)}
+                  </Text>
                 </Text>
-                <Text
-                  style={{
-                    color: "#0069b4",
-                    fontWeight: "bold",
-                    marginBottom: 5,
-                    fontSize: 16,
-                  }}
-                >
-                  {formatData(result.header[key], lang)}
-                </Text>
-              </>
+              </React.Fragment>
             );
           })}
           <Divider style={{ marginVertical: 10 }} />
@@ -79,58 +94,63 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               marginTop: 10,
               marginBottom: 5,
             }}
-            style={{ fontVariant: "small-caps" }}
+            style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
+            <Icon
+              name="build-outline"
+              type="ionicon"
+              // size={15}
+              color="gray"
+              style={{ marginRight: 10 }}
+            />
             {getLabel(lang, "standard")}
           </Text>
           <Text key="compliance">
-            {getLabel(lang, "compliance").charAt(0).toUpperCase() +
-              getLabel(lang, "compliance").slice(1)}
-          </Text>
-          <Text
-            key="vds_standard"
-            style={{
-              color: "#0069b4",
-              fontWeight: "bold",
-              marginBottom: 5,
-              fontSize: 16,
-            }}
-          >
-            {result.vds_standard == "DOC_ISO22376_2023"
-              ? "ISO 22376:2023"
-              : result.vds_standard == "105"
-              ? "AFNOR 105"
-              : "2D-Doc"}
+            {getLabel(lang, "compliance")}:{" "}
+            <Text
+              key="vds_standard"
+              style={{
+                color: "#0069b4",
+                fontWeight: "bold",
+                fontSize: 14,
+                lineHeight: 30,
+              }}
+            >
+              {result.vds_standard == "DOC_ISO22376_2023"
+                ? "ISO 22376:2023"
+                : result.vds_standard == "105"
+                ? "AFNOR 105"
+                : "2D-Doc"}
+            </Text>
           </Text>
         </ScrollView>
-        <View style={{ width: "100%" }}>
+        <View style={{ width: "100%", paddingBottom: 10 }}>
           <Pressable>
             <Button
               onPress={() => closeModal()}
               // onPressIn={() => navigation.navigate("Security Details")}
-              title={getLabel(lang, "valid")}
+              title={getLabel(lang, "close")}
               icon={
                 <Icon
-                  name="chevron-down-circle-outline"
+                  name="close-circle-outline"
                   type="ionicon"
                   // size={15}
-                  color="green"
+                  color="white"
                   style={{ marginLeft: 10 }}
                 />
               }
-              iconRight={true}
+              iconLeft={true}
               buttonStyle={{
-                backgroundColor: "#d3fdc5",
+                backgroundColor: "#0069b4",
                 borderWidth: 3,
-                borderBottomRightRadius: 20,
-                borderBottomLeftRadius: 20,
-                borderColor: "#d3fdc5",
+                borderRadius: 20,
+                borderColor: "#0069b4",
                 width: "100%",
               }}
               titleStyle={{
                 flex: 1,
                 textAlign: "center",
-                color: "green",
+                color: "white",
               }}
               containerStyle={{
                 paddingLeft: 0,
@@ -151,11 +171,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 30,
-    marginBottom: 30,
+    marginTop: 82,
+    marginBottom: 75,
   },
   modalView: {
-    margin: 20,
+    margin: 10,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -175,8 +195,8 @@ const styles = StyleSheet.create({
     padding: 0,
     elevation: 2,
     borderWidth: 3,
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
+    // borderBottomRightRadius: 20,
+    // borderBottomLeftRadius: 20,
     // borderColor: "#d3fdc5",
     width: "100%",
   },

@@ -12,7 +12,7 @@ const Settings = ({ navigation, lang, setLang }) => {
         style={styles.listMiddle}
         onPress={() => navigation.navigate("about")}
       >
-        <Icon name="chatbox-ellipses-outline" type="ionicon" color="grey" />
+        <Icon name="chatbox-ellipses-outline" type="ionicon" color="gray" />
         <ListItem.Content>
           <ListItem.Title>{getLabel(lang, "about")}</ListItem.Title>
         </ListItem.Content>
@@ -22,7 +22,7 @@ const Settings = ({ navigation, lang, setLang }) => {
         style={styles.listBotton}
         onPress={() => navigation.navigate("usepolicy")}
       >
-        <Icon name="receipt-outline" type="ionicon" color="grey" />
+        <Icon name="receipt-outline" type="ionicon" color="gray" />
         <ListItem.Content>
           <ListItem.Title>{getLabel(lang, "usepolicy")}</ListItem.Title>
         </ListItem.Content>
@@ -32,7 +32,7 @@ const Settings = ({ navigation, lang, setLang }) => {
         style={styles.listBotton}
         onPress={() => navigation.navigate("privacypolicy")}
       >
-        <Icon name="information-circle-outline" type="ionicon" color="grey" />
+        <Icon name="information-circle-outline" type="ionicon" color="gray" />
         <ListItem.Content>
           <ListItem.Title>{getLabel(lang, "privacypolicy")}</ListItem.Title>
         </ListItem.Content>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     textAlign: "left",
-    color: "grey",
+    color: "gray",
     margin: 20,
     fontVariant: "small-caps",
   },
