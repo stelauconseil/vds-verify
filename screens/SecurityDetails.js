@@ -2,7 +2,19 @@ import React from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
+const get_standard = (vds_standard) => {
+  switch (vds_standard) {
+    case "DOC_ISO22376_2023":
+      return "ISO 22376:2023";
+    case "DOC_105":
+      return "AFNOR 105";
+    case "DOC_101":
+      return "2D-Doc";
+    default:
+      return "2D-Doc";
+  }
+};
 
 const SecurityDetails = ({ result, lang, closeModal }) => {
   return (
@@ -116,11 +128,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
                 lineHeight: 30,
               }}
             >
-              {result.vds_standard == "DOC_ISO22376_2023"
-                ? "ISO 22376:2023"
-                : result.vds_standard == "105"
-                ? "AFNOR 105"
-                : "2D-Doc"}
+              {get_standard(result.vds_standard)}
             </Text>
           </Text>
         </ScrollView>
