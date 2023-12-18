@@ -106,7 +106,6 @@ const Scan = ({ lang }) => {
                 >
                   ⚠️ {getLabel(lang, "error")}
                 </Text>
-
                 <Text
                   style={{
                     color: "#0069b4",
