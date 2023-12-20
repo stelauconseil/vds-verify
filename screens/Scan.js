@@ -8,6 +8,7 @@ import { Text, Button } from "@rneui/themed";
 import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
+import * as Linking from "expo-linking";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
@@ -16,6 +17,23 @@ const Scan = ({ lang }) => {
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [previousLink, setPreviousLink] = useState(null);
+  const [link, setLink] = React.useState(null);
+
+  const deepLink = Linking.useURL();
+  console.log("deep link: ", deepLink);
+  if (
+    deepLink !== null &&
+    deepLink !== previousLink &&
+    link === null &&
+    typeof deepLink === "string" &&
+    deepLink.startsWith("https://vds-verify.stelau.com/vds#")
+  ) {
+    const data = deepLink.replace("https://vds-verify.stelau.com/vds#", "");
+    setLink(data);
+    console.log("previous link: ", previousLink);
+    console.log("data received through url: ", data);
+  }
 
   useEffect(() => {
     (async () => {
@@ -51,6 +69,14 @@ const Scan = ({ lang }) => {
       setErrorMessage(error.message);
     }
   };
+
+  if (link !== null && !scanned && previousLink !== link) {
+    console.log("processing this data: ", link);
+    setScanned(true);
+    processResult({ data: link });
+    setPreviousLink(link);
+    setLink(null);
+  }
 
   if (hasPermission === null) {
     return <Text>{getLabel(lang, "camerapermission")}</Text>;

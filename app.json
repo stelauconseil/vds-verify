@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#0069b4"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "17",
       "supportsTablet": true,
@@ -29,10 +27,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
       },
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
-      "package": "com.stelau.vdsverify"
+      "permissions": ["android.permission.CAMERA"],
+      "package": "com.stelau.vdsverify",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "vds-verify.stelau.com",
+              "pathPrefix": "/vds"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,6 +61,6 @@
         "projectId": "2f5314e0-d7e8-4b1d-96bc-8c10bcb2e53d"
       }
     },
-    "owner": "nicocha"
+    "owner": "stelau"
   }
 }
