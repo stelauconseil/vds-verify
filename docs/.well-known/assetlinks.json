@@ -1,5 +1,5 @@
 [{
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target" : { "namespace": "android_app", "package_name": "com.stelau.vdsverify",
-    "sha256_cert_fingerprints": ["FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C"] }
+    "sha256_cert_fingerprints": ["C3:62:8E:CB:23:14:64:F7:19:76:59:A9:17:5A:71:C0:3E:A9:4A:09:92:65:33:DB:92:C7:B3:5F:DA:B8:6F:50"] }
 }]
