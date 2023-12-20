@@ -1,3 +1,4 @@
+import React from "react";
 import { View, ScrollView, Modal } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
