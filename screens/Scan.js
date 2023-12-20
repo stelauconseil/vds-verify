@@ -17,22 +17,31 @@ const Scan = ({ lang }) => {
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [previousLink, setPreviousLink] = useState(null);
+  const [firstUrl, setFirstUrl] = useState(true);
   const [link, setLink] = React.useState(null);
+  const [url, setUrl] = React.useState(null);
 
-  const deepLink = Linking.useURL();
-  console.log("deep link: ", deepLink);
+  function onChange(event) {
+    setUrl(event.url);
+  }
+
+  useEffect(() => {
+    if (firstUrl) {
+      Linking.getInitialURL().then((url) => setUrl(url));
+      setFirstUrl(false);
+    }
+    const subscription = Linking.addEventListener("url", onChange);
+    return () => subscription.remove();
+  }, []);
+
   if (
-    deepLink !== null &&
-    deepLink !== previousLink &&
+    url !== null &&
     link === null &&
-    typeof deepLink === "string" &&
-    deepLink.startsWith("https://vds-verify.stelau.com/vds#")
+    typeof url === "string" &&
+    url.startsWith("https://vds-verify.stelau.com/vds#")
   ) {
-    const data = deepLink.replace("https://vds-verify.stelau.com/vds#", "");
+    const data = url.replace("https://vds-verify.stelau.com/vds#", "");
     setLink(data);
-    console.log("previous link: ", previousLink);
-    console.log("data received through url: ", data);
   }
 
   useEffect(() => {
@@ -70,11 +79,10 @@ const Scan = ({ lang }) => {
     }
   };
 
-  if (link !== null && !scanned && previousLink !== link) {
-    console.log("processing this data: ", link);
+  if (link !== null && !scanned) {
     setScanned(true);
     processResult({ data: link });
-    setPreviousLink(link);
+    setUrl(null);
     setLink(null);
   }
 

@@ -19,7 +19,8 @@
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.stelau.vdsverify"
+      "bundleIdentifier": "com.stelau.vdsverify",
+      "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
       "versionCode": "17",
