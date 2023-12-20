@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#0069b4"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "18",
       "supportsTablet": true,
@@ -21,7 +19,8 @@
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.stelau.vdsverify"
+      "bundleIdentifier": "com.stelau.vdsverify",
+      "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
       "versionCode": "18",
@@ -29,10 +28,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
       },
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
-      "package": "com.stelau.vdsverify"
+      "permissions": ["android.permission.CAMERA"],
+      "package": "com.stelau.vdsverify",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "vds-verify.stelau.com",
+              "pathPrefix": "/vds"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

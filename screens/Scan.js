@@ -8,6 +8,7 @@ import { Text, Button } from "@rneui/themed";
 import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
+import * as Linking from "expo-linking";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
@@ -16,6 +17,32 @@ const Scan = ({ lang }) => {
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [firstUrl, setFirstUrl] = useState(true);
+  const [link, setLink] = React.useState(null);
+  const [url, setUrl] = React.useState(null);
+
+  function onChange(event) {
+    setUrl(event.url);
+  }
+
+  useEffect(() => {
+    if (firstUrl) {
+      Linking.getInitialURL().then((url) => setUrl(url));
+      setFirstUrl(false);
+    }
+    const subscription = Linking.addEventListener("url", onChange);
+    return () => subscription.remove();
+  }, []);
+
+  if (
+    url !== null &&
+    link === null &&
+    typeof url === "string" &&
+    url.startsWith("https://vds-verify.stelau.com/vds#")
+  ) {
+    const data = url.replace("https://vds-verify.stelau.com/vds#", "");
+    setLink(data);
+  }
 
   useEffect(() => {
     (async () => {
@@ -51,6 +78,13 @@ const Scan = ({ lang }) => {
       setErrorMessage(error.message);
     }
   };
+
+  if (link !== null && !scanned) {
+    setScanned(true);
+    processResult({ data: link });
+    setUrl(null);
+    setLink(null);
+  }
 
   if (hasPermission === null) {
     return <Text>{getLabel(lang, "camerapermission")}</Text>;
