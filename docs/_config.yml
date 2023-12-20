@@ -4,3 +4,4 @@ description: (FR) VDS Verify décode et vérifie les Cachets Electroniques Visib
 show_downloads: false
 google_analytics:
 theme: jekyll-theme-minimal
+include: [".well-known"]
