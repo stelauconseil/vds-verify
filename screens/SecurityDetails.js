@@ -83,7 +83,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             return (
               <React.Fragment key={key}>
                 <Text style={{ marginBottom: 5 }}>
-                  {key.charAt(0).toUpperCase() + key.slice(1)} :{" "}
+                  {getLabel(lang, key)}:{" "}
                   <Text
                     style={{
                       color: "#0069b4",
