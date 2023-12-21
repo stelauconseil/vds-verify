@@ -37,14 +37,6 @@ const Scan = ({ lang }) => {
     return () => subscription.remove();
   }, []);
 
-  if (
-    url !== null &&
-    typeof url === "string" &&
-    url.startsWith("https://vds-verify.stelau.com/vds#")
-  ) {
-    setUrl(url);
-  }
-
   useEffect(() => {
     (async () => {
       setScanned(false);
@@ -97,7 +89,7 @@ const Scan = ({ lang }) => {
     }
   };
 
-  if (url !== null) {
+  if (url !== null && typeof url === "string" && url.startsWith("http")) {
     processResult({ data: url });
     setUrl(null);
   }
