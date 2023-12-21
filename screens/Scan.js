@@ -19,7 +19,6 @@ const Scan = ({ lang }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [firstUrl, setFirstUrl] = useState(true);
-  const [link, setLink] = React.useState(null);
   const [url, setUrl] = React.useState(null);
 
   function onChange(event) {
@@ -31,18 +30,19 @@ const Scan = ({ lang }) => {
       Linking.getInitialURL().then((url) => setUrl(url));
       setFirstUrl(false);
     }
+  }, [firstUrl]);
+
+  useEffect(() => {
     const subscription = Linking.addEventListener("url", onChange);
     return () => subscription.remove();
   }, []);
 
   if (
     url !== null &&
-    link === null &&
     typeof url === "string" &&
     url.startsWith("https://vds-verify.stelau.com/vds#")
   ) {
-    const data = url.split("#").slice(-1);
-    setLink(data);
+    setUrl(url);
   }
 
   useEffect(() => {
@@ -53,11 +53,27 @@ const Scan = ({ lang }) => {
     })();
   }, []);
 
+  const parseData = (data) => {
+    if (data.startsWith("http")) {
+      const lastIndex = data.lastIndexOf("#");
+      if (lastIndex === -1 || lastIndex === data.length - 1) {
+        return null;
+      }
+      return encode(data.substring(lastIndex + 1));
+    } else {
+      return encode(data);
+    }
+  };
+
   const processResult = async ({ data }) => {
     const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
     setScanned(true);
-    const raw = data.split("#").slice(-1);
-    const b64encodedvds = encode(raw);
+    let b64encodedvds = parseData(data);
+    if (b64encodedvds === null) {
+      setErrorMessage("error_invalid_qr");
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/api/v1/decode`, {
         method: "POST",
@@ -81,11 +97,9 @@ const Scan = ({ lang }) => {
     }
   };
 
-  if (link !== null && !scanned) {
-    setScanned(true);
-    processResult({ data: link });
+  if (url !== null) {
+    processResult({ data: url });
     setUrl(null);
-    setLink(null);
   }
 
   if (hasPermission === null) {
