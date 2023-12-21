@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import React, { View, Image } from "react-native";
 import { Text } from "@rneui/themed";
 import vdsreaderLogo from "../assets/icon.png";
 

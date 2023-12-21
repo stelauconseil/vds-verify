@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
+import PropTypes from "prop-types";
 
 export default function ScannerView({ scanned }) {
   return (
@@ -65,3 +66,7 @@ const styles = StyleSheet.create({
     borderRightWidth: BORDER_WIDTH,
   },
 });
+
+ScannerView.propTypes = {
+  scanned: PropTypes.bool.isRequired,
+};

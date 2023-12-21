@@ -7,6 +7,7 @@ import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
 import PrivacyPolicy from "../screens/PrivacyPolicy";
 import { getLabel } from "../components/Label";
+import PropTypes from "prop-types";
 
 const Stack = createNativeStackNavigator();
 
@@ -80,6 +81,11 @@ const InfoStack = ({ lang, setLang }) => {
       </Stack.Screen>
     </Stack.Navigator>
   );
+};
+
+InfoStack.propTypes = {
+  lang: PropTypes.string.isRequired,
+  setLang: PropTypes.func.isRequired,
 };
 
 export default InfoStack;

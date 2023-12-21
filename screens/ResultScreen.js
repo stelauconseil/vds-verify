@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
+import PropTypes from "prop-types";
 
 const ResultScreen = ({
   result,
@@ -138,6 +139,15 @@ const ResultScreen = ({
       </Modal>
     </View>
   );
+};
+
+ResultScreen.propTypes = {
+  result: PropTypes.object.isRequired,
+  lang: PropTypes.string.isRequired,
+  setResult: PropTypes.func.isRequired,
+  setScanned: PropTypes.func.isRequired,
+  modalVisible: PropTypes.bool.isRequired,
+  setModalVisible: PropTypes.func.isRequired,
 };
 
 export default ResultScreen;

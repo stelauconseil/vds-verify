@@ -2,6 +2,7 @@ import React from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
+import PropTypes from "prop-types";
 
 const get_standard = (vds_standard) => {
   switch (vds_standard) {
@@ -39,7 +40,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             />
             {getLabel(lang, "signer")}
           </Text>
-          {Object.keys(result.signer).map((key, i) => {
+          {Object.keys(result.signer).map((key) => {
             return (
               <React.Fragment key={key}>
                 <Text style={{ marginBottom: 5 }}>
@@ -78,7 +79,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             />
             {getLabel(lang, "header")}
           </Text>
-          {Object.keys(result.header).map((key, i) => {
+          {Object.keys(result.header).map((key) => {
             return (
               <React.Fragment key={key}>
                 <Text style={{ marginBottom: 5 }}>
@@ -172,6 +173,12 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
       </View>
     </View>
   );
+};
+
+SecurityDetails.propTypes = {
+  result: PropTypes.object.isRequired,
+  lang: PropTypes.string.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({

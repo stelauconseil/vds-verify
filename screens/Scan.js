@@ -9,6 +9,7 @@ import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
+import PropTypes from "prop-types";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
@@ -40,7 +41,7 @@ const Scan = ({ lang }) => {
     typeof url === "string" &&
     url.startsWith("https://vds-verify.stelau.com/vds#")
   ) {
-    const data = url.replace("https://vds-verify.stelau.com/vds#", "");
+    const data = url.split("#").slice(-1);
     setLink(data);
   }
 
@@ -52,10 +53,11 @@ const Scan = ({ lang }) => {
     })();
   }, []);
 
-  const processResult = async ({ type, data }) => {
+  const processResult = async ({ data }) => {
     const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
     setScanned(true);
-    const b64encodedvds = encode(data);
+    const raw = data.split("#").slice(-1);
+    const b64encodedvds = encode(raw);
     try {
       const response = await fetch(`${apiUrl}/api/v1/decode`, {
         method: "POST",
@@ -201,5 +203,9 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
+
+Scan.propTypes = {
+  lang: PropTypes.string,
+};
 
 export default Scan;

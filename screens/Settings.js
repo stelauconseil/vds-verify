@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, ListItem, Icon } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
 import { getLabel, saveLang } from "../components/Label";
+import PropTypes from "prop-types";
 
 const Settings = ({ navigation, lang, setLang }) => {
   return (
@@ -44,7 +45,7 @@ const Settings = ({ navigation, lang, setLang }) => {
         style={styles.picker}
         itemStyle={styles.pickerItem}
         selectedValue={lang}
-        onValueChange={(itemValue, itemIndex) => {
+        onValueChange={(itemValue) => {
           setLang(itemValue);
           saveLang(itemValue);
         }}
@@ -54,6 +55,12 @@ const Settings = ({ navigation, lang, setLang }) => {
       </Picker>
     </View>
   );
+};
+
+Settings.propTypes = {
+  navigation: PropTypes.object.isRequired,
+  lang: PropTypes.string.isRequired,
+  setLang: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({

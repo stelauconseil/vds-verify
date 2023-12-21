@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
 import * as Application from "expo-application";
-import { Text, Button } from "@rneui/themed";
-import { getLabel } from "../components/Label";
-import logo from "../assets/icon.png";
+import { Text } from "@rneui/themed";
+import PropTypes from "prop-types";
 
 const About = ({ lang }) => {
   return (
@@ -30,5 +29,9 @@ const styles = StyleSheet.create({
     margin: 20,
   },
 });
+
+About.propTypes = {
+  lang: PropTypes.string.isRequired,
+};
 
 export default About;
