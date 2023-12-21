@@ -3,15 +3,15 @@
     "apps": [],
     "details": [
       {
-        "appID": "{APPLE_TEAM_ID}.{BUNDLE_ID}",
+        "appID": "D3ZX4B4V4U.com.stelau.vdsverify",
         "paths": ["/vds#*"]
       }
     ]
   },
   "activitycontinuation": {
-    "apps": ["{APPLE_TEAM_ID}.{BUNDLE_ID}"]
+    "apps": ["D3ZX4B4V4U.com.stelau.vdsverify"]
   },
   "webcredentials": {
-    "apps": ["{APPLE_TEAM_ID}.{BUNDLE_ID}"]
+    "apps": ["D3ZX4B4V4U.com.stelau.vdsverify"]
   }
 }
