@@ -37,6 +37,10 @@ label.fr = {
   "Network request failed": "Erreur réseau",
   "Une erreur est survenue lors du décodage du CEV":
     "Le type de code n'est pas reconnu ou une erreur est survenue lors du décodage",
+  certificate_reference: "Référence du certificat",
+  manifest_ID: "ID du manifeste",
+  manifest_version: "Version du manifeste",
+  sign_datetime: "Date et heure de signature",
 };
 
 label.en = {
@@ -73,6 +77,10 @@ label.en = {
   "Network request failed": "Network error",
   "Une erreur est survenue lors du décodage du CEV":
     "Unknown QR code format or error during decoding",
+  certificate_reference: "Certificate reference",
+  manifest_ID: "Manifest ID",
+  manifest_version: "Manifest version",
+  sign_datetime: "Signature date and time",
 };
 
 const getLabel = (lang, key) => {
