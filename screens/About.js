@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 });
 
 About.propTypes = {
-  lang: PropTypes.string.isRequired,
+  lang: PropTypes.string,
 };
 
 export default About;

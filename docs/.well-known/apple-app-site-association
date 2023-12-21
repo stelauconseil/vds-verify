@@ -4,14 +4,13 @@
     "details": [
       {
         "appID": "D3ZX4B4V4U.com.stelau.vdsverify",
-        "paths": ["/vds#*"]
+        "components": [
+          {
+            "/": "/vds*",
+            "comment": "Matches any URL whose path starts with /vds"
+          }
+        ]
       }
     ]
-  },
-  "activitycontinuation": {
-    "apps": ["D3ZX4B4V4U.com.stelau.vdsverify"]
-  },
-  "webcredentials": {
-    "apps": ["D3ZX4B4V4U.com.stelau.vdsverify"]
   }
 }
