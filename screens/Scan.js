@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
+
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
@@ -82,7 +83,8 @@ const Scan = ({ lang }) => {
       if (success === true) {
         setResult(vds);
       } else {
-        setErrorMessage(message);
+        console.log(message);
+        // setErrorMessage(message);
       }
     } catch (error) {
       console.error(error);

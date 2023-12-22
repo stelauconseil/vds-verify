@@ -44,7 +44,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             return (
               <React.Fragment key={key}>
                 <Text style={{ marginBottom: 5 }}>
-                  {getLabel(lang, key)} :{" "}
+                  {getLabel(lang, key)}:{" "}
                   <Text
                     style={{
                       color: "#0069b4",

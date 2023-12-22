@@ -84,10 +84,12 @@ label.en = {
 };
 
 const getLabel = (lang, key) => {
-  if (lang && label[lang]) {
+  if (lang && key in label[lang]) {
     return label[lang][key];
+  } else if (key in label.en) {
+    return label.en[key];
   }
-  return label.en[key];
+  return key;
 };
 
 const getLang = async () => {
