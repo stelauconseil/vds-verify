@@ -1,6 +1,5 @@
 import React from "react";
 import { View, ScrollView, Modal } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
@@ -13,9 +12,8 @@ const ResultScreen = ({
   setScanned,
   modalVisible,
   setModalVisible,
+  navigation,
 }) => {
-  const navigation = useNavigation();
-
   const openModal = () => {
     setModalVisible(true);
   };
@@ -148,6 +146,7 @@ ResultScreen.propTypes = {
   setScanned: PropTypes.func.isRequired,
   modalVisible: PropTypes.bool.isRequired,
   setModalVisible: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 
 export default ResultScreen;

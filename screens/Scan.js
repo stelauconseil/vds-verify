@@ -10,6 +10,7 @@ import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
 import PropTypes from "prop-types";
+import { useNavigation } from "@react-navigation/native";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
@@ -21,15 +22,15 @@ const Scan = ({ lang }) => {
   const [firstUrl, setFirstUrl] = useState(true);
   const [url, setUrl] = React.useState(null);
 
-  function onChange(event) {
+  const navigation = useNavigation();
+
+  const onChange = (event) => {
     setUrl(event.url);
-  }
+  };
 
   useEffect(() => {
-    if (firstUrl) {
-      Linking.getInitialURL().then((url) => setUrl(url));
-      setFirstUrl(false);
-    }
+    Linking.getInitialURL().then((url) => setUrl(url));
+    setFirstUrl(false);
   }, [firstUrl]);
 
   useEffect(() => {
@@ -133,6 +134,7 @@ const Scan = ({ lang }) => {
               setScanned,
               modalVisible,
               setModalVisible,
+              navigation,
             })}
           {!!errorMessage && (
             <View style={{ flex: 1, backgroundColor: "white" }}>

@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#0069b4"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "22",
       "supportsTablet": true,
@@ -22,9 +20,7 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.stelau.vdsverify",
-      "associatedDomains": [
-        "applinks:vds-verify.stelau.com"
-      ]
+      "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
       "versionCode": "22",
@@ -32,9 +28,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
       },
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
+      "permissions": ["android.permission.CAMERA"],
       "package": "com.stelau.vdsverify",
       "intentFilters": [
         {
@@ -47,10 +41,7 @@
               "pathPrefix": "/vds"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },
