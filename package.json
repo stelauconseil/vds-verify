@@ -1,5 +1,5 @@
 {
-  "name": "vds-verify-expo",
+  "name": "vds-verify",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -39,11 +39,11 @@
     "react-native-webview": "13.2.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.23.7",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "prettier": "^3.1.0"
+    "prettier": "^3.1.1"
   },
   "private": false
 }
