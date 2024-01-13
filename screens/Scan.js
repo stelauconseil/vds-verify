@@ -83,11 +83,11 @@ const Scan = ({ lang }) => {
       if (success === true) {
         setResult(vds);
       } else {
-        console.log(message);
-        // setErrorMessage(message);
+        // console.error(message);
+        setErrorMessage(message);
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       setErrorMessage(error.message);
     }
   };
