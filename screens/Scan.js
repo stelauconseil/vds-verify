@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { encode } from "base-64";
 import Constants from "expo-constants";
@@ -10,7 +10,6 @@ import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
 import PropTypes from "prop-types";
-import { useNavigation } from "@react-navigation/native";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
@@ -80,6 +79,7 @@ const Scan = ({ lang }) => {
         }),
       });
       const { success, message, vds } = await response.json();
+      // console.log(vds);
       if (success === true) {
         setResult(vds);
       } else {
