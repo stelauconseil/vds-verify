@@ -15,10 +15,10 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "26",
+      "buildNumber": "27",
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
+        "NSCameraUsageDescription": "This app uses the camera to capture QR codes.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.stelau.vdsverify",
@@ -27,7 +27,7 @@
       ]
     },
     "android": {
-      "versionCode": "26",
+      "versionCode": "27",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
@@ -61,7 +61,7 @@
       [
         "expo-barcode-scanner",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+          "cameraPermission": "This app uses the camera to capture QR codes."
         }
       ],
       "expo-localization"
