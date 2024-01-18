@@ -34,7 +34,6 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             <Icon
               name="checkmark-circle-outline"
               type="ionicon"
-              // size={15}
               color="green"
               style={{ marginRight: 10 }}
             />
@@ -73,7 +72,6 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             <Icon
               name="browsers-outline"
               type="ionicon"
-              // size={15}
               color="gray"
               style={{ marginRight: 10 }}
             />
@@ -112,7 +110,6 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             <Icon
               name="build-outline"
               type="ionicon"
-              // size={15}
               color="gray"
               style={{ marginRight: 10 }}
             />
@@ -132,12 +129,12 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               {get_standard(result.vds_standard)}
             </Text>
           </Text>
+          <Text>&nbsp;</Text>
         </ScrollView>
         <View style={{ width: "100%", paddingBottom: 10 }}>
           <Pressable>
             <Button
               onPress={() => closeModal()}
-              // onPressIn={() => navigation.navigate("Security Details")}
               title={getLabel(lang, "close")}
               icon={
                 <Icon
@@ -177,7 +174,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
 
 SecurityDetails.propTypes = {
   result: PropTypes.object.isRequired,
-  lang: PropTypes.string.isRequired,
+  lang: PropTypes.string,
   closeModal: PropTypes.func.isRequired,
 };
 

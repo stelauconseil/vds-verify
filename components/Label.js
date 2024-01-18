@@ -41,6 +41,7 @@ label.fr = {
   manifest_ID: "ID du manifeste",
   manifest_version: "Version du manifeste",
   sign_datetime: "Date et heure de signature",
+  testdata: "Données de test",
 };
 
 label.en = {
@@ -81,6 +82,7 @@ label.en = {
   manifest_ID: "Manifest ID",
   manifest_version: "Manifest version",
   sign_datetime: "Signature date and time",
+  testdata: "Test data",
 };
 
 const getLabel = (lang, key) => {

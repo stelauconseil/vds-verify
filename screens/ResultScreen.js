@@ -24,6 +24,26 @@ const ResultScreen = ({
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
+      {result.test_data ? (
+        <>
+          <View
+            style={{ width: "100%", backgroundColor: "#ff95a1", padding: 2 }}
+          >
+            <Text
+              h4={true}
+              h4Style={{
+                textAlign: "center",
+                fontVariant: "small-caps",
+                color: "red",
+              }}
+            >
+              {getLabel(lang, "testdata")}
+            </Text>
+          </View>
+        </>
+      ) : (
+        ""
+      )}
       <ScrollView
         style={{ paddingHorizontal: "5%", paddingBottom: 10 }}
         containerStyle={{
@@ -72,13 +92,11 @@ const ResultScreen = ({
       </ScrollView>
       <Button
         onPress={() => openModal()}
-        // onPressIn={() => navigation.navigate("Security Details")}
         title={getLabel(lang, "valid")}
         icon={
           <Icon
             name="chevron-up-circle-outline"
             type="ionicon"
-            // size={15}
             color="green"
             style={{ marginLeft: 10 }}
           />
