@@ -24,7 +24,7 @@ const ResultScreen = ({
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      {result.test_data ? (
+      {result.testdata ? (
         <>
           <View
             style={{ width: "100%", backgroundColor: "#ff95a1", padding: 2 }}
