@@ -23,7 +23,7 @@
     "eslint-plugin-react": "^7.33.2",
     "expo": "^49.0.21",
     "expo-barcode-scanner": "~12.5.3",
-    "expo-constants": "^14.4.2",
+    "expo-constants": "~14.4.2",
     "expo-linking": "~5.0.2",
     "expo-localization": "~14.3.0",
     "expo-splash-screen": "~0.20.5",
@@ -43,7 +43,7 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "prettier": "^3.2.2"
+    "prettier": "^3.2.4"
   },
   "private": false
 }
