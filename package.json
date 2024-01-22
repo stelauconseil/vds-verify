@@ -21,7 +21,7 @@
     "@rneui/themed": "4.0.0-rc.8",
     "base-64": "^1.0.0",
     "eslint-plugin-react": "^7.33.2",
-    "expo": "^49.0.21",
+    "expo": "49.0.22",
     "expo-barcode-scanner": "~12.5.3",
     "expo-constants": "~14.4.2",
     "expo-linking": "~5.0.2",
