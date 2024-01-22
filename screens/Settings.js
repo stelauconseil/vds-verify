@@ -10,7 +10,7 @@ const Settings = ({ navigation, lang, setLang }) => {
     <View>
       <Text style={styles.title}>{getLabel(lang, "information")}</Text>
       <ListItem
-        style={styles.listMiddle}
+        style={styles.listTop}
         onPress={() => navigation.navigate("about")}
       >
         <Icon name="chatbox-ellipses-outline" type="ionicon" color="gray" />
@@ -20,7 +20,7 @@ const Settings = ({ navigation, lang, setLang }) => {
         <ListItem.Chevron />
       </ListItem>
       <ListItem
-        style={styles.listBotton}
+        style={styles.listMiddle}
         onPress={() => navigation.navigate("usepolicy")}
       >
         <Icon name="receipt-outline" type="ionicon" color="gray" />
@@ -78,17 +78,17 @@ const styles = StyleSheet.create({
     margin: 20,
     fontVariant: "small-caps",
   },
-  listMiddle: {
-    width: "90%",
-    alignSelf: "center",
-    overflow: "hidden",
-  },
   listTop: {
     width: "90%",
     alignSelf: "center",
     overflow: "hidden",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+  },
+  listMiddle: {
+    width: "90%",
+    alignSelf: "center",
+    overflow: "hidden",
   },
   listBotton: {
     width: "90%",
