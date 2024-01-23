@@ -38,6 +38,7 @@ label.fr = {
   "Une erreur est survenue lors du décodage du CEV":
     "Le type de code n'est pas reconnu ou une erreur est survenue lors du décodage",
   certificate_reference: "Référence du certificat",
+  iac: "Code de l'Agence émettrice ",
   manifest_ID: "ID du manifeste",
   manifest_version: "Version du manifeste",
   sign_datetime: "Date et heure de signature",
@@ -79,6 +80,7 @@ label.en = {
   "Une erreur est survenue lors du décodage du CEV":
     "Unknown QR code format or error during decoding",
   certificate_reference: "Certificate reference",
+  iac: "Issuing Agency Code",
   manifest_ID: "Manifest ID",
   manifest_version: "Manifest version",
   sign_datetime: "Signature date and time",
