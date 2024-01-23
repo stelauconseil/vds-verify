@@ -9,7 +9,7 @@ const get_standard = (vds_standard) => {
     case "DOC_ISO22376_2023":
       return "ISO 22376:2023";
     case "DOC_105":
-      return "AFNOR 105";
+      return "AFNOR XP Z42-105";
     case "DOC_101":
       return "2D-Doc";
     default:
@@ -183,13 +183,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 82,
+    marginTop: 90,
     marginBottom: 75,
   },
   modalView: {
     margin: 10,
     backgroundColor: "white",
     borderRadius: 20,
+    paddingTop: 20,
     padding: 35,
     paddingBottom: 0,
     alignItems: "center",
