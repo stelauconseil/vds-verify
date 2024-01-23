@@ -15,7 +15,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "30",
+      "buildNumber": "31",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to capture QR codes.",
@@ -27,7 +27,7 @@
       ]
     },
     "android": {
-      "versionCode": "30",
+      "versionCode": "31",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
