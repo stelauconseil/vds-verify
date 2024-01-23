@@ -24,25 +24,19 @@ const ResultScreen = ({
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      {result.testdata ? (
-        <>
-          <View
-            style={{ width: "100%", backgroundColor: "#ff95a1", padding: 2 }}
+      {result.testdata && (
+        <View style={{ width: "100%", backgroundColor: "#ff95a1", padding: 2 }}>
+          <Text
+            h4={true}
+            h4Style={{
+              textAlign: "center",
+              fontVariant: "small-caps",
+              color: "red",
+            }}
           >
-            <Text
-              h4={true}
-              h4Style={{
-                textAlign: "center",
-                fontVariant: "small-caps",
-                color: "red",
-              }}
-            >
-              {getLabel(lang, "testdata")}
-            </Text>
-          </View>
-        </>
-      ) : (
-        ""
+            {getLabel(lang, "testdata")}
+          </Text>
+        </View>
       )}
       <ScrollView
         style={{ paddingHorizontal: "5%", paddingBottom: 10 }}
