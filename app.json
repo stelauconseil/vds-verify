@@ -2,7 +2,7 @@
   "expo": {
     "name": "VDS Verify",
     "slug": "vds-verify",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon-1024-72.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "31",
+      "buildNumber": "32",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to capture QR codes.",
@@ -27,7 +27,7 @@
       ]
     },
     "android": {
-      "versionCode": "31",
+      "versionCode": "32",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
