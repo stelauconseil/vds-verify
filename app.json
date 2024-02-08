@@ -59,7 +59,7 @@
     },
     "plugins": [
       [
-        "expo-barcode-scanner",
+        "expo-camera",
         {
           "cameraPermission": "This app uses the camera to capture QR codes."
         }
