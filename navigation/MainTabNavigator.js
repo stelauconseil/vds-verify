@@ -39,7 +39,6 @@ const MainTabNavigator = () => {
     >
       <Tab.Screen
         name="scan"
-        // listeners={{ focus: () => setUseScan(false) }}
         options={{
           headerTitle: () => <HeaderLogoText />,
           headerTitleAlign: "center",
@@ -49,7 +48,7 @@ const MainTabNavigator = () => {
         {() => <Scan {...{ lang }} />}
       </Tab.Screen>
       <Tab.Screen
-        name="options" // listeners={{ focus: () => setuseScan(true) }}
+        name="options"
         options={{
           headerTitle: () => <HeaderLogoText />,
           headerTitleAlign: "center",
