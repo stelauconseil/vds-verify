@@ -21,7 +21,7 @@
     "@rneui/themed": "4.0.0-rc.8",
     "base-64": "^1.0.0",
     "eslint-plugin-react": "^7.33.2",
-    "expo": "50.0.6",
+    "expo": "^50.0.6",
     "expo-application": "~5.8.3",
     "expo-camera": "~14.0.4",
     "expo-constants": "~15.4.5",
