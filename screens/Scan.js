@@ -40,7 +40,6 @@ const Scan = ({ lang }) => {
 
   useEffect(() => {
     (async () => {
-      setScanned(false);
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();

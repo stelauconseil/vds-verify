@@ -31,8 +31,8 @@ label.fr = {
   scanagain: "Scanner à nouveau",
   helpscan: "Chercher un CEV à scanner",
   error: "Erreur",
-  cameraerror: "No access to camera",
-  camerapermission: "Requesting for camera permission",
+  cameraerror: "VDS Verify n'est pas autorisé à utiliser votre caméra",
+  camerapermission: "VDS Verify a besoin d'accéder à votre caméra",
   "Le CEV n'est pas authentique": "Le CEV n'est pas authentique",
   "Network request failed": "Erreur réseau",
   "Une erreur est survenue lors du décodage du CEV":
@@ -73,8 +73,8 @@ label.en = {
   scanagain: "Scan again",
   helpscan: "Find a VDS to scan",
   error: "Error",
-  cameraerror: "No access to camera",
-  camerapermission: "Requesting for camera permission",
+  cameraerror: "VDS Verify is not allowed to access your camera",
+  camerapermission: "VDS Verify is requesting for camera permission",
   "Le CEV n'est pas authentique": "VDS is not authentic",
   "Network request failed": "Network error",
   "Une erreur est survenue lors du décodage du CEV":
