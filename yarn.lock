@@ -3756,7 +3756,7 @@ expo-asset@~9.0.2:
     invariant "^2.2.4"
     md5-file "^3.2.3"
 
-expo-camera@~14.0.5:
+expo-camera@~14.0.4:
   version "14.0.5"
   resolved "https://registry.yarnpkg.com/expo-camera/-/expo-camera-14.0.5.tgz#b39a873316895e5a7ab86e8131dc9ffe529fc972"
   integrity sha512-rHCOEAjt0NOjYXMyKnrGruOMvPdKbhhJBMtpr8LfJPVprsxZTjFC+flQgX52tZZWxPa1Hn6qpGYUzxZhVakHCg==
@@ -3833,7 +3833,7 @@ expo-status-bar@~1.11.1:
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.11.1.tgz#a11318741d361048c11db2b16c4364a79a74af30"
   integrity sha512-ddQEtCOgYHTLlFUe/yH67dDBIoct5VIULthyT3LRJbEwdpzAgueKsX2FYK02ldh440V87PWKCamh7R9evk1rrg==
 
-expo@^50.0.7:
+expo@^50.0.6:
   version "50.0.7"
   resolved "https://registry.yarnpkg.com/expo/-/expo-50.0.7.tgz#d32e6f05e03e7b97d53571f5b3a453a1c4d72fde"
   integrity sha512-lTqIrKOUTKHLdTuAaJzZihi1v7F8Ix1dOXVWMpToDy9zPC/s+fet0fbyXdFUxYsCUyuEDIB9tvejrTYZk8Hm0Q==
