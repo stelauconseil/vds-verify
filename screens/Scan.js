@@ -78,15 +78,12 @@ const Scan = ({ lang }) => {
         }),
       });
       const { success, message, vds } = await response.json();
-      // console.log(vds);
       if (success === true) {
         setResult(vds);
       } else {
-        // console.error(message);
         setErrorMessage(message);
       }
     } catch (error) {
-      // console.error(error);
       setErrorMessage(error.message);
     }
   };
