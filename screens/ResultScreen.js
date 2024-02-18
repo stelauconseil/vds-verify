@@ -66,23 +66,31 @@ const ResultScreen = ({
         >
           {getLabel(lang, "data")}
         </Text>
-        {Object.keys(result.data).map((key, i) => (
-          <View key={i}>
-            <Text style={{ color: "gray", fontSize: 14 }}>
-              {key.charAt(0).toUpperCase() + key.slice(1)}
-            </Text>
-            <Text
-              style={{
-                color: "#0069b4",
-                fontWeight: "bold",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
-            >
-              {formatData(result.data[key], lang)}
-            </Text>
-          </View>
-        ))}
+        {Object.keys(result.data)
+          .filter((key) => {
+            return (
+              result.data[key] !== null &&
+              result.data[key] !== undefined &&
+              result.data[key] !== ""
+            );
+          })
+          .map((key) => (
+            <View key={key}>
+              <Text style={{ color: "gray", fontSize: 14 }}>
+                {key.charAt(0).toUpperCase() + key.slice(1)}
+              </Text>
+              <Text
+                style={{
+                  color: "#0069b4",
+                  fontWeight: "bold",
+                  marginBottom: 10,
+                  fontSize: 16,
+                }}
+              >
+                {formatData(result.data[key], lang)}
+              </Text>
+            </View>
+          ))}
       </ScrollView>
       <Button
         onPress={() => openModal()}
