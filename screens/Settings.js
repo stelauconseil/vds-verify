@@ -21,6 +21,16 @@ const Settings = ({ navigation, lang, setLang }) => {
       </ListItem>
       <ListItem
         style={styles.listMiddle}
+        onPress={() => navigation.navigate("faq")}
+      >
+        <Icon name="help-circle-outline" type="ionicon" color="gray" />
+        <ListItem.Content>
+          <ListItem.Title>{getLabel(lang, "faq")}</ListItem.Title>
+        </ListItem.Content>
+        <ListItem.Chevron />
+      </ListItem>
+      <ListItem
+        style={styles.listMiddle}
         onPress={() => navigation.navigate("usepolicy")}
       >
         <Icon name="receipt-outline" type="ionicon" color="gray" />

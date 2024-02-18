@@ -1,19 +1,16 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-// import { Button } from "react-native";
-// import { useNavigation } from "@react-navigation/native";
 import Settings from "../screens/Settings";
 import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
 import PrivacyPolicy from "../screens/PrivacyPolicy";
+import Faq from "../screens/Faq";
 import { getLabel } from "../components/Label";
 import PropTypes from "prop-types";
 
 const Stack = createNativeStackNavigator();
 
 const InfoStack = ({ lang, setLang }) => {
-  // const navigation = useNavigation();
-
   return (
     <Stack.Navigator
       initialRouteName="settings"
@@ -28,16 +25,18 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "about"),
           headerTitleAlign: "center",
-          // headerRight: () => (
-          //   <Button
-          //     onPress={() => navigation.goBack(null)}
-          //     title={getLabel(lang, "close")}
-          //     // color="#ffffff"
-          //   />
-          // ),
         }}
       >
         {(props) => <About {...props} {...{ lang }} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="faq"
+        options={{
+          headerTitle: getLabel(lang, "faq"),
+          headerTitleAlign: "center",
+        }}
+      >
+        {(props) => <PrivacyPolicy {...props} {...{ lang }} />}
       </Stack.Screen>
       <Stack.Screen
         name="settings"
@@ -52,13 +51,6 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "usepolicy"),
           headerTitleAlign: "center",
-          // headerRight: () => (
-          //   <Button
-          //     onPress={() => navigation.goBack(null)}
-          //     title={getLabel(lang, "close")}
-          //     // color="#ffffff"
-          //   />
-          // ),
         }}
       >
         {(props) => <UsePolicy {...props} {...{ lang }} />}
@@ -68,13 +60,6 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "privacypolicy"),
           headerTitleAlign: "center",
-          // headerRight: () => (
-          //   <Button
-          //     onPress={() => navigation.goBack(null)}
-          //     title={getLabel(lang, "close")}
-          //     // color="#ffffff"
-          //   />
-          // ),
         }}
       >
         {(props) => <PrivacyPolicy {...props} {...{ lang }} />}
