@@ -36,7 +36,7 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <PrivacyPolicy {...props} {...{ lang }} />}
+        {(props) => <Faq {...props} {...{ lang }} />}
       </Stack.Screen>
       <Stack.Screen
         name="settings"
