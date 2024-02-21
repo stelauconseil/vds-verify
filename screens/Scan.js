@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { CameraView, Camera } from "expo-camera/next";
+// import { CameraView, Camera } from "expo-camera/next";
+import { BarCodeScanner } from "expo-barcode-scanner";
 import { encode } from "base-64";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
@@ -40,7 +41,8 @@ const Scan = ({ lang }) => {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      // const { status } = await Camera.requestCameraPermissionsAsync();
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -105,11 +107,19 @@ const Scan = ({ lang }) => {
       {!scanned && hasPermission ? (
         <View style={{ flex: 1 }}>
           {isFocused ? (
-            <CameraView
-              barCodeScannerSettings={{
-                barCodeTypes: ["qr", "datamatrix"],
-              }}
-              onBarcodeScanned={scanned ? undefined : processResult}
+            // <CameraView
+            //   barCodeScannerSettings={{
+            //     barCodeTypes: ["qr", "datamatrix"],
+            //   }}
+            //   onBarcodeScanned={scanned ? undefined : processResult}
+            //   style={StyleSheet.absoluteFillObject}
+            // />
+            <BarCodeScanner
+              barCodeTypes={[
+                BarCodeScanner.Constants.BarCodeType.qr,
+                BarCodeScanner.Constants.BarCodeType.datamatrix,
+              ]}
+              onBarCodeScanned={scanned ? undefined : processResult}
               style={StyleSheet.absoluteFillObject}
             />
           ) : null}
