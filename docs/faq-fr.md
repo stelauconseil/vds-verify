@@ -4,10 +4,6 @@
 
 L'application VDS Verify est en mesure de décoder et vérifier:
 
-- Tous les CEV conforme à la norme AFNOR xp-z42105
-
-  - Aujourd'hui nous recensons ceux apposés sur le justificatif d'identité à usage unique de [France Identité](https://france-identite.gouv.fr/justificatif/)
-
 - Les 2D-Doc apposés sur les documents suivants:
   - Carte nationale d'identité française
   - Relevé d'information restreint (RIR)
@@ -15,6 +11,10 @@ L'application VDS Verify est en mesure de décoder et vérifier:
   - Facture d'énergie (EDF par exemple)
   - Facture de téléphone (Free par exemple)
   - ... et tout autre document conforme à la norme 2D-Doc
+- Tous les CEV conforme à la norme AFNOR xp-z42105
+
+  - Aujourd'hui nous recensons ceux apposés sur le justificatif d'identité à usage unique de [France Identité](https://france-identite.gouv.fr/justificatif/)
+
 - Tous les CEV conforme à la norme ISO 22376:2023
 
 ## Comment fonctionne la vérification d'un CEV ?
