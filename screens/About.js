@@ -10,7 +10,8 @@ const About = ({ lang }) => {
       {/* <Image style={{ width: 30, height: 30 }} source={logo} /> */}
       <Text style={styles.title}>{Application.applicationName}</Text>
       <Text style={styles.title}>
-        Version {Application.nativeApplicationVersion}
+        Version {Application.nativeApplicationVersion} (
+        {Application.nativeBuildVersion})
       </Text>
     </View>
   );
