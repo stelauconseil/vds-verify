@@ -1,0 +1,31 @@
+setResult({
+  data: {
+    Genre: "Feminin",
+    "Liste des prénoms": ["MAELYS-GAELLE", "MARIE"],
+    Nationalité: "FR",
+    "Nom de famille": "MARTIN",
+    "Numéro de la pièce d’identité": "X4RTBPFW4",
+    "Pays de naissance": "FR",
+    "Type de pièce d'identité": "Carte d'identité",
+  },
+  header: {
+    "Date de création de la signature": "2022-11-15",
+    "Date d’émission du document": "2022-11-15",
+    "Identifiant de l’autorité de certification": "FR05",
+    "Identifiant du certificat": "0001",
+    Pays: "FR",
+    Périmètre: "01",
+    "Type de document": "Titre d'identité",
+    Version: "4",
+  },
+  signer: {
+    cert_cn: "0001",
+    cert_issuer: "FR05 - Agence Nationale des Titres Sécurisés",
+    cert_not_after: "Fri, 08 Mar 2024 09:35:02 GMT",
+    cert_not_before: "Mon, 08 Mar 2021 09:35:02 GMT",
+    cert_o: "Agence Nationale des Titres Sécurisés",
+    cert_ou: "0002 130003262",
+  },
+  vds_standard: "DOC_101",
+  testdata: true,
+});

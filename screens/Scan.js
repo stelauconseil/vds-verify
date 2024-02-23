@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-// import { CameraView, Camera } from "expo-camera/next";
+// import { CameraView, useCameraPermissions } from "expo-camera/next";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { encode } from "base-64";
 import Constants from "expo-constants";
@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
 
+  // const [hasPermission, requestPermission] = useCameraPermissions();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
@@ -41,11 +42,15 @@ const Scan = ({ lang }) => {
 
   useEffect(() => {
     (async () => {
-      // const { status } = await Camera.requestCameraPermissionsAsync();
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
+
+  const requestPermission = async () => {
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    setHasPermission(status === "granted");
+  };
 
   const parseData = (data) => {
     if (data.startsWith("http")) {
@@ -95,11 +100,49 @@ const Scan = ({ lang }) => {
     setUrl(null);
   }
 
-  if (hasPermission === null) {
-    return <Text>{getLabel(lang, "camerapermission")}</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>{getLabel(lang, "cameraerror")}</Text>;
+  // if (!hasPermission?.granted) {
+  if (!hasPermission) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={{ paddingHorizontal: "5%" }}>
+          <Text
+            h1={true}
+            h1Style={{
+              color: "#0069b4",
+              alignSelf: "center",
+              marginTop: 50,
+              marginBottom: 50,
+            }}
+          >
+            ⚠️ {getLabel(lang, "error")}
+          </Text>
+          <Text
+            style={{
+              color: "#0069b4",
+              alignSelf: "center",
+              fontSize: 20,
+            }}
+          >
+            {getLabel(lang, "cameraerror")}
+          </Text>
+        </ScrollView>
+        <Button
+          title={getLabel(lang, "camerapermission")}
+          buttonStyle={{
+            backgroundColor: "#0069b4",
+            borderWidth: 2,
+            borderColor: "#0069b4",
+            width: "100%",
+          }}
+          containerStyle={{
+            paddingTop: 5,
+            paddingBottom: 0,
+          }}
+          titleStyle={{ color: "white" }}
+          onPress={requestPermission}
+        />
+      </View>
+    );
   }
 
   return (
