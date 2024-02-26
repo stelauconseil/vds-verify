@@ -2,7 +2,7 @@
   "expo": {
     "name": "VDS Verify",
     "slug": "vds-verify",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon-1024-72.png",
     "userInterfaceStyle": "light",
@@ -15,11 +15,14 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "49",
+      "buildNumber": "50",
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to capture QR codes.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+        "CFBundleAllowMixedLocalizations": true,
+      },
+      "locales": {
+        "fr": "./languages/french.json",
+        "en": "./languages/english.json"
       },
       "bundleIdentifier": "com.stelau.vdsverify",
       "associatedDomains": [
@@ -27,7 +30,7 @@
       ]
     },
     "android": {
-      "versionCode": 49,
+      "versionCode": 50,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
