@@ -23,7 +23,7 @@ label.fr = {
   cert_issuer: "Emetteur",
   cert_cn: "Nom Commun",
   cert_not_after: "Non valide avant",
-  cert_not_before: "Non Valide après",
+  cert_not_before: "Non valide après",
   cert_o: "Organisation",
   cert_ou: "Unité d'organisation",
   standard: "Norme",
