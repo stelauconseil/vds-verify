@@ -54,7 +54,7 @@ const Scan = ({ lang }) => {
 
   const parseData = (data) => {
     if (data.startsWith("http")) {
-      const lastIndex = data.lastIndexOf("#");
+      const lastIndex = data.lastIndexOf("/vds#");
       if (lastIndex === -1 || lastIndex === data.length - 1) {
         return null;
       }
