@@ -20,7 +20,7 @@
 
 ## Notre solution de création de CEV
 
-L'application mobile s'appuie sur notre API de création / encodage / signature et de décodage / vérification de CEV. Elle permet notamment de démontrer les capacités de notre API de décoder et vérifier les CEV créés par notre Solution de création de CEV.
+L'application mobile s'appuie sur notre API de création, encodage, signature et de décodage, vérification de CEV. Elle permet notamment de démontrer les capacités de notre API de décoder et vérifier les CEV créés par notre Solution de création de CEV.
 
 ### Ils l'utilisent
 
