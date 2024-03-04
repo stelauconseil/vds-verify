@@ -94,28 +94,32 @@ const ResultScreen = ({
       </ScrollView>
       <Button
         onPress={() => openModal()}
-        title={getLabel(lang, "valid")}
+        title={
+          result.signer
+            ? getLabel(lang, "valid")
+            : getLabel(lang, "nonverifiable")
+        }
         icon={
           <Icon
             name="chevron-up-circle-outline"
             type="ionicon"
-            color="green"
+            color={result.signer ? "green" : "orange"}
             style={{ marginLeft: 10 }}
           />
         }
         iconRight={true}
         buttonStyle={{
-          backgroundColor: "#d3fdc5",
+          backgroundColor: result.signer ? "#d3fdc5" : "#ffcc99",
           borderWidth: 3,
           borderTopRightRadius: 20,
           borderTopLeftRadius: 20,
-          borderColor: "#d3fdc5",
+          borderColor: result.signer ? "#d3fdc5" : "#ffcc99",
           width: "100%",
         }}
         titleStyle={{
           flex: 1,
           textAlign: "center",
-          color: "green",
+          color: result.signer ? "green" : "orange",
         }}
         containerStyle={{
           paddingLeft: 0,

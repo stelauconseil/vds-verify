@@ -32,32 +32,42 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
             <Icon
-              name="checkmark-circle-outline"
+              name={
+                result.signer
+                  ? "checkmark-circle-outline"
+                  : "alert-circle-outline"
+              }
               type="ionicon"
-              color="green"
+              color={result.signer ? "green" : "orange"}
               style={{ marginRight: 10 }}
             />
             {getLabel(lang, "signer")}
           </Text>
-          {Object.keys(result.signer).map((key) => {
-            return (
-              <React.Fragment key={key}>
-                <Text style={{ marginBottom: 5 }}>
-                  {getLabel(lang, key)}:{" "}
-                  <Text
-                    style={{
-                      color: "#0069b4",
-                      fontWeight: "bold",
-                      fontSize: 14,
-                      lineHeight: 30,
-                    }}
-                  >
-                    {formatData(result.signer[key], lang)}
+          {result.signer ? (
+            Object.keys(result.signer).map((key) => {
+              return (
+                <React.Fragment key={key}>
+                  <Text style={{ marginBottom: 5 }}>
+                    {getLabel(lang, key)}:{" "}
+                    <Text
+                      style={{
+                        color: "#0069b4",
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        lineHeight: 30,
+                      }}
+                    >
+                      {formatData(result.signer[key], lang)}
+                    </Text>
                   </Text>
-                </Text>
-              </React.Fragment>
-            );
-          })}
+                </React.Fragment>
+              );
+            })
+          ) : (
+            <Text style={{ marginTop: 5, marginBottom: 5 }}>
+              {getLabel(lang, "sign_not_verified")}
+            </Text>
+          )}
           <Divider style={{ marginVertical: 10 }} />
           <Text
             h4={true}
