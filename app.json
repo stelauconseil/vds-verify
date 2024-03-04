@@ -15,7 +15,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "52",
+      "buildNumber": "53",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
@@ -30,7 +30,7 @@
       ]
     },
     "android": {
-      "versionCode": 52,
+      "versionCode": 53,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"
