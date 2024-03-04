@@ -58,7 +58,7 @@ const Scan = ({ lang }) => {
       if (lastIndex === -1 || lastIndex === data.length - 1) {
         return null;
       }
-      return encode(data.substring(lastIndex + 1));
+      return encode(data.substring(lastIndex + 5));
     } else {
       return encode(data);
     }
