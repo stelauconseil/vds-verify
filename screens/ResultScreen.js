@@ -25,7 +25,15 @@ const ResultScreen = ({
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       {result.testdata && (
-        <View style={{ width: "100%", backgroundColor: "#ff95a1", padding: 2 }}>
+        <View
+          style={{
+            width: "100%",
+            backgroundColor: "#ff95a1",
+            padding: 2,
+            borderWidth: 3,
+            borderColor: "#ff95a1",
+          }}
+        >
           <Text
             h4={true}
             h4Style={{
@@ -39,7 +47,7 @@ const ResultScreen = ({
         </View>
       )}
       <ScrollView
-        style={{ paddingHorizontal: "5%", paddingBottom: 10 }}
+        style={{ paddingHorizontal: "5%", paddingTop: 10, paddingBottom: 10 }}
         containerStyle={{
           paddingTop: 5,
           paddingBottom: 0,
@@ -95,46 +103,69 @@ const ResultScreen = ({
       <Button
         onPress={() => openModal()}
         title={
-          result.signer
+          result.sign_is_valid && result.signer
             ? getLabel(lang, "valid")
-            : getLabel(lang, "nonverifiable")
+            : result.signer
+              ? getLabel(lang, "invalid")
+              : getLabel(lang, "nonverifiable")
         }
         icon={
           <Icon
             name="chevron-up-circle-outline"
             type="ionicon"
-            color={result.signer ? "green" : "orange"}
+            color={
+              result.sign_is_valid && result.signer
+                ? "green"
+                : result.signer
+                  ? "red"
+                  : "orange"
+            }
             style={{ marginLeft: 10 }}
           />
         }
         iconRight={true}
         buttonStyle={{
-          backgroundColor: result.signer ? "#d3fdc5" : "#ffcc99",
+          backgroundColor:
+            result.sign_is_valid && result.signer
+              ? "#d3fdc5"
+              : result.signer
+                ? "#ff95a1"
+                : "#ffcc99",
           borderWidth: 3,
           borderTopRightRadius: 20,
           borderTopLeftRadius: 20,
-          borderColor: result.signer ? "#d3fdc5" : "#ffcc99",
+          borderColor:
+            result.sign_is_valid && result.signer
+              ? "#d3fdc5"
+              : result.signer
+                ? "#ff95a1"
+                : "#ffcc99",
           width: "100%",
         }}
         titleStyle={{
           flex: 1,
           textAlign: "center",
-          color: result.signer ? "green" : "orange",
+          color:
+            result.sign_is_valid && result.signer
+              ? "green"
+              : result.signer
+                ? "red"
+                : "orange",
         }}
         containerStyle={{
           paddingLeft: 0,
           paddingRight: 0,
           paddingBottom: 0,
-          paddingTop: 20,
+          paddingTop: 0,
         }}
       />
       <Button
         title={getLabel(lang, "scanagain")}
         buttonStyle={{
           backgroundColor: "#0069b4",
+          borderWidth: 3,
+          borderColor: "#0069b4",
           borderRadius: 0,
-          // borderWidth: 0,
-          // borderColor: "#0069b4",
           width: "100%",
           // marginTop: 10,
         }}

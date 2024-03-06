@@ -33,12 +33,20 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
           >
             <Icon
               name={
-                result.signer
+                // result.signer
+                result.sign_is_valid && result.signer
                   ? "checkmark-circle-outline"
                   : "alert-circle-outline"
               }
               type="ionicon"
-              color={result.signer ? "green" : "orange"}
+              // color={result.signer ? "green" : "orange"}
+              color={
+                result.sign_is_valid && result.signer
+                  ? "green"
+                  : result.signer
+                    ? "red"
+                    : "orange"
+              }
               style={{ marginRight: 10 }}
             />
             {getLabel(lang, "signer")}
