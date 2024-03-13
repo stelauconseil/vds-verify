@@ -5,6 +5,75 @@ import { getLabel, formatData } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
 
+const formatResult = (data, key, lang) => {
+  // If data[key] is a string or an array of strings, display it
+  // else if data[key] is an object, display its keys and values
+  if (
+    typeof data[key] === "string" ||
+    (Array.isArray(data[key]) && data[key].every((e) => typeof e === "string"))
+  ) {
+    return (
+      <View key={key}>
+        <Text style={{ color: "gray", fontSize: 14 }}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}
+        </Text>
+        <Text
+          style={{
+            color: "#0069b4",
+            fontWeight: "bold",
+            marginBottom: 10,
+            fontSize: 16,
+          }}
+        >
+          {formatData(data[key], lang)}
+        </Text>
+      </View>
+    );
+  } else if (data[key] != null && typeof data[key] === "object") {
+    return (
+      <View key={key}>
+        {key != "0" && (
+          <Text style={{ color: "gray", fontSize: 14 }}>
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </Text>
+        )}
+        <View style={{ marginLeft: 10 }}>
+          {Object.keys(data[key])
+            // .filter((k) => {
+            //   return k !== null && k !== undefined && k !== "";
+            // })
+            .map((k) => formatResult(data[key], k, lang))}
+        </View>
+      </View>
+    );
+    // }
+  } else if (
+    data[key] !== null &&
+    data[key] !== undefined &&
+    data[key] !== ""
+  ) {
+    return (
+      <View key={key}>
+        <Text style={{ color: "gray", fontSize: 14 }}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}
+        </Text>
+        <Text
+          style={{
+            color: "#0069b4",
+            fontWeight: "bold",
+            marginBottom: 10,
+            fontSize: 16,
+          }}
+        >
+          {formatData(data[key], lang)}
+        </Text>
+      </View>
+    );
+  } else {
+    return;
+  }
+};
+
 const ResultScreen = ({
   result,
   lang,
@@ -82,23 +151,7 @@ const ResultScreen = ({
               result.data[key] !== ""
             );
           })
-          .map((key) => (
-            <View key={key}>
-              <Text style={{ color: "gray", fontSize: 14 }}>
-                {key.charAt(0).toUpperCase() + key.slice(1)}
-              </Text>
-              <Text
-                style={{
-                  color: "#0069b4",
-                  fontWeight: "bold",
-                  marginBottom: 10,
-                  fontSize: 16,
-                }}
-              >
-                {formatData(result.data[key], lang)}
-              </Text>
-            </View>
-          ))}
+          .map((key) => formatResult(result.data, key, lang))}
       </ScrollView>
       <Button
         onPress={() => openModal()}
