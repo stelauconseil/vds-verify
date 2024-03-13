@@ -40,7 +40,7 @@ label.fr = {
   camerapermission: "Demander l'accès",
   "Le CEV n'est pas authentique": "Le CEV n'est pas authentique",
   "Network request failed": "Erreur réseau",
-  "Une erreur est survenue lors du décodage du CEV":
+  "Une erreur est survenue lors du décodage":
     "Le type de code n'est pas reconnu ou une erreur est survenue lors du décodage",
   certificate_reference: "Référence du certificat",
   iac: "Code de l'Agence émettrice ",
@@ -87,7 +87,7 @@ label.en = {
   camerapermission: "Request access",
   "Le CEV n'est pas authentique": "VDS is not authentic",
   "Network request failed": "Network error",
-  "Une erreur est survenue lors du décodage du CEV":
+  "Une erreur est survenue lors du décodage":
     "Unknown QR code format or error during decoding",
   certificate_reference: "Certificate reference",
   iac: "Issuing Agency Code",
