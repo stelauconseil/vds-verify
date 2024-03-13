@@ -131,7 +131,7 @@ const formatData = (data, lang) => {
   try {
     const languageTag = getLabel(lang, "languageTag");
     if (Array.isArray(data)) {
-      return data.join(" ");
+      return data.join(" ").trim();
     } else if (data.length < 10) {
       throw new Error("data is not a date");
     } else {
