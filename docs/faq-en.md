@@ -1,10 +1,10 @@
 # Frequently Asked Questions
 
-## What types of CEV are supported?
+## What types of VDS are supported?
 
 VDS Verify is able to decode and verify:
 
-- All CEVs compliant with the AFNOR xp-z42105 standard
+- All VDSs compliant with the AFNOR xp-z42105 standard
 
   - Today we list those affixed to the single-use identity proof of [France Identity](https://france-identite.gouv.fr/justificatif/)
 
@@ -15,17 +15,17 @@ VDS Verify is able to decode and verify:
   - Energy bill (EDF for example)
   - Phone bill (Free for example)
   - ... and any other document compliant with the 2D-Doc standard
-- All CEVs compliant with the ISO 22376:2023 standard
+- All VDSs compliant with the ISO 22376:2023 standard
 
-## How does CEV verification work?
+## How does VDS verification work?
 
-In order to verify the validity of a CEV, the VDS Verify application will:
+In order to verify the validity of a VDS, the VDS Verify application will:
 
-- Decode the CEV
+- Decode the VDS
 - Retrieve the electronic signature certificates in a TrustedList (trust list) issued by the ANTS
 - Verify the validity of the electronic signature certificate (validity date and revocation)
-- Verify the electronic signature of the CEV.
+- Verify the electronic signature of the VDS.
 
 ## Are personal data stored?
 
-No, the VDS Verify application does not store any personal data. The CEV to decode is transmitted to our decoding API which performs the operations detailed above and transmits the results and the decoded data. This API processes these data in memory and no information is stored in any form. The API does not generate any logs.
+No, the VDS Verify application does not store any personal data. The VDS to decode is transmitted to our decoding API which performs the operations detailed above and transmits the results and the decoded data. This API processes these data in memory and no information is stored in any form. The API does not generate any logs.
