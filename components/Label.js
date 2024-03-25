@@ -48,6 +48,8 @@ label.fr = {
   manifest_version: "Version du manifeste",
   sign_datetime: "Date et heure de signature",
   testdata: "Données de test",
+  true: "vrai",
+  false: "faux",
 };
 
 label.en = {
@@ -95,6 +97,8 @@ label.en = {
   manifest_version: "Manifest version",
   sign_datetime: "Signature date and time",
   testdata: "Test data",
+  true: "true",
+  false: "false",
 };
 
 const getLabel = (lang, key) => {
@@ -132,6 +136,8 @@ const formatData = (data, lang) => {
     const languageTag = getLabel(lang, "languageTag");
     if (Array.isArray(data)) {
       return data.join(" ").trim();
+    } else if (typeof data === "boolean") {
+      return data ? getLabel(lang, "true") : getLabel(lang, "false");
     } else if (data.length < 10) {
       throw new Error("data is not a date");
     } else {
