@@ -1,14 +1,36 @@
 import React from "react";
-import { View, ScrollView, Modal } from "react-native";
+import { View, ScrollView, Modal, Image } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
 
+const isBase64 = (value) =>
+  /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
+    value
+  );
+
 const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
   // else if data[key] is an object, display its keys and values
-  if (
+  if (key.includes("Image") && isBase64(data[key])) {
+    return (
+      <View key={key}>
+        <Text style={{ color: "gray", fontSize: 14 }}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}
+        </Text>
+        <Image
+          style={{
+            width: 100,
+            height: 100,
+          }}
+          source={{
+            uri: "data:image/png;base64," + data[key],
+          }}
+        />
+      </View>
+    );
+  } else if (
     typeof data[key] === "string" ||
     (Array.isArray(data[key]) && data[key].every((e) => typeof e === "string"))
   ) {
