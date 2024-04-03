@@ -48,8 +48,8 @@ label.fr = {
   manifest_version: "Version du manifeste",
   sign_datetime: "Date et heure de signature",
   testdata: "Données de test",
-  true: "vrai",
-  false: "faux",
+  true: "oui",
+  false: "non",
 };
 
 label.en = {
@@ -97,8 +97,8 @@ label.en = {
   manifest_version: "Manifest version",
   sign_datetime: "Signature date and time",
   testdata: "Test data",
-  true: "true",
-  false: "false",
+  true: "yes",
+  false: "no",
 };
 
 const getLabel = (lang, key) => {

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-// import { CameraView, useCameraPermissions } from "expo-camera/next";
-import { BarCodeScanner } from "expo-barcode-scanner";
+import { CameraView, useCameraPermissions } from "expo-camera/next";
 import { encode } from "base-64";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
@@ -15,8 +14,7 @@ import PropTypes from "prop-types";
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
 
-  // const [hasPermission, requestPermission] = useCameraPermissions();
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasPermission, setHasPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -39,18 +37,6 @@ const Scan = ({ lang }) => {
     const subscription = Linking.addEventListener("url", onChange);
     return () => subscription.remove();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  const requestPermission = async () => {
-    const { status } = await BarCodeScanner.requestPermissionsAsync();
-    setHasPermission(status === "granted");
-  };
 
   const parseData = (data) => {
     if (data.startsWith("http")) {
@@ -100,8 +86,7 @@ const Scan = ({ lang }) => {
     setUrl(null);
   }
 
-  // if (!hasPermission?.granted) {
-  if (!hasPermission) {
+  if (!hasPermission?.granted) {
     return (
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ScrollView style={{ paddingHorizontal: "5%" }}>
@@ -139,7 +124,7 @@ const Scan = ({ lang }) => {
             paddingBottom: 0,
           }}
           titleStyle={{ color: "white" }}
-          onPress={requestPermission}
+          onPress={Linking.openSettings}
         />
       </View>
     );
@@ -150,19 +135,11 @@ const Scan = ({ lang }) => {
       {!scanned && hasPermission ? (
         <View style={{ flex: 1 }}>
           {isFocused ? (
-            // <CameraView
-            //   barCodeScannerSettings={{
-            //     barCodeTypes: ["qr", "datamatrix"],
-            //   }}
-            //   onBarcodeScanned={scanned ? undefined : processResult}
-            //   style={StyleSheet.absoluteFillObject}
-            // />
-            <BarCodeScanner
-              barCodeTypes={[
-                BarCodeScanner.Constants.BarCodeType.qr,
-                BarCodeScanner.Constants.BarCodeType.datamatrix,
-              ]}
-              onBarCodeScanned={scanned ? undefined : processResult}
+            <CameraView
+              barcodeScannerSettings={{
+                barcodeTypes: ["qr", "datamatrix"],
+              }}
+              onBarcodeScanned={scanned ? undefined : processResult}
               style={StyleSheet.absoluteFillObject}
             />
           ) : null}
