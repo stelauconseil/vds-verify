@@ -117,7 +117,6 @@ const getLang = async () => {
       return value;
     } else throw new Error("no lang");
   } catch (e) {
-    // console.error(e);
     const l = getLocales();
     return l[0].languageCode;
   }
@@ -145,9 +144,11 @@ const formatData = (data, lang) => {
       if (newdate > 1000) {
         const d = new Date(newdate);
         if (d.toString() !== "Invalid Date") {
-          const dateString = d.toLocaleDateString(languageTag);
+          const dateString = d.toLocaleDateString(languageTag, {
+            timeZone: "UTC"
+          });
           if (!d.toUTCString().includes("00:00:00")) {
-            return `${dateString} ${d.toLocaleTimeString(languageTag)}`;
+            return `${dateString} ${d.toLocaleTimeString(languageTag, { timeZone: "UTC", timeZoneName: "short" })}`;
           }
           return dateString;
         }
