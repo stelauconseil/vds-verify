@@ -25,13 +25,13 @@ const formatResult = (data, key, lang) => {
             height: 100,
           }}
           source={{
-            uri: "data:image/png;base64," + data[key],
+            uri: "data:image/webp;base64," + data[key],
           }}
         />
       </View>
     );
   } else if (
-    typeof data[key] === "string" ||
+    (typeof data[key] === "string" && data[key] !== "") ||
     (Array.isArray(data[key]) && data[key].every((e) => typeof e === "string"))
   ) {
     return (
@@ -69,28 +69,6 @@ const formatResult = (data, key, lang) => {
       </View>
     );
     // }
-  } else if (
-    data[key] !== null &&
-    data[key] !== undefined &&
-    data[key] !== ""
-  ) {
-    return (
-      <View key={key}>
-        <Text style={{ color: "gray", fontSize: 14 }}>
-          {key.charAt(0).toUpperCase() + key.slice(1)}
-        </Text>
-        <Text
-          style={{
-            color: "#0069b4",
-            fontWeight: "bold",
-            marginBottom: 10,
-            fontSize: 16,
-          }}
-        >
-          {formatData(data[key], lang)}
-        </Text>
-      </View>
-    );
   } else {
     return;
   }
