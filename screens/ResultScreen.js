@@ -1,7 +1,7 @@
 import React from "react";
 import { View, ScrollView, Modal, Image } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
-import { getLabel, formatData } from "../components/Label";
+import { getLabel, formatDataAsDate } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
 
@@ -47,7 +47,7 @@ const formatResult = (data, key, lang) => {
             fontSize: 16,
           }}
         >
-          {formatData(data[key], lang)}
+          {formatDataAsDate(data[key], lang)}
         </Text>
       </View>
     );

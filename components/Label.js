@@ -1,3 +1,6 @@
+import React from "react";
+import { Linking } from "react-native";
+import { Text } from "@rneui/themed";
 import { getLocales } from "expo-localization";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -130,7 +133,28 @@ const saveLang = async (lang) => {
   }
 };
 
-const formatData = (data, lang) => {
+const formatString = (data, lang) => {
+  if (data.includes("http")) {
+    return (
+      <Text
+        style={{
+          color: "#0069b4",
+          fontWeight: "bold",
+          marginBottom: 10,
+          fontSize: 16,
+          textDecorationLine: "underline",
+        }}
+        onPress={() => Linking.openURL(data)}
+      >
+        {data}
+      </Text>
+    );
+  } else {
+    return data;
+  }
+};
+
+const formatDataAsDate = (data, lang) => {
   try {
     const languageTag = getLabel(lang, "languageTag");
     if (Array.isArray(data)) {
@@ -145,21 +169,22 @@ const formatData = (data, lang) => {
         const d = new Date(newdate);
         if (d.toString() !== "Invalid Date") {
           const dateString = d.toLocaleDateString(languageTag, {
-            timeZone: "UTC"
+            timeZone: "UTC",
           });
           if (!d.toUTCString().includes("00:00:00")) {
             return `${dateString} ${d.toLocaleTimeString(languageTag, { timeZone: "UTC", timeZoneName: "short" })}`;
           }
           return dateString;
+        } else {
+          throw new Error("data is not a date");
         }
-        return data;
       } else {
         throw new Error("data is not a date");
       }
     }
   } catch (error) {
-    return data;
+    return formatString(data);
   }
 };
 
-export { getLang, saveLang, getLabel, formatData };
+export { getLang, saveLang, getLabel, formatDataAsDate };

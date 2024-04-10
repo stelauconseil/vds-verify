@@ -1,7 +1,7 @@
 import React from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
-import { getLabel, formatData } from "../components/Label";
+import { getLabel, formatDataAsDate } from "../components/Label";
 import PropTypes from "prop-types";
 
 const get_standard = (vds_standard) => {
@@ -65,7 +65,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
                         lineHeight: 30,
                       }}
                     >
-                      {formatData(result.signer[key], lang)}
+                      {formatDataAsDate(result.signer[key], lang)}
                     </Text>
                   </Text>
                 </React.Fragment>
@@ -108,7 +108,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
                       lineHeight: 30,
                     }}
                   >
-                    {formatData(result.header[key], lang)}
+                    {formatDataAsDate(result.header[key], lang)}
                   </Text>
                 </Text>
               </React.Fragment>
