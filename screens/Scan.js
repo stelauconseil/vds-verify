@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera/next";
-import { encode } from "base-64";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
 import ScannerView from "./ScannerView";
@@ -10,6 +9,7 @@ import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
 import PropTypes from "prop-types";
+import { Buffer } from "buffer";
 
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
@@ -44,9 +44,9 @@ const Scan = ({ lang }) => {
       if (lastIndex === -1 || lastIndex === data.length - 1) {
         return null;
       }
-      return encode(data.substring(lastIndex + 5));
+      return Buffer.from(data.substring(lastIndex + 5)).toString("base64");
     } else {
-      return encode(data);
+      return Buffer.from(data).toString("base64");
     }
   };
 

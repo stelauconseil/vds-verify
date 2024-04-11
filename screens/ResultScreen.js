@@ -1,30 +1,24 @@
 import React from "react";
 import { View, ScrollView, Modal, Image } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
-import CryptoES from "crypto-es";
-import Base64 from "Base64";
+import CryptoJS from "crypto-js";
 import { getLabel, formatDataAsDate } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
 
 const isBase64 = (value) =>
   /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
-    value
+    value,
   );
 
 const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
   // else if data[key] is an object, display its keys and values
   if (key.includes("Image") && isBase64(data[key])) {
-    console.log("IMAGE");
     try {
-      const decryptedData = CryptoES.AES.decrypt(
-        Base64.btoa(data[key]),
-        "1234"
-      );
-      console.log("decryptedData", CryptoES.enc.Hex.stringify(decryptedData));
-      console.log(CryptoES.enc.Hex.stringify(decryptedData));
-      console.log(hexToArrayBuffer(decryptedData));
+      const password = "1234";
+      CryptoJS.algo.EvpKDF.cfg.hasher = CryptoJS.algo.SHA256.create();
+      const decryptedData = CryptoJS.AES.decrypt(data[key], password);
       return (
         <View key={key}>
           <Text style={{ color: "gray", fontSize: 14 }}>
@@ -38,7 +32,7 @@ const formatResult = (data, key, lang) => {
             source={{
               uri:
                 "data:image/webp;base64," +
-                CryptoES.enc.Base64.stringify(decryptedData),
+                decryptedData.toString(CryptoJS.enc.Base64),
             }}
           />
         </View>
