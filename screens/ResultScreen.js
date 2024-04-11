@@ -1,6 +1,8 @@
 import React from "react";
 import { View, ScrollView, Modal, Image } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
+import CryptoES from "crypto-es";
+import Base64 from "Base64";
 import { getLabel, formatDataAsDate } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
@@ -14,22 +16,52 @@ const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
   // else if data[key] is an object, display its keys and values
   if (key.includes("Image") && isBase64(data[key])) {
-    return (
-      <View key={key}>
-        <Text style={{ color: "gray", fontSize: 14 }}>
-          {key.charAt(0).toUpperCase() + key.slice(1)}
-        </Text>
-        <Image
-          style={{
-            width: 100,
-            height: 100,
-          }}
-          source={{
-            uri: "data:image/webp;base64," + data[key],
-          }}
-        />
-      </View>
-    );
+    console.log("IMAGE");
+    try {
+      const decryptedData = CryptoES.AES.decrypt(
+        Base64.btoa(data[key]),
+        "1234"
+      );
+      console.log("decryptedData", CryptoES.enc.Hex.stringify(decryptedData));
+      console.log(CryptoES.enc.Hex.stringify(decryptedData));
+      console.log(hexToArrayBuffer(decryptedData));
+      return (
+        <View key={key}>
+          <Text style={{ color: "gray", fontSize: 14 }}>
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </Text>
+          <Image
+            style={{
+              width: 100,
+              height: 100,
+            }}
+            source={{
+              uri:
+                "data:image/webp;base64," +
+                CryptoES.enc.Base64.stringify(decryptedData),
+            }}
+          />
+        </View>
+      );
+    } catch (e) {
+      console.log(e);
+      return (
+        <View key={key}>
+          <Text style={{ color: "gray", fontSize: 14 }}>
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </Text>
+          <Image
+            style={{
+              width: 100,
+              height: 100,
+            }}
+            source={{
+              uri: "data:image/webp;base64," + data[key],
+            }}
+          />
+        </View>
+      );
+    }
   } else if (
     (typeof data[key] === "string" && data[key] !== "") ||
     (Array.isArray(data[key]) && data[key].every((e) => typeof e === "string"))

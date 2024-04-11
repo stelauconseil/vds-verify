@@ -136,6 +136,7 @@ const Scan = ({ lang }) => {
         <View style={{ flex: 1 }}>
           {isFocused ? (
             <CameraView
+              zoom="0.20"
               barcodeScannerSettings={{
                 barcodeTypes: ["qr", "datamatrix"],
               }}
