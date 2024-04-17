@@ -134,22 +134,26 @@ const saveLang = async (lang) => {
 };
 
 const formatString = (data, lang) => {
-  if (data.includes("http")) {
-    return (
-      <Text
-        style={{
-          color: "#0069b4",
-          fontWeight: "bold",
-          marginBottom: 10,
-          fontSize: 16,
-          textDecorationLine: "underline",
-        }}
-        onPress={() => Linking.openURL(data)}
-      >
-        {data}
-      </Text>
-    );
-  } else {
+  try {
+    if (data.includes("http")) {
+      return (
+        <Text
+          style={{
+            color: "#0069b4",
+            fontWeight: "bold",
+            marginBottom: 10,
+            fontSize: 16,
+            textDecorationLine: "underline",
+          }}
+          onPress={() => Linking.openURL(data)}
+        >
+          {data}
+        </Text>
+      );
+    } else {
+      throw new Error("data is not a string");
+    }
+  } catch (error) {
     return data;
   }
 };

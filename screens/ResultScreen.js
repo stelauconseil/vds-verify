@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 
 const isBase64 = (value) =>
   /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
-    value,
+    value
   );
 
 const formatResult = (data, key, lang) => {
@@ -38,7 +38,7 @@ const formatResult = (data, key, lang) => {
         </View>
       );
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return (
         <View key={key}>
           <Text style={{ color: "gray", fontSize: 14 }}>
@@ -58,7 +58,9 @@ const formatResult = (data, key, lang) => {
     }
   } else if (
     (typeof data[key] === "string" && data[key] !== "") ||
-    (Array.isArray(data[key]) && data[key].every((e) => typeof e === "string"))
+    typeof data[key] === "number" ||
+    (Array.isArray(data[key]) &&
+      data[key].every((e) => typeof e === "string" || typeof e === "number"))
   ) {
     return (
       <View key={key}>
