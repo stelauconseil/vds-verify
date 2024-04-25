@@ -15,47 +15,46 @@ const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
   // else if data[key] is an object, display its keys and values
   if (key.includes("Image") && isBase64(data[key])) {
-    try {
-      const password = "1234";
-      CryptoJS.algo.EvpKDF.cfg.hasher = CryptoJS.algo.SHA256.create();
-      const decryptedData = CryptoJS.AES.decrypt(data[key], password);
-      return (
-        <View key={key}>
-          <Text style={{ color: "gray", fontSize: 14 }}>
-            {key.charAt(0).toUpperCase() + key.slice(1)}
-          </Text>
-          <Image
-            style={{
-              width: 100,
-              height: 100,
-            }}
-            source={{
-              uri:
-                "data:image/webp;base64," +
-                decryptedData.toString(CryptoJS.enc.Base64),
-            }}
-          />
-        </View>
-      );
-    } catch (e) {
-      console.error(e);
-      return (
-        <View key={key}>
-          <Text style={{ color: "gray", fontSize: 14 }}>
-            {key.charAt(0).toUpperCase() + key.slice(1)}
-          </Text>
-          <Image
-            style={{
-              width: 100,
-              height: 100,
-            }}
-            source={{
-              uri: "data:image/webp;base64," + data[key],
-            }}
-          />
-        </View>
-      );
-    }
+    // try {
+    //   const password = "1234";
+    //   CryptoJS.algo.EvpKDF.cfg.hasher = CryptoJS.algo.SHA256.create();
+    //   const decryptedData = CryptoJS.AES.decrypt(data[key], password);
+    //   return (
+    //     <View key={key}>
+    //       <Text style={{ color: "gray", fontSize: 14 }}>
+    //         {key.charAt(0).toUpperCase() + key.slice(1)}
+    //       </Text>
+    //       <Image
+    //         style={{
+    //           width: 100,
+    //           height: 100,
+    //         }}
+    //         source={{
+    //           uri:
+    //             "data:image/webp;base64," +
+    //             decryptedData.toString(CryptoJS.enc.Base64),
+    //         }}
+    //       />
+    //     </View>
+    //   );
+    // } catch (e) {
+    return (
+      <View key={key}>
+        <Text style={{ color: "gray", fontSize: 14 }}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}
+        </Text>
+        <Image
+          style={{
+            width: 100,
+            height: 100,
+          }}
+          source={{
+            uri: "data:image/webp;base64," + data[key],
+          }}
+        />
+      </View>
+    );
+    // }
   } else if (
     (typeof data[key] === "string" && data[key] !== "") ||
     typeof data[key] === "number" ||
