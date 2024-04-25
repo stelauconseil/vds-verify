@@ -1,6 +1,6 @@
 {
   "name": "vds-verify",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -28,7 +28,7 @@
     "expo-constants": "~15.4.6",
     "expo-linking": "~6.2.2",
     "expo-localization": "~14.8.4",
-    "expo-splash-screen": "~0.26.4",
+    "expo-splash-screen": "~0.26.5",
     "expo-status-bar": "~1.11.1",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
@@ -42,10 +42,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",
-    "eslint": "^9.0.0",
+    "eslint": "^9.1.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-hooks": "^4.6.1",
     "prettier": "^3.2.5"
   },
   "private": false
