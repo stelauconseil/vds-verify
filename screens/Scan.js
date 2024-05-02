@@ -14,7 +14,7 @@ import { Buffer } from "buffer";
 const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
 
-  const [hasPermission, setHasPermission] = useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -27,6 +27,10 @@ const Scan = ({ lang }) => {
   const onChange = (event) => {
     setUrl(event.url);
   };
+
+  useEffect(() => {
+    requestPermission();
+  });
 
   useEffect(() => {
     Linking.getInitialURL().then((url) => setUrl(url));
@@ -86,7 +90,12 @@ const Scan = ({ lang }) => {
     setUrl(null);
   }
 
-  if (!hasPermission?.granted) {
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission?.granted) {
     return (
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ScrollView style={{ paddingHorizontal: "5%" }}>
@@ -132,7 +141,7 @@ const Scan = ({ lang }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {!scanned && hasPermission ? (
+      {!scanned && permission ? (
         <View style={{ flex: 1 }}>
           {isFocused ? (
             <CameraView
