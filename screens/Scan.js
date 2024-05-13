@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { CameraView, useCameraPermissions } from "expo-camera/next";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import Constants from "expo-constants";
 import { Text, Button } from "@rneui/themed";
 import ScannerView from "./ScannerView";
