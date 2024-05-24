@@ -10,10 +10,11 @@ L'application VDS Verify est en mesure de décoder et vérifier:
   - Vignette Crit'Air
   - Facture d'énergie (EDF par exemple)
   - Facture de téléphone (Free par exemple)
-  - ... et tout autre document conforme à la norme 2D-Doc
-- Tous les CEV conforme à la norme AFNOR xp-z42105
+  - ... et tout autre document conforme à la norme [2D-Doc](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc)
+- Tous les CEV conforme à la norme AFNOR xp-z42105, dont notamment ceux apposés sur :
 
-  - Aujourd'hui nous recensons ceux apposés sur le justificatif d'identité à usage unique de [France Identité](https://france-identite.gouv.fr/justificatif/)
+  - le justificatif d'identité à usage unique de [France Identité](https://france-identite.gouv.fr/justificatif/)
+  - la demande d'identité numérique certifiée de [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
 
 - Tous les CEV conforme à la norme ISO 22376:2023
 
@@ -22,7 +23,7 @@ L'application VDS Verify est en mesure de décoder et vérifier:
 Afin de vérifier la validité d'un CEV, l'application VDS Verify va:
 
 - Décoder le CEV
-- Récupérer les certificats de signature électronique dans une TrustedList (liste de confiance) émise par l'ANTS
+- Récupérer les certificats de signature électronique dans une TrustedList (liste de confiance) émise par l'[ANTS](https://ants.gouv.fr/)
 - Vérifier la validité du certificat électronique de signature (date de validité et révocation)
 - Vérifier la signature électronique du CEV.
 

@@ -4,9 +4,10 @@
 
 VDS Verify is able to decode and verify:
 
-- All VDSs compliant with the AFNOR xp-z42105 standard
+- All VDSs compliant with the AFNOR xp-z42105 standard, including those affixed to:
 
-  - Today we list those affixed to the single-use identity proof of [France Identity](https://france-identite.gouv.fr/justificatif/)
+  - the single-use identity proof of [France Identity](https://france-identite.gouv.fr/justificatif/)
+  - the certified digital identity request of [France Identity](https://france-identite.gouv.fr/identite-numerique-certifiee/)
 
 - The 2D-Doc affixed to the following documents:
   - French national identity card
@@ -22,7 +23,7 @@ VDS Verify is able to decode and verify:
 In order to verify the validity of a VDS, the VDS Verify application will:
 
 - Decode the VDS
-- Retrieve the electronic signature certificates in a TrustedList (trust list) issued by the ANTS
+- Retrieve the electronic signature certificates in a TrustedList (trust list) issued by the [ANTS](https://ants.gouv.fr/)
 - Verify the validity of the electronic signature certificate (validity date and revocation)
 - Verify the electronic signature of the VDS.
 
