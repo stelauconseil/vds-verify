@@ -29,4 +29,4 @@ Afin de vérifier la validité d'un CEV, l'application VDS Verify va:
 
 ## Les données personnelles sont-elles stockées ?
 
-Non, l'application VDS Verify ne stocke aucune donnée personnelle. Le CEV a décoder est transmis à notre API de décodage qui réalise les opérations détaillées plus haut et transmet le résultats et les données décodées. Cette API traite ces données en mémmoire et aucune information n'est stockée sous quelque forme que ce soit. L'API ne génère aucun log.
+Non, l'application VDS Verify ne stocke aucune donnée personnelle. Le CEV a décoder est transmis à notre API de décodage qui réalise les opérations détaillées plus haut et transmet le résultat et les données décodées. Cette API traite ces données en mémoire et aucune information n'est stockée sous quelque forme que ce soit. L'API ne génère aucun log.
