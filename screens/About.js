@@ -9,13 +9,13 @@ const About = ({ lang }) => {
     <View style={styles.left}>
       {/* <Image style={{ width: 30, height: 30 }} source={logo} /> */}
       <Text style={styles.title}>
-        {Application.applicationName} version{" "}
-        {Application.nativeApplicationVersion} (build
+        {Application.applicationName} {Application.nativeApplicationVersion}{" "}
+        (build
         {Application.nativeBuildVersion})
       </Text>
       <Text
         style={styles.title}
-        onPress={() => Linking.openURL("https://www.stelau.com")}
+        onPress={() => Linking.openURL("https://vds-verify.stelau.com")}
       >
         ©️ Stelau
       </Text>

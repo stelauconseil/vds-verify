@@ -19,7 +19,7 @@
       "en": "./languages/english.json"
     },
     "ios": {
-      "buildNumber": "66",
+      "buildNumber": "67",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
@@ -35,7 +35,7 @@
       ]
     },
     "android": {
-      "versionCode": 66,
+      "versionCode": 67,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0069b4"

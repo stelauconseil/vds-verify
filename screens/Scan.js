@@ -147,7 +147,7 @@ const Scan = ({ lang }) => {
             <CameraView
               // zoom={0.01}
               barcodeScannerSettings={{
-                barcodeTypes: ["qr", "datamatrix"],
+                barcodeTypes: ["qr", "datamatrix", "aztec"],
               }}
               onBarcodeScanned={scanned ? undefined : processResult}
               style={StyleSheet.absoluteFillObject}
