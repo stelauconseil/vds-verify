@@ -10,14 +10,14 @@ const About = ({ lang }) => {
       {/* <Image style={{ width: 30, height: 30 }} source={logo} /> */}
       <Text style={styles.title}>
         {Application.applicationName} {Application.nativeApplicationVersion}{" "}
-        (build
-        {Application.nativeBuildVersion})
+        (build {Application.nativeBuildVersion})
       </Text>
+      <Text style={styles.title}>VDS Verify </Text>
       <Text
         style={styles.title}
         onPress={() => Linking.openURL("https://vds-verify.stelau.com")}
       >
-        ©️ Stelau
+        ©️ {new Date().getFullYear()} Stelau
       </Text>
     </View>
   );
