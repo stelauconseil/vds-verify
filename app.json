@@ -67,12 +67,6 @@
     },
     "plugins": [
       [
-        "react-native-vision-camera",
-        {
-          "enableCodeScanner": true
-        }
-      ],
-      [
         "expo-camera",
         {
           "cameraPermission": "This app uses the camera to capture QR codes."
