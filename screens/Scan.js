@@ -145,13 +145,13 @@ const Scan = ({ lang }) => {
         <View style={{ flex: 1 }}>
           {isFocused ? (
             <CameraView
-              zoom={0.02}
-              barcodeScannerSettings={{
-                barcodeTypes: ["qr", "datamatrix", "aztec"],
-              }}
-              onBarcodeScanned={scanned ? undefined : processResult}
-              style={StyleSheet.absoluteFillObject}
-            />
+            zoom={0.02}
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr", "datamatrix", "aztec"],
+            }}
+            onBarcodeScanned={scanned ? undefined : processResult}
+            style={StyleSheet.absoluteFillObject}
+          />
           ) : null}
           <View style={styles.helpTextWrapper}>
             <Text style={styles.helpText}>{getLabel(lang, "helpscan")}</Text>
