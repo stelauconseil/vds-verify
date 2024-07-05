@@ -81,7 +81,7 @@ const formatResult = (data, key, lang) => {
   } else if (data[key] != null && typeof data[key] === "object") {
     return (
       <View key={key}>
-        {key != "0" && (
+        {isNaN(key) && (
           <Text style={{ color: "gray", fontSize: 14 }}>
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </Text>
