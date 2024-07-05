@@ -2,14 +2,10 @@ import React from "react";
 import { View, ScrollView, Modal, Image } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import CryptoJS from "crypto-js";
-import { getLabel, formatDataAsDate } from "../components/Label";
+import { getLabel, formatData, isBase64 } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
 
-const isBase64 = (value) =>
-  /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
-    value
-  );
 
 const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
@@ -74,7 +70,7 @@ const formatResult = (data, key, lang) => {
             fontSize: 16,
           }}
         >
-          {formatDataAsDate(data[key], lang)}
+          {formatData(data[key], lang)}
         </Text>
       </View>
     );

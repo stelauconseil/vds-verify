@@ -135,8 +135,16 @@ const saveLang = async (lang) => {
   }
 };
 
+const isBase64 = (value) =>
+  /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
+    value
+  );
+
 const formatString = (data, lang) => {
   try {
+    if (isBase64(data)) {
+      return atob(data)
+    }
     if (data.includes("http")) {
       return (
         <Text
@@ -160,7 +168,7 @@ const formatString = (data, lang) => {
   }
 };
 
-const formatDataAsDate = (data, lang) => {
+const formatData = (data, lang) => {
   try {
     const languageTag = getLabel(lang, "languageTag");
     if (Array.isArray(data)) {
@@ -193,4 +201,4 @@ const formatDataAsDate = (data, lang) => {
   }
 };
 
-export { getLang, saveLang, getLabel, formatDataAsDate };
+export { getLang, saveLang, getLabel, formatData, isBase64 };
