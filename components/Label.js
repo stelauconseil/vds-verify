@@ -142,9 +142,6 @@ const isBase64 = (value) =>
 
 const formatString = (data, lang) => {
   try {
-    if (isBase64(data)) {
-      return atob(data)
-    }
     if (data.includes("http")) {
       return (
         <Text
@@ -161,7 +158,7 @@ const formatString = (data, lang) => {
         </Text>
       );
     } else {
-      throw new Error("data is not a string");
+      throw new Error("data is not a link");
     }
   } catch (error) {
     return data;
