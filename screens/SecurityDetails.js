@@ -24,6 +24,44 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
         <ScrollView>
           <Text
             h4={true}
+            key="header"
+            h4Style={{
+              color: "black",
+              marginTop: 10,
+              marginBottom: 5,
+            }}
+            style={{ fontVariant: "small-caps", marginBottom: 5 }}
+          >
+            <Icon
+              name="browsers-outline"
+              type="ionicon"
+              color="gray"
+              style={{ marginRight: 10 }}
+            />
+            {getLabel(lang, "header")}
+          </Text>
+          {Object.keys(result.header).map((key) => {
+            return (
+              <React.Fragment key={key}>
+                <Text style={{ marginBottom: 5 }}>
+                  {getLabel(lang, key)}:{" "}
+                  <Text
+                    style={{
+                      color: "#0069b4",
+                      fontWeight: "bold",
+                      fontSize: 14,
+                      lineHeight: 30,
+                    }}
+                  >
+                    {formatData(result.header[key], lang)}
+                  </Text>
+                </Text>
+              </React.Fragment>
+            );
+          })}
+          <Divider style={{ marginVertical: 10 }} />
+          <Text
+            h4={true}
             key="signer"
             h4style={{
               color: "black",
@@ -76,44 +114,6 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               {getLabel(lang, "sign_not_verified")}
             </Text>
           )}
-          <Divider style={{ marginVertical: 10 }} />
-          <Text
-            h4={true}
-            key="header"
-            h4Style={{
-              color: "black",
-              marginTop: 10,
-              marginBottom: 5,
-            }}
-            style={{ fontVariant: "small-caps", marginBottom: 5 }}
-          >
-            <Icon
-              name="browsers-outline"
-              type="ionicon"
-              color="gray"
-              style={{ marginRight: 10 }}
-            />
-            {getLabel(lang, "header")}
-          </Text>
-          {Object.keys(result.header).map((key) => {
-            return (
-              <React.Fragment key={key}>
-                <Text style={{ marginBottom: 5 }}>
-                  {getLabel(lang, key)}:{" "}
-                  <Text
-                    style={{
-                      color: "#0069b4",
-                      fontWeight: "bold",
-                      fontSize: 14,
-                      lineHeight: 30,
-                    }}
-                  >
-                    {formatData(result.header[key], lang)}
-                  </Text>
-                </Text>
-              </React.Fragment>
-            );
-          })}
           <Divider style={{ marginVertical: 10 }} />
           <Text
             h4={true}
