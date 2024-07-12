@@ -22,7 +22,7 @@
     "@rneui/themed": "4.0.0-rc.8",
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
-    "expo": "~51.0.18",
+    "expo": "~51.0.20",
     "expo-application": "~5.9.1",
     "expo-camera": "~15.0.13",
     "expo-constants": "~16.0.2",
@@ -41,7 +41,7 @@
     "react-native-webview": "13.8.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.7",
+    "@babel/core": "^7.24.8",
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.34.3",

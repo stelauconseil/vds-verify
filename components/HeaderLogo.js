@@ -1,6 +1,6 @@
 import React, { View, Image } from "react-native";
 import { Text } from "@rneui/themed";
-import vdsreaderLogo from "../assets/icon.png";
+import vdsreaderLogo from "../assets/icons/icon.png";
 
 const HeaderLogoText = () => {
   return (
@@ -43,7 +43,7 @@ const HeaderLogo = () => {
     >
       <Image
         style={{ width: 30, height: 30 }}
-        source={require("../assets/icon.png")}
+        source={require("../assets/icons/icon.png")}
       />
     </View>
   );

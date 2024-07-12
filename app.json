@@ -4,7 +4,7 @@
     "slug": "vds-verify",
     "version": "1.2.2",
     "orientation": "portrait",
-    "icon": "./assets/icon-1024-72.png",
+    "icon": "./assets/icons/icon-1024-72.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -19,7 +19,7 @@
       "en": "./languages/english.json"
     },
     "ios": {
-      "buildNumber": "72",
+      "buildNumber": "73",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
@@ -35,9 +35,9 @@
       ]
     },
     "android": {
-      "versionCode": 72,
+      "versionCode": 73,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#0069b4"
       },
       "permissions": [
