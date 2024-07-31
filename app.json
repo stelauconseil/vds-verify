@@ -11,38 +11,29 @@
       "resizeMode": "contain",
       "backgroundColor": "#0069b4"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "locales": {
       "fr": "./languages/french.json",
       "en": "./languages/english.json"
     },
     "ios": {
-      "buildNumber": "73",
+      "buildNumber": "74",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": [
-          "en",
-          "fr"
-        ],
+        "CFBundleLocalizations": ["en", "fr"],
         "CFBundleDevelopmentRegion": "fr"
       },
       "bundleIdentifier": "com.stelau.vdsverify",
-      "associatedDomains": [
-        "applinks:vds-verify.stelau.com"
-      ]
+      "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
-      "versionCode": 73,
+      "versionCode": 74,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#0069b4"
       },
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
+      "permissions": ["android.permission.CAMERA"],
       "package": "com.stelau.vdsverify",
       "intentFilters": [
         {
@@ -55,10 +46,7 @@
               "pathPrefix": "/vds"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },
