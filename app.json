@@ -2,7 +2,7 @@
   "expo": {
     "name": "VDS Verify",
     "slug": "vds-verify",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "orientation": "portrait",
     "icon": "./assets/icons/icon-1024-72.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,7 @@
       "en": "./languages/english.json"
     },
     "ios": {
-      "buildNumber": "74",
+      "buildNumber": "75",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
@@ -28,7 +28,7 @@
       "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
-      "versionCode": 74,
+      "versionCode": 75,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#0069b4"
