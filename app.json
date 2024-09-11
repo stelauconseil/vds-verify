@@ -17,7 +17,6 @@
       "en": "./languages/english.json"
     },
     "ios": {
-      "buildNumber": "75",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
@@ -28,7 +27,6 @@
       "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
-      "versionCode": 75,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#0069b4"

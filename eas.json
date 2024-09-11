@@ -1,7 +1,8 @@
 {
   "cli": {
     "version": ">= 3.15.0",
-    "promptToConfigurePushNotifications": false
+    "promptToConfigurePushNotifications": false,
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -17,7 +18,8 @@
     "production": {
       "env": {
         "EXPO_PUBLIC_VDS_API_URL": "https://api.vds-verify.stelau.com"
-      }
+      },
+      "autoIncrement": true
     }
   },
   "submit": {
