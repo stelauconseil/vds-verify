@@ -1,6 +1,7 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useTheme } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+
 import * as SplashScreen from "expo-splash-screen";
 import MainTabNavigator from "./navigation/MainTabNavigator";
 
@@ -10,8 +11,11 @@ setTimeout(() => {
 }, 2000);
 
 const App = () => {
+  const { colors } = useTheme();
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      style={{ flex: 1, backgroundColor: colors.background }}
+    >
       <StatusBar style="auto" />
       <MainTabNavigator />
     </NavigationContainer>

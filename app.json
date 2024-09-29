@@ -4,7 +4,7 @@
     "slug": "vds-verify",
     "version": "1.2.3",
     "orientation": "portrait",
-    "icon": "./assets/icons/icon-1024-72.png",
+    "icon": "./assets/icons/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -27,10 +27,6 @@
       "associatedDomains": ["applinks:vds-verify.stelau.com"]
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/adaptive-icon.png",
-        "backgroundColor": "#0069b4"
-      },
       "permissions": ["android.permission.CAMERA"],
       "package": "com.stelau.vdsverify",
       "intentFilters": [
