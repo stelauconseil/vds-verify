@@ -6,7 +6,6 @@ import { getLabel, formatData, isBase64 } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";
 
-
 const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
   // else if data[key] is an object, display its keys and values
@@ -155,7 +154,7 @@ const ResultScreen = ({
           {result.header["Type de document"]}
         </Text>
         <Divider style={{ marginVertical: 10 }} />
-        <Text
+        {/* <Text
           h4={true}
           key="data"
           h4style={{
@@ -165,7 +164,7 @@ const ResultScreen = ({
           style={{ fontVariant: "small-caps" }}
         >
           {getLabel(lang, "data")}
-        </Text>
+        </Text> */}
         {Object.keys(result.data)
           .filter((key) => {
             return (
