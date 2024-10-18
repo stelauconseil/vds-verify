@@ -25,6 +25,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "about"),
           headerTitleAlign: "center",
+          animation: "none",
         }}
       >
         {(props) => <About {...props} {...{ lang }} />}
@@ -34,6 +35,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "faq"),
           headerTitleAlign: "center",
+          animation: "none",
         }}
       >
         {(props) => <Faq {...props} {...{ lang }} />}
@@ -42,6 +44,7 @@ const InfoStack = ({ lang, setLang }) => {
         name="settings"
         options={{
           headerTitle: getLabel(lang, "settings"),
+          animation: "none",
         }}
       >
         {(props) => <Settings {...props} {...{ lang, setLang }} />}
@@ -51,6 +54,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "usepolicy"),
           headerTitleAlign: "center",
+          animation: "none",
         }}
       >
         {(props) => <UsePolicy {...props} {...{ lang }} />}
