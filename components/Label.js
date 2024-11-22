@@ -36,7 +36,6 @@ label.fr = {
   cert_ou: "Unité d'Organisation",
   standard: "Norme",
   compliance: "Conformité",
-  "Type de document": "Type de document",
   scanagain: "Scanner à nouveau",
   helpscan: "Chercher un CEV à scanner",
   error: "Erreur",
@@ -54,6 +53,16 @@ label.fr = {
   testdata: "Données de Test",
   true: "oui",
   false: "non",
+  // 2D-Doc header
+  "Date d'émission du document": "Date d'émission du document",
+  "Date de création de la signature": "Date de création de la signature",
+  "Identifiant de l'autorité de certification":
+    "Identifiant de l'autorité de certification",
+  "Identifiant du certificat": "Identifiant du certificat",
+  Version: "Version",
+  "Type de document": "Type de document",
+  Périmètre: "Périmètre",
+  Pays: "Pays",
 };
 
 label.en = {
@@ -86,7 +95,6 @@ label.en = {
   cert_ou: "Organizational Unit",
   standard: "Standard",
   compliance: "Compliance",
-  "Type de document": "Document Type",
   scanagain: "Scan again",
   helpscan: "Find a VDS to scan",
   error: "Error",
@@ -104,6 +112,16 @@ label.en = {
   testdata: "Test Data",
   true: "yes",
   false: "no",
+  // 2D-Doc header
+  "Date d'émission du document": "Document issue date",
+  "Date de création de la signature": "Signature creation date",
+  "Identifiant de l'autorité de certification":
+    "Certification Authority Identifier",
+  "Identifiant du certificat": "Certificate Identifier",
+  Version: "Version",
+  "Type de document": "Document Type",
+  Périmètre: "Scope",
+  Pays: "Country",
 };
 
 const getLabel = (lang, key) => {
