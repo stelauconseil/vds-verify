@@ -108,13 +108,13 @@ label.en = {
   iac: "Issuing Agency Code",
   manifest_ID: "Manifest ID",
   manifest_version: "Manifest Version",
-  sign_datetime: "Signature date",
+  sign_datetime: "Signature Date",
   testdata: "Test Data",
   true: "yes",
   false: "no",
   // 2D-Doc header
-  "Date d’émission du document": "Document issue date",
-  "Date de création de la signature": "Signature creation date",
+  "Date d’émission du document": "Document Issue Date",
+  "Date de création de la signature": "Signature Creation Date",
   "Identifiant de l’autorité de certification":
     "Certification Authority Identifier",
   "Identifiant du certificat": "Certificate Identifier",
