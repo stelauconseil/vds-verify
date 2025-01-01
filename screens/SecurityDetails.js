@@ -1,4 +1,3 @@
-import React from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";

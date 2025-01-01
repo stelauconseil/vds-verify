@@ -1,4 +1,3 @@
-import React from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import * as Application from "expo-application";
 import { Text } from "@rneui/themed";

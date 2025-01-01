@@ -1,4 +1,3 @@
-import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, ListItem, Icon } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";

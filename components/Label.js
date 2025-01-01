@@ -1,4 +1,3 @@
-import React from "react";
 import { Linking } from "react-native";
 import { Text } from "@rneui/themed";
 import { getLocales } from "expo-localization";

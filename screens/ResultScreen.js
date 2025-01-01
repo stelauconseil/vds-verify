@@ -1,7 +1,6 @@
-import React from "react";
 import { View, ScrollView, Modal, Image } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 import { getLabel, formatData, isBase64 } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import PropTypes from "prop-types";

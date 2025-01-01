@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "@rneui/themed";
 import { getLabel, getLang } from "../components/Label";
@@ -9,9 +9,9 @@ import InfoStack from "./InfoStack";
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
-  const [lang, setLang] = React.useState(null);
+  const [lang, setLang] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getLangAsync = async () => {
       const l = await getLang();
       setLang(l);
