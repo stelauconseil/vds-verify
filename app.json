@@ -7,11 +7,6 @@
     "icon": "./assets/icons/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0069b4"
-    },
     "assetBundlePatterns": ["**/*"],
     "locales": {
       "fr": "./languages/french.json",
@@ -55,7 +50,15 @@
           "cameraPermission": "This app uses the camera to capture QR codes."
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "backgroundColor": "#0069b4",
+          "imageWidth": 1284
+        }
+      ]
     ],
     "extra": {
       "eas": {
