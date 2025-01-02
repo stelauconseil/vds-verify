@@ -40,9 +40,6 @@
         }
       ]
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
     "plugins": [
       [
         "expo-camera",
@@ -55,8 +52,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash.png",
-          "backgroundColor": "#0069b4",
-          "imageWidth": 1284
+          "backgroundColor": "#0069b4"
         }
       ]
     ],
