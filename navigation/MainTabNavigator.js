@@ -26,7 +26,7 @@ const MainTabNavigator = () => {
           let iconName;
           if (route.name === "scan") {
             iconName = focused ? "qr-code-outline" : "qr-code";
-          } else if (route.name === "options") {
+          } else if (route.name === "settings") {
             iconName = focused ? "settings" : "settings-outline";
           }
           return (
@@ -48,7 +48,7 @@ const MainTabNavigator = () => {
         {() => <Scan {...{ lang }} />}
       </Tab.Screen>
       <Tab.Screen
-        name="options"
+        name="settings"
         options={{
           headerTitle: () => <HeaderLogoText />,
           headerTitleAlign: "center",
