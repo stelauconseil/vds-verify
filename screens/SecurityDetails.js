@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
@@ -41,7 +42,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
           </Text>
           {Object.keys(result.header).map((key) => {
             return (
-              <React.Fragment key={key}>
+              <Fragment key={key}>
                 <Text style={{ marginBottom: 5 }}>
                   {getLabel(lang, key)}:{" "}
                   <Text
@@ -55,7 +56,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
                     {formatData(result.header[key], lang)}
                   </Text>
                 </Text>
-              </React.Fragment>
+              </Fragment>
             );
           })}
           <Divider style={{ marginVertical: 10 }} />
@@ -91,7 +92,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
           {result.signer ? (
             Object.keys(result.signer).map((key) => {
               return (
-                <React.Fragment key={key}>
+                <Fragment key={key}>
                   <Text style={{ marginBottom: 5 }}>
                     {getLabel(lang, key)}:{" "}
                     <Text
@@ -105,7 +106,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
                       {formatData(result.signer[key], lang)}
                     </Text>
                   </Text>
-                </React.Fragment>
+                </Fragment>
               );
             })
           ) : (
