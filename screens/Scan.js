@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -20,7 +20,7 @@ const Scan = ({ lang }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [firstUrl, setFirstUrl] = useState(true);
-  const [url, setUrl] = React.useState(null);
+  const [url, setUrl] = useState(null);
 
   const navigation = useNavigation();
 
@@ -145,13 +145,13 @@ const Scan = ({ lang }) => {
         <View style={{ flex: 1 }}>
           {isFocused ? (
             <CameraView
-            zoom={0.02}
-            barcodeScannerSettings={{
-              barcodeTypes: ["qr", "datamatrix", "aztec"],
-            }}
-            onBarcodeScanned={scanned ? undefined : processResult}
-            style={StyleSheet.absoluteFillObject}
-          />
+              zoom={0.02}
+              barcodeScannerSettings={{
+                barcodeTypes: ["qr", "datamatrix", "aztec"],
+              }}
+              onBarcodeScanned={scanned ? undefined : processResult}
+              style={StyleSheet.absoluteFillObject}
+            />
           ) : null}
           <View style={styles.helpTextWrapper}>
             <Text style={styles.helpText}>{getLabel(lang, "helpscan")}</Text>
