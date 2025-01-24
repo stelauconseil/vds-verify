@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Settings from "../screens/Settings";
+import SettingsView from "../screens/SettingsView";
 import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
 import PrivacyPolicy from "../screens/PrivacyPolicy";
@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 const InfoStack = ({ lang, setLang }) => {
   return (
     <Stack.Navigator
-      initialRouteName="settings"
+      initialRouteName="settingsView"
       screenOptions={{
         headerTitleAlign: "center",
         // headerTintColor: "white",
@@ -20,11 +20,19 @@ const InfoStack = ({ lang, setLang }) => {
       }}
     >
       <Stack.Screen
+        name="settingsView"
+        options={{
+          headerTitle: getLabel(lang, "settings"),
+          headerTitleAlign: "center",
+        }}
+      >
+        {(props) => <SettingsView {...props} {...{ lang, setLang }} />}
+      </Stack.Screen>
+      <Stack.Screen
         name="about"
         options={{
           headerTitle: getLabel(lang, "about"),
           headerTitleAlign: "center",
-          animation: "none",
         }}
       >
         {(props) => <About {...props} {...{ lang }} />}
@@ -34,26 +42,15 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel(lang, "faq"),
           headerTitleAlign: "center",
-          animation: "none",
         }}
       >
         {(props) => <Faq {...props} {...{ lang }} />}
-      </Stack.Screen>
-      <Stack.Screen
-        name="settings"
-        options={{
-          headerTitle: getLabel(lang, "settings"),
-          animation: "none",
-        }}
-      >
-        {(props) => <Settings {...props} {...{ lang, setLang }} />}
       </Stack.Screen>
       <Stack.Screen
         name="usepolicy"
         options={{
           headerTitle: getLabel(lang, "usepolicy"),
           headerTitleAlign: "center",
-          animation: "none",
         }}
       >
         {(props) => <UsePolicy {...props} {...{ lang }} />}
