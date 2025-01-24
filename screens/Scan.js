@@ -140,87 +140,92 @@ const Scan = ({ lang }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {!scanned && permission ? (
-        <View style={{ flex: 1 }}>
-          {isFocused ? (
-            <CameraView
-              zoom={0.02}
-              barcodeScannerSettings={{
-                barcodeTypes: ["qr", "datamatrix", "aztec"],
-              }}
-              onBarcodeScanned={scanned ? undefined : processResult}
-              style={StyleSheet.absoluteFillObject}
-            />
-          ) : null}
-          <View style={styles.helpTextWrapper}>
-            <Text style={styles.helpText}>{getLabel(lang, "helpscan")}</Text>
-          </View>
-          <View style={styles.content}>
-            <ScannerView scanned={scanned} />
-          </View>
-        </View>
-      ) : (
-        <>
-          {result &&
-            ResultScreen({
-              result,
-              lang,
-              setResult,
-              setErrorMessage,
-              setScanned,
-              modalVisible,
-              setModalVisible,
-              navigation,
-            })}
-          {!!errorMessage && (
-            <View style={{ flex: 1, backgroundColor: "white" }}>
-              <ScrollView style={{ paddingHorizontal: "5%" }}>
-                <Text
-                  h1={true}
-                  h1Style={{
-                    color: "#0069b4",
-                    alignSelf: "center",
-                    marginTop: 50,
-                    marginBottom: 50,
-                  }}
-                >
-                  ⚠️ {getLabel(lang, "error")}
-                </Text>
-                <Text
-                  style={{
-                    color: "#0069b4",
-                    alignSelf: "center",
-                    fontSize: 20,
-                  }}
-                >
-                  {getLabel(lang, errorMessage)}
-                </Text>
-              </ScrollView>
-              <Button
-                title={getLabel(lang, "scanagain")}
-                buttonStyle={{
-                  backgroundColor: "#0069b4",
-                  borderWidth: 2,
-                  borderColor: "#0069b4",
-                  width: "100%",
+    <>
+      {isFocused && (
+        <SafeAreaView style={styles.container}>
+          {!scanned && permission ? (
+            <View style={{ flex: 1 }}>
+              <CameraView
+                zoom={0.02}
+                barcodeScannerSettings={{
+                  barcodeTypes: ["qr", "datamatrix", "aztec"],
                 }}
-                containerStyle={{
-                  paddingTop: 5,
-                  paddingBottom: 0,
-                }}
-                titleStyle={{ color: "white" }}
-                onPress={() => {
-                  setResult(null);
-                  setErrorMessage(null);
-                  setScanned(false);
-                }}
+                onBarcodeScanned={scanned ? undefined : processResult}
+                style={StyleSheet.absoluteFillObject}
               />
+
+              <View style={styles.helpTextWrapper}>
+                <Text style={styles.helpText}>
+                  {getLabel(lang, "helpscan")}
+                </Text>
+              </View>
+              <View style={styles.content}>
+                <ScannerView scanned={scanned} />
+              </View>
             </View>
+          ) : (
+            <>
+              {result &&
+                ResultScreen({
+                  result,
+                  lang,
+                  setResult,
+                  setErrorMessage,
+                  setScanned,
+                  modalVisible,
+                  setModalVisible,
+                  navigation,
+                })}
+              {!!errorMessage && (
+                <View style={{ flex: 1, backgroundColor: "white" }}>
+                  <ScrollView style={{ paddingHorizontal: "5%" }}>
+                    <Text
+                      h1={true}
+                      h1Style={{
+                        color: "#0069b4",
+                        alignSelf: "center",
+                        marginTop: 50,
+                        marginBottom: 50,
+                      }}
+                    >
+                      ⚠️ {getLabel(lang, "error")}
+                    </Text>
+                    <Text
+                      style={{
+                        color: "#0069b4",
+                        alignSelf: "center",
+                        fontSize: 20,
+                      }}
+                    >
+                      {getLabel(lang, errorMessage)}
+                    </Text>
+                  </ScrollView>
+                  <Button
+                    title={getLabel(lang, "scanagain")}
+                    buttonStyle={{
+                      backgroundColor: "#0069b4",
+                      borderWidth: 2,
+                      borderColor: "#0069b4",
+                      width: "100%",
+                    }}
+                    containerStyle={{
+                      paddingTop: 5,
+                      paddingBottom: 0,
+                    }}
+                    titleStyle={{ color: "white" }}
+                    onPress={() => {
+                      setResult(null);
+                      setErrorMessage(null);
+                      setScanned(false);
+                    }}
+                  />
+                </View>
+              )}
+            </>
           )}
-        </>
+        </SafeAreaView>
       )}
-    </SafeAreaView>
+    </>
   );
 };
 
