@@ -35,3 +35,4 @@ android/
 # github pages
 docs/_site/*
 docs/.sass-cache/*
+Gemfile.lock
