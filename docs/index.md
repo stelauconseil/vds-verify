@@ -24,7 +24,10 @@ L'application mobile s'appuie sur notre API de création, encodage, signature et
 
 ### Ils l'utilisent
 
-Notre solution de création, encodage et signature électronique de CEV (aux formats AFNOR et ISO) est la seule utilisée aujourd'hui en production. Elle est notamment mise en oeuvre par le Ministère de l'Intérieur pour la création des CEV apposés sur le [justificatif d'identité](https://france-identite.gouv.fr/justificatif/) de l'application [France Identité](https://france-identite.gouv.fr/).
+Notre solution de création, encodage et signature électronique de CEV (aux formats AFNOR et ISO) est la seule solution aujourd'hui utilisée en production. Elle est notamment mise en oeuvre par le Ministère de l'Intérieur pour la création des CEV :
+
+- apposés sur le [justificatif d'identité](https://france-identite.gouv.fr/justificatif/) de l'application [France Identité](https://france-identite.gouv.fr/),
+- utilisés par l'application [France Identité](https://france-identite.gouv.fr/) pour la [présentation de son identité en face à face avec la SNCF](https://france-identite.gouv.fr/actualite/experimentation-SNCF/).
 
 Elle est en cours de déploiement pour la création des CEV apposés sur les attestations issues de [Attestation](https://attestation.france-identite.gouv.fr/).
 
