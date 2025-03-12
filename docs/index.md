@@ -29,8 +29,6 @@ Notre solution de création, encodage et signature électronique de CEV (aux for
 - apposés sur le [justificatif d'identité](https://france-identite.gouv.fr/justificatif/) de l'application [France Identité](https://france-identite.gouv.fr/),
 - utilisés par l'application [France Identité](https://france-identite.gouv.fr/) pour la [présentation de son identité en face à face avec la SNCF](https://france-identite.gouv.fr/actualite/experimentation-SNCF/).
 
-Elle est en cours de déploiement pour la création des CEV apposés sur les attestations issues de [Attestation](https://attestation.france-identite.gouv.fr/).
-
 ### Fonctionnalités avancées
 
 Notre solution de création de CEV permet de créer des CEV selon les _manifests_ définis et de les signer électroniquement avec un certificat électronique qualifié.
