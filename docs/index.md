@@ -1,10 +1,10 @@
 # VDS Verify
 
-Encodage et décodage de Visible Digital Seal - VDS et Cachet Electronique Visible CEV
+Encodage et décodage Visible Digital Seal - VDS et Cachet Electronique Visible CEV.
 
 ## Nos applications mobiles
 
-`VDS Verify` est une application mobile (Android et iOS) de décodage et de vérification de Cachet Electronique Visible (CEV). Elle permet de décoder/vérifier les CEV (datamatrix et QR Code) selon les spécifications :
+`VDS Verify` est une application mobile (Android et iOS) de décodage et de vérification de Cachet Electronique Visible (CEV). Elle permet de décoder et vérifier les CEV (datamatrix et QR Code) selon les spécifications :
 
 - 2D-DOC
 
