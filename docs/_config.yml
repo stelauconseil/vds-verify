@@ -1,6 +1,7 @@
 title: VDS Verify
 logo: assets/icon.png
-description: (FR) VDS Verify décode et vérifie les Cachets Electroniques Visibles (CEV). Elle interagit avec notre API de fabrication, signature, décodage et vérification.<br />(EN) VDS Verify reads and verifies VDS (Visible Digital Seal). It sends the encoded data to our encode, sign, decode and verify API.
+description: VDS Verify décode et vérifie les Cachets Electroniques Visibles - CEV. VDS Verify interagit avec notre API de fabrication, signature, décodage et vérification.
+# (EN) VDS Verify reads and verifies VDS (Visible Digital Seal). It sends the encoded data to our encode, sign, decode and verify API.
 show_downloads: false
 google_analytics:
 theme: jekyll-theme-minimal
