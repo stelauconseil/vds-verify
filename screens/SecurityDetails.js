@@ -42,21 +42,23 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
           </Text>
           {Object.keys(result.header).map((key) => {
             return (
-              <Fragment key={key}>
-                <Text style={{ marginBottom: 5 }}>
-                  {getLabel(lang, key)}:{" "}
-                  <Text
-                    style={{
-                      color: "#0069b4",
-                      fontWeight: "bold",
-                      fontSize: 14,
-                      lineHeight: 30,
-                    }}
-                  >
-                    {formatData(result.header[key], lang)}
+              result.header[key] !== null && (
+                <Fragment key={key}>
+                  <Text style={{ marginBottom: 5 }}>
+                    {getLabel(lang, key)}:{" "}
+                    <Text
+                      style={{
+                        color: "#0069b4",
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        lineHeight: 30,
+                      }}
+                    >
+                      {formatData(result.header[key], lang)}
+                    </Text>
                   </Text>
-                </Text>
-              </Fragment>
+                </Fragment>
+              )
             );
           })}
           <Divider style={{ marginVertical: 10 }} />
