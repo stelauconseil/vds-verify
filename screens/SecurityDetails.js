@@ -9,11 +9,11 @@ const get_standard = (vds_standard) => {
     case "DOC_ISO22376_2023":
       return "ISO 22376:2023";
     case "DOC_105":
-      return "AFNOR XP Z42-105";
+      return "AFNOR XP Z42 105";
     case "DOC_101":
-      return "2D-Doc";
+      return "AFNOR XP Z42 101 - 104";
     default:
-      return "2D-Doc";
+      return vds_standard;
   }
 };
 
