@@ -22,7 +22,7 @@ Encodage et décodage Visible Digital Seal - VDS et Cachet Electronique Visible 
 
 ## Notre solution de création de CEV
 
-L'application mobile s'appuie sur notre API de création, encodage, signature et de décodage, vérification de CEV. Elle permet notamment de démontrer les capacités de notre API de décoder et vérifier les CEV créés par notre Solution de création de CEV.
+L'application mobile s'appuie sur notre API de création, encodage, signature et de décodage, vérification de CEV. Elle permet notamment de démontrer les capacités de notre API de décoder et vériimgfier les CEV créés par notre Solution de création de CEV.
 
 ### Ils l'utilisent
 
@@ -40,3 +40,9 @@ Notre solution de création de CEV permet de créer des CEV selon les _manifests
 - Gestion des manifest
 - Gestion des certificats et des clés de signature électronique
 - Compatibilité avec les HSM (Hardware Security Module) lors de la signature du CEV
+
+### Exemple
+
+#### Justificatif d'identité - France Identité
+
+<a href="https://vds-verify.stelau.com/vds#3YBHXHJ3J6UY2SSJAJTOFLJNABE2GRTJN2JB5ILKUCVU4T2NEBCCOVKTIFDULJSNIFJFISKOWVGWDQ5LNRUXGLKHMHB2W3DMMUQE2YLSNFS2CRVKGEZS6MBXF4YTSOJQUVIECUSJKORUMUSBZD7NS5BUZNQMNXMSOG7UPTDZRJTFITC6YXFTJ6WWOHJEHMNC37DYY6PPLH3BQR56Y35ZNSBUHJPU3IV3PWSH7IO26LMCUHB6L73HZFI="><img src="assets/justificatif-d-identite-maelis-martin.jpg" alt="Justificatif d'identité - France Identité" style="width:500px;"/></a>
