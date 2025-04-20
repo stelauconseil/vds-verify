@@ -45,4 +45,4 @@ Notre solution de création de CEV permet de créer des CEV selon les _manifests
 
 #### Justificatif d'identité - France Identité
 
-<a href="https://vds-verify.stelau.com/vds#3YBHXHJ3J6UY2SSJAJTOFLJNABE2GRTJN2JB5ILKUCVU4T2NEBCCOVKTIFDULJSNIFJFISKOWVGWDQ5LNRUXGLKHMHB2W3DMMUQE2YLSNFS2CRVKGEZS6MBXF4YTSOJQUVIECUSJKORUMUSBZD7NS5BUZNQMNXMSOG7UPTDZRJTFITC6YXFTJ6WWOHJEHMNC37DYY6PPLH3BQR56Y35ZNSBUHJPU3IV3PWSH7IO26LMCUHB6L73HZFI="><img src="assets/justificatif-d-identite-maelis-martin.jpg" alt="Justificatif d'identité - France Identité" style="width:500px;"/></a>
+<img src="assets/justificatif-d-identite-maelis-martin.jpg" alt="Justificatif d'identité - France Identité" style="width:500px;"/>
