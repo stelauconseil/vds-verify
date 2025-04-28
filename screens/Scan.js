@@ -3,6 +3,7 @@ import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, Button } from "@rneui/themed";
 import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
