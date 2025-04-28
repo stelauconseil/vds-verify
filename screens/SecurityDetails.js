@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { Text, Button, Divider, Icon } from "@rneui/themed";
 import { getLabel, formatData } from "../components/Label";
@@ -38,14 +38,14 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               color="gray"
               style={{ marginRight: 10 }}
             />
-            {getLabel(lang, "header")}
+            {getLabel("header")}
           </Text>
           {Object.keys(result.header).map((key) => {
             return (
               result.header[key] !== null && (
                 <Fragment key={key}>
                   <Text style={{ marginBottom: 5 }}>
-                    {getLabel(lang, key)}:{" "}
+                    {getLabel(key)}:{" "}
                     <Text
                       style={{
                         color: "#0069b4",
@@ -89,14 +89,14 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               }
               style={{ marginRight: 10 }}
             />
-            {getLabel(lang, "signer")}
+            {getLabel("signer")}
           </Text>
           {result.signer ? (
             Object.keys(result.signer).map((key) => {
               return (
                 <Fragment key={key}>
                   <Text style={{ marginBottom: 5 }}>
-                    {getLabel(lang, key)}:{" "}
+                    {getLabel(key)}:{" "}
                     <Text
                       style={{
                         color: "#0069b4",
@@ -113,7 +113,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             })
           ) : (
             <Text style={{ marginTop: 5, marginBottom: 5 }}>
-              {getLabel(lang, "sign_not_verified")}
+              {getLabel("sign_not_verified")}
             </Text>
           )}
           <Divider style={{ marginVertical: 10 }} />
@@ -133,10 +133,10 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               color="gray"
               style={{ marginRight: 10 }}
             />
-            {getLabel(lang, "standard")}
+            {getLabel("standard")}
           </Text>
           <Text key="compliance">
-            {getLabel(lang, "compliance")}:{" "}
+            {getLabel("compliance")}:{" "}
             <Text
               key="vds_standard"
               style={{
@@ -155,7 +155,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
           <Pressable>
             <Button
               onPress={() => closeModal()}
-              title={getLabel(lang, "close")}
+              title={getLabel("close")}
               icon={
                 <Icon
                   name="close-circle-outline"

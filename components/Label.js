@@ -1,3 +1,5 @@
+import React, { useContext } from "react";
+import { LanguageContext } from "../LanguageContext";
 import { Linking } from "react-native";
 import { Text } from "@rneui/themed";
 import { getLocales } from "expo-localization";
@@ -64,6 +66,7 @@ label.fr = {
   "Type de document": "Type de document",
   Périmètre: "Périmètre",
   Pays: "Pays",
+  history: "Historique",
 };
 
 label.en = {
@@ -125,9 +128,11 @@ label.en = {
   "Type de document": "Document Type",
   Périmètre: "Scope",
   Pays: "Country",
+  history: "History",
 };
 
-const getLabel = (lang, key) => {
+const getLabel = (key) => {
+  const { lang } = useContext(LanguageContext);
   if (lang && key in label[lang]) {
     return label[lang][key];
   } else if (key in label.en) {
@@ -145,14 +150,6 @@ const getLang = async () => {
   } catch (e) {
     const l = getLocales();
     return l[0].languageCode;
-  }
-};
-
-const saveLang = async (lang) => {
-  try {
-    await AsyncStorage.setItem("lang", lang);
-  } catch (e) {
-    console.error(e);
   }
 };
 
@@ -188,11 +185,11 @@ const formatString = (data, lang) => {
 
 const formatData = (data, lang) => {
   try {
-    const languageTag = getLabel(lang, "languageTag");
+    const languageTag = getLabel("languageTag");
     if (Array.isArray(data)) {
       return data.join(" ").trim();
     } else if (typeof data === "boolean") {
-      return data ? getLabel(lang, "true") : getLabel(lang, "false");
+      return data ? getLabel("true") : getLabel("false");
     } else if (data.length < 10) {
       throw new Error("data is not a date");
     } else {
@@ -219,4 +216,4 @@ const formatData = (data, lang) => {
   }
 };
 
-export { getLang, saveLang, getLabel, formatData, isBase64 };
+export { getLang, getLabel, formatData, isBase64, label };

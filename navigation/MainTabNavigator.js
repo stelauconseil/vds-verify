@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "@rneui/themed";
-import { getLabel, getLang } from "../components/Label";
+import { getLabel } from "../components/Label";
 import HeaderLogoText from "../components/HeaderLogo";
 import Scan from "../screens/Scan";
 import InfoStack from "./InfoStack";
@@ -9,16 +9,6 @@ import InfoStack from "./InfoStack";
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
-  const [lang, setLang] = useState(null);
-
-  useEffect(() => {
-    const getLangAsync = async () => {
-      const l = await getLang();
-      setLang(l);
-    };
-    getLangAsync();
-  }, []);
-
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -42,20 +32,20 @@ const MainTabNavigator = () => {
         options={{
           headerTitle: () => <HeaderLogoText />,
           headerTitleAlign: "center",
-          title: getLabel(lang, "scan"),
+          title: getLabel("scan"),
         }}
       >
-        {() => <Scan {...{ lang }} />}
+        {() => <Scan />}
       </Tab.Screen>
       <Tab.Screen
         name="settings"
         options={{
           headerTitle: () => <HeaderLogoText />,
           headerTitleAlign: "center",
-          title: getLabel(lang, "settings"),
+          title: getLabel("settings"),
         }}
       >
-        {() => <InfoStack {...{ lang, setLang }} />}
+        {() => <InfoStack />}
       </Tab.Screen>
     </Tab.Navigator>
   );

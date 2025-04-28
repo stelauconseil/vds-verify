@@ -132,7 +132,7 @@ const ResultScreen = ({
               color: "red",
             }}
           >
-            {getLabel(lang, "testdata")}
+            {getLabel("testdata")}
           </Text>
         </View>
       )}
@@ -162,7 +162,7 @@ const ResultScreen = ({
           }}
           style={{ fontVariant: "small-caps" }}
         >
-          {getLabel(lang, "data")}
+          {getLabel( "data")}
         </Text> */}
         {Object.keys(result.data)
           .filter((key) => {
@@ -178,10 +178,10 @@ const ResultScreen = ({
         onPress={() => openModal()}
         title={
           result.sign_is_valid && result.signer
-            ? getLabel(lang, "valid")
+            ? getLabel("valid")
             : result.signer
-              ? getLabel(lang, "invalid")
-              : getLabel(lang, "nonverifiable")
+              ? getLabel("invalid")
+              : getLabel("nonverifiable")
         }
         icon={
           <Icon
@@ -234,7 +234,7 @@ const ResultScreen = ({
         }}
       />
       <Button
-        title={getLabel(lang, "scanagain")}
+        title={getLabel("scanagain")}
         buttonStyle={{
           backgroundColor: "#0069b4",
           borderWidth: 3,

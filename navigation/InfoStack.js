@@ -4,12 +4,12 @@ import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
 import PrivacyPolicy from "../screens/PrivacyPolicy";
 import Faq from "../screens/Faq";
+import HistoryScreen from "../screens/HistoryScreen";
 import { getLabel } from "../components/Label";
-import PropTypes from "prop-types";
 
 const Stack = createNativeStackNavigator();
 
-const InfoStack = ({ lang, setLang }) => {
+const InfoStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="settingsView"
@@ -22,55 +22,59 @@ const InfoStack = ({ lang, setLang }) => {
       <Stack.Screen
         name="settingsView"
         options={{
-          headerTitle: getLabel(lang, "settings"),
+          headerTitle: getLabel("settings"),
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <SettingsView {...props} {...{ lang, setLang }} />}
+        {(props) => <SettingsView {...props} />}
       </Stack.Screen>
       <Stack.Screen
         name="about"
         options={{
-          headerTitle: getLabel(lang, "about"),
+          headerTitle: getLabel("about"),
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <About {...props} {...{ lang }} />}
+        {(props) => <About {...props} />}
       </Stack.Screen>
       <Stack.Screen
         name="faq"
         options={{
-          headerTitle: getLabel(lang, "faq"),
+          headerTitle: getLabel("faq"),
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <Faq {...props} {...{ lang }} />}
+        {(props) => <Faq {...props} />}
       </Stack.Screen>
       <Stack.Screen
         name="usepolicy"
         options={{
-          headerTitle: getLabel(lang, "usepolicy"),
+          headerTitle: getLabel("usepolicy"),
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <UsePolicy {...props} {...{ lang }} />}
+        {(props) => <UsePolicy {...props} />}
       </Stack.Screen>
       <Stack.Screen
         name="privacypolicy"
         options={{
-          headerTitle: getLabel(lang, "privacypolicy"),
+          headerTitle: getLabel("privacypolicy"),
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <PrivacyPolicy {...props} {...{ lang }} />}
+        {(props) => <PrivacyPolicy {...props} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="history"
+        options={{
+          headerTitle: getLabel("history"),
+          headerTitleAlign: "center",
+        }}
+      >
+        {(props) => <HistoryScreen {...props} />}
       </Stack.Screen>
     </Stack.Navigator>
   );
-};
-
-InfoStack.propTypes = {
-  lang: PropTypes.string.isRequired,
-  setLang: PropTypes.func.isRequired,
 };
 
 export default InfoStack;

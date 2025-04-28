@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -8,10 +8,9 @@ import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
-import PropTypes from "prop-types";
 import { Buffer } from "buffer";
 
-const Scan = ({ lang }) => {
+const Scan = () => {
   const isFocused = useIsFocused();
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -30,7 +29,7 @@ const Scan = ({ lang }) => {
 
   useEffect(() => {
     requestPermission();
-  });
+  }, []);
 
   useEffect(() => {
     Linking.getInitialURL().then((url) => setUrl(url));
@@ -41,6 +40,13 @@ const Scan = ({ lang }) => {
     const subscription = Linking.addEventListener("url", onChange);
     return () => subscription.remove();
   }, []);
+
+  useEffect(() => {
+    if (url !== null && typeof url === "string" && url.startsWith("http")) {
+      processResult({ data: url });
+      setUrl(null);
+    }
+  }, [url]);
 
   const parseData = (data) => {
     if (data.startsWith("http")) {
@@ -76,6 +82,11 @@ const Scan = ({ lang }) => {
       });
       const { success, message, vds } = await response.json();
       if (success === true) {
+        const history =
+          JSON.parse(await AsyncStorage.getItem("scanHistory")) || [];
+        const newEntry = { timestamp: new Date().toISOString(), data: vds };
+        history.push(newEntry);
+        await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
         setResult(vds);
       } else {
         setErrorMessage(message);
@@ -85,13 +96,7 @@ const Scan = ({ lang }) => {
     }
   };
 
-  if (url !== null && typeof url === "string" && url.startsWith("http")) {
-    processResult({ data: url });
-    setUrl(null);
-  }
-
   if (!permission) {
-    // Camera permissions are still loading
     return <View />;
   }
 
@@ -108,7 +113,7 @@ const Scan = ({ lang }) => {
               marginBottom: 50,
             }}
           >
-            ⚠️ {getLabel(lang, "error")}
+            ⚠️ {getLabel("error")}
           </Text>
           <Text
             style={{
@@ -117,11 +122,11 @@ const Scan = ({ lang }) => {
               fontSize: 20,
             }}
           >
-            {getLabel(lang, "cameraerror")}
+            {getLabel("cameraerror")}
           </Text>
         </ScrollView>
         <Button
-          title={getLabel(lang, "camerapermission")}
+          title={getLabel("camerapermission")}
           buttonStyle={{
             backgroundColor: "#0069b4",
             borderWidth: 2,
@@ -153,11 +158,8 @@ const Scan = ({ lang }) => {
                 onBarcodeScanned={scanned ? undefined : processResult}
                 style={StyleSheet.absoluteFillObject}
               />
-
               <View style={styles.helpTextWrapper}>
-                <Text style={styles.helpText}>
-                  {getLabel(lang, "helpscan")}
-                </Text>
+                <Text style={styles.helpText}>{getLabel("helpscan")}</Text>
               </View>
               <View style={styles.content}>
                 <ScannerView scanned={scanned} />
@@ -165,17 +167,17 @@ const Scan = ({ lang }) => {
             </View>
           ) : (
             <>
-              {result &&
-                ResultScreen({
-                  result,
-                  lang,
-                  setResult,
-                  setErrorMessage,
-                  setScanned,
-                  modalVisible,
-                  setModalVisible,
-                  navigation,
-                })}
+              {result && (
+                <ResultScreen
+                  result={result}
+                  setResult={setResult}
+                  setErrorMessage={setErrorMessage}
+                  setScanned={setScanned}
+                  modalVisible={modalVisible}
+                  setModalVisible={setModalVisible}
+                  navigation={navigation}
+                />
+              )}
               {!!errorMessage && (
                 <View style={{ flex: 1, backgroundColor: "white" }}>
                   <ScrollView style={{ paddingHorizontal: "5%" }}>
@@ -188,7 +190,7 @@ const Scan = ({ lang }) => {
                         marginBottom: 50,
                       }}
                     >
-                      ⚠️ {getLabel(lang, "error")}
+                      ⚠️ {getLabel("error")}
                     </Text>
                     <Text
                       style={{
@@ -197,11 +199,11 @@ const Scan = ({ lang }) => {
                         fontSize: 20,
                       }}
                     >
-                      {getLabel(lang, errorMessage)}
+                      {getLabel(errorMessage)}
                     </Text>
                   </ScrollView>
                   <Button
-                    title={getLabel(lang, "scanagain")}
+                    title={getLabel("scanagain")}
                     buttonStyle={{
                       backgroundColor: "#0069b4",
                       borderWidth: 2,
@@ -253,9 +255,5 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-
-Scan.propTypes = {
-  lang: PropTypes.string,
-};
 
 export default Scan;

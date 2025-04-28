@@ -1,18 +1,14 @@
 import { WebView } from "react-native-webview";
-import PropTypes from "prop-types";
+import { getLabel } from "../components/Label";
 
-const Faq = ({ lang }) => {
+const Faq = () => {
   return (
     <WebView
       source={{
-        uri: `https://vds-verify.stelau.com/faq-${lang}.html`,
+        uri: `https://vds-verify.stelau.com/faq-${getLabel("code")}.html`,
       }}
     />
   );
-};
-
-Faq.propTypes = {
-  lang: PropTypes.string.isRequired,
 };
 
 export default Faq;
