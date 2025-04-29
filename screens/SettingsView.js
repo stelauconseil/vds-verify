@@ -1,14 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import { Text, ListItem, Icon } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
-import { LanguageContext } from "../LanguageContext";
-import { getLabel } from "../components/Label";
+import { getLabel, saveLang } from "../components/Label";
 import PropTypes from "prop-types";
 
-const SettingsView = ({ navigation }) => {
-  const { lang, changeLanguage } = useContext(LanguageContext);
+const SettingsView = ({ navigation, lang, setLang }) => {
   const isFocused = useIsFocused();
 
   return (
@@ -16,7 +14,7 @@ const SettingsView = ({ navigation }) => {
       {isFocused && (
         <>
           <View>
-            <Text style={styles.title}>{getLabel("information")}</Text>
+            <Text style={styles.title}>{getLabel("information", lang)}</Text>
             <ListItem
               style={styles.listTop}
               onPress={() => navigation.navigate("about")}
@@ -27,7 +25,7 @@ const SettingsView = ({ navigation }) => {
                 color="gray"
               />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("about")}</ListItem.Title>
+                <ListItem.Title>{getLabel("about", lang)}</ListItem.Title>
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
@@ -37,7 +35,7 @@ const SettingsView = ({ navigation }) => {
             >
               <Icon name="help-circle-outline" type="ionicon" color="gray" />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("faq")}</ListItem.Title>
+                <ListItem.Title>{getLabel("faq", lang)}</ListItem.Title>
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
@@ -47,7 +45,7 @@ const SettingsView = ({ navigation }) => {
             >
               <Icon name="receipt-outline" type="ionicon" color="gray" />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("usepolicy")}</ListItem.Title>
+                <ListItem.Title>{getLabel("usepolicy", lang)}</ListItem.Title>
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
@@ -61,7 +59,9 @@ const SettingsView = ({ navigation }) => {
                 color="gray"
               />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("privacypolicy")}</ListItem.Title>
+                <ListItem.Title>
+                  {getLabel("privacypolicy", lang)}
+                </ListItem.Title>
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
@@ -71,19 +71,20 @@ const SettingsView = ({ navigation }) => {
             >
               <Icon name="archive-outline" type="ionicon" color="gray" />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("history")}</ListItem.Title>
+                <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
 
-            <Text style={styles.title}>{getLabel("language")}</Text>
+            <Text style={styles.title}>{getLabel("language", lang)}</Text>
 
             <Picker
               style={styles.picker}
               itemStyle={styles.pickerItem}
               selectedValue={lang || "en"} // Fallback to "en" if lang is undefined
               onValueChange={(itemValue) => {
-                changeLanguage(itemValue);
+                setLang(itemValue);
+                saveLang(itemValue);
               }}
             >
               <Picker.Item label="English" value="en" />
@@ -98,6 +99,8 @@ const SettingsView = ({ navigation }) => {
 
 SettingsView.propTypes = {
   navigation: PropTypes.object.isRequired,
+  lang: PropTypes.string.isRequired,
+  setLang: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({

@@ -17,7 +17,7 @@ const get_standard = (vds_standard) => {
   }
 };
 
-const SecurityDetails = ({ result, lang, closeModal }) => {
+const SecurityDetails = ({ result, closeModal }) => {
   return (
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
@@ -38,14 +38,14 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               color="gray"
               style={{ marginRight: 10 }}
             />
-            {getLabel("header")}
+            {getLabel("header", lang)}
           </Text>
           {Object.keys(result.header).map((key) => {
             return (
               result.header[key] !== null && (
                 <Fragment key={key}>
                   <Text style={{ marginBottom: 5 }}>
-                    {getLabel(key)}:{" "}
+                    {getLabel(key, lang)}:{" "}
                     <Text
                       style={{
                         color: "#0069b4",
@@ -89,14 +89,14 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               }
               style={{ marginRight: 10 }}
             />
-            {getLabel("signer")}
+            {getLabel("signer", lang)}
           </Text>
           {result.signer ? (
             Object.keys(result.signer).map((key) => {
               return (
                 <Fragment key={key}>
                   <Text style={{ marginBottom: 5 }}>
-                    {getLabel(key)}:{" "}
+                    {getLabel(key, lang)}:{" "}
                     <Text
                       style={{
                         color: "#0069b4",
@@ -113,7 +113,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             })
           ) : (
             <Text style={{ marginTop: 5, marginBottom: 5 }}>
-              {getLabel("sign_not_verified")}
+              {getLabel("sign_not_verified", lang)}
             </Text>
           )}
           <Divider style={{ marginVertical: 10 }} />
@@ -133,10 +133,10 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
               color="gray"
               style={{ marginRight: 10 }}
             />
-            {getLabel("standard")}
+            {getLabel("standard", lang)}
           </Text>
           <Text key="compliance">
-            {getLabel("compliance")}:{" "}
+            {getLabel("compliance", lang)}:{" "}
             <Text
               key="vds_standard"
               style={{
@@ -155,7 +155,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
           <Pressable>
             <Button
               onPress={() => closeModal()}
-              title={getLabel("close")}
+              title={getLabel("close", lang)}
               icon={
                 <Icon
                   name="close-circle-outline"
@@ -194,7 +194,6 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
 
 SecurityDetails.propTypes = {
   result: PropTypes.object.isRequired,
-  lang: PropTypes.string,
   closeModal: PropTypes.func.isRequired,
 };
 

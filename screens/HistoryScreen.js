@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import PropTypes from "prop-types";
+import { formatData } from "../components/Label";
 
-const HistoryScreen = () => {
+const HistoryScreen = ({ lang }) => {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
@@ -21,8 +23,10 @@ const HistoryScreen = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <Text style={styles.timestamp}>{item.timestamp}</Text>
-            <Text style={styles.data}>{item.data}</Text>
+            <Text style={styles.timestamp}>
+              {formatData(item.timestamp, lang)}
+            </Text>
+            {/* <Text style={styles.data}>{item.data}</Text> */}
           </View>
         )}
       />
@@ -57,5 +61,9 @@ const styles = StyleSheet.create({
     color: "#000",
   },
 });
+
+HistoryScreen.propTypes = {
+  lang: PropTypes.string.isRequired,
+};
 
 export default HistoryScreen;

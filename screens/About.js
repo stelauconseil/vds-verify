@@ -1,6 +1,7 @@
 import { View, StyleSheet, Linking } from "react-native";
 import * as Application from "expo-application";
 import { Text } from "@rneui/themed";
+import PropTypes from "prop-types";
 
 const About = () => {
   return (
@@ -34,5 +35,9 @@ const styles = StyleSheet.create({
     margin: 20,
   },
 });
+
+About.propTypes = {
+  lang: PropTypes.string.isRequired,
+};
 
 export default About;

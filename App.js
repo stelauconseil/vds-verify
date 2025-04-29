@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
-import { LanguageProvider } from "./LanguageContext";
+// import { LanguageProvider } from "./LanguageContext";
 import { StatusBar } from "expo-status-bar";
 
 import * as SplashScreen from "expo-splash-screen";
@@ -15,14 +15,14 @@ setTimeout(() => {
 
 const App = () => {
   return (
-    <LanguageProvider>
-      <SafeAreaProvider>
-        <NavigationContainer style={{ flex: 1 }}>
-          <StatusBar style="auto" />
-          <MainTabNavigator />
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </LanguageProvider>
+    // <LanguageProvider>
+    <SafeAreaProvider>
+      <NavigationContainer style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+        <MainTabNavigator />
+      </NavigationContainer>
+    </SafeAreaProvider>
+    // </LanguageProvider>
   );
 };
 

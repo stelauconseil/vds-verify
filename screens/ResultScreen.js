@@ -85,7 +85,7 @@ const formatResult = (data, key, lang) => {
             // .filter((k) => {
             //   return k !== null && k !== undefined && k !== "";
             // })
-            .map((k) => formatResult(data[key], k, lang))}
+            .map((k) => formatResult(data[key], k))}
         </View>
       </View>
     );
@@ -97,7 +97,6 @@ const formatResult = (data, key, lang) => {
 
 const ResultScreen = ({
   result,
-  lang,
   setResult,
   setScanned,
   modalVisible,
@@ -132,7 +131,7 @@ const ResultScreen = ({
               color: "red",
             }}
           >
-            {getLabel("testdata")}
+            {getLabel("testdata", lang)}
           </Text>
         </View>
       )}
@@ -172,16 +171,16 @@ const ResultScreen = ({
               result.data[key] !== ""
             );
           })
-          .map((key) => formatResult(result.data, key, lang))}
+          .map((key) => formatResult(result.data, key))}
       </ScrollView>
       <Button
         onPress={() => openModal()}
         title={
           result.sign_is_valid && result.signer
-            ? getLabel("valid")
+            ? getLabel("valid", lang)
             : result.signer
-              ? getLabel("invalid")
-              : getLabel("nonverifiable")
+              ? getLabel("invalid", lang)
+              : getLabel("nonverifiable", lang)
         }
         icon={
           <Icon
@@ -234,7 +233,7 @@ const ResultScreen = ({
         }}
       />
       <Button
-        title={getLabel("scanagain")}
+        title={getLabel("scanagain", lang)}
         buttonStyle={{
           backgroundColor: "#0069b4",
           borderWidth: 3,
@@ -262,7 +261,7 @@ const ResultScreen = ({
         swipeDirection="down" // Enable swipe down to close the modal
         onSwipeComplete={closeModal} // Handle swipe down event
       >
-        <SecurityDetails result={result} lang={lang} closeModal={closeModal} />
+        <SecurityDetails result={result} closeModal={closeModal} />
       </Modal>
     </View>
   );

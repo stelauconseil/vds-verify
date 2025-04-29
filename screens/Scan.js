@@ -10,8 +10,9 @@ import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
+import PropTypes from "prop-types";
 
-const Scan = () => {
+const Scan = ({ lang }) => {
   const isFocused = useIsFocused();
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -81,6 +82,7 @@ const Scan = () => {
           vds: b64encodedvds,
         }),
       });
+
       const { success, message, vds } = await response.json();
       if (success === true) {
         const history =
@@ -114,7 +116,7 @@ const Scan = () => {
               marginBottom: 50,
             }}
           >
-            ⚠️ {getLabel("error")}
+            ⚠️ {getLabel("error", lang)}
           </Text>
           <Text
             style={{
@@ -123,11 +125,11 @@ const Scan = () => {
               fontSize: 20,
             }}
           >
-            {getLabel("cameraerror")}
+            {getLabel("cameraerror", lang)}
           </Text>
         </ScrollView>
         <Button
-          title={getLabel("camerapermission")}
+          title={getLabel("camerapermission", lang)}
           buttonStyle={{
             backgroundColor: "#0069b4",
             borderWidth: 2,
@@ -160,7 +162,9 @@ const Scan = () => {
                 style={StyleSheet.absoluteFillObject}
               />
               <View style={styles.helpTextWrapper}>
-                <Text style={styles.helpText}>{getLabel("helpscan")}</Text>
+                <Text style={styles.helpText}>
+                  {getLabel("helpscan", lang)}
+                </Text>
               </View>
               <View style={styles.content}>
                 <ScannerView scanned={scanned} />
@@ -168,17 +172,17 @@ const Scan = () => {
             </View>
           ) : (
             <>
-              {result && (
-                <ResultScreen
-                  result={result}
-                  setResult={setResult}
-                  setErrorMessage={setErrorMessage}
-                  setScanned={setScanned}
-                  modalVisible={modalVisible}
-                  setModalVisible={setModalVisible}
-                  navigation={navigation}
-                />
-              )}
+              {result &&
+                ResultScreen({
+                  result,
+                  lang,
+                  setResult,
+                  setErrorMessage,
+                  setScanned,
+                  modalVisible,
+                  setModalVisible,
+                  navigation,
+                })}
               {!!errorMessage && (
                 <View style={{ flex: 1, backgroundColor: "white" }}>
                   <ScrollView style={{ paddingHorizontal: "5%" }}>
@@ -191,7 +195,7 @@ const Scan = () => {
                         marginBottom: 50,
                       }}
                     >
-                      ⚠️ {getLabel("error")}
+                      ⚠️ {getLabel("error", lang)}
                     </Text>
                     <Text
                       style={{
@@ -200,11 +204,11 @@ const Scan = () => {
                         fontSize: 20,
                       }}
                     >
-                      {getLabel(errorMessage)}
+                      {getLabel(errorMessage, lang)}
                     </Text>
                   </ScrollView>
                   <Button
-                    title={getLabel("scanagain")}
+                    title={getLabel("scanagain", lang)}
                     buttonStyle={{
                       backgroundColor: "#0069b4",
                       borderWidth: 2,
@@ -256,5 +260,9 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
+
+Scan.propTypes = {
+  lang: PropTypes.string,
+};
 
 export default Scan;
