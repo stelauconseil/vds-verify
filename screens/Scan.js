@@ -88,7 +88,7 @@ const Scan = ({ lang }) => {
         const history =
           JSON.parse(await AsyncStorage.getItem("scanHistory")) || [];
         const newEntry = { timestamp: new Date().toISOString(), data: vds };
-        history.push(newEntry);
+        history.unshift(newEntry);
         await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
         setResult(vds);
       } else {

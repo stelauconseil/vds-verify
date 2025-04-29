@@ -97,6 +97,7 @@ const formatResult = (data, key, lang) => {
 
 const ResultScreen = ({
   result,
+  lang,
   setResult,
   setScanned,
   modalVisible,

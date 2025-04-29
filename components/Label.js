@@ -66,6 +66,7 @@ label.fr = {
   Périmètre: "Périmètre",
   Pays: "Pays",
   history: "Historique",
+  deleteHistory: "Supprimer l'historique",
 };
 
 label.en = {
@@ -128,6 +129,7 @@ label.en = {
   Périmètre: "Scope",
   Pays: "Country",
   history: "History",
+  deleteHistory: "Delete History",
 };
 
 const getLabel = (key, lang) => {

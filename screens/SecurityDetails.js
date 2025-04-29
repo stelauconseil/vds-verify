@@ -17,7 +17,7 @@ const get_standard = (vds_standard) => {
   }
 };
 
-const SecurityDetails = ({ result, closeModal }) => {
+const SecurityDetails = ({ result, lang, closeModal }) => {
   return (
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
@@ -32,12 +32,7 @@ const SecurityDetails = ({ result, closeModal }) => {
             }}
             style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
-            <Icon
-              name="browsers-outline"
-              type="ionicon"
-              color="gray"
-              style={{ marginRight: 10 }}
-            />
+            <Icon name="browsers-outline" type="ionicon" color="gray" />
             {getLabel("header", lang)}
           </Text>
           {Object.keys(result.header).map((key) => {
@@ -87,7 +82,6 @@ const SecurityDetails = ({ result, closeModal }) => {
                     ? "red"
                     : "orange"
               }
-              style={{ marginRight: 10 }}
             />
             {getLabel("signer", lang)}
           </Text>
@@ -127,12 +121,7 @@ const SecurityDetails = ({ result, closeModal }) => {
             }}
             style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
-            <Icon
-              name="build-outline"
-              type="ionicon"
-              color="gray"
-              style={{ marginRight: 10 }}
-            />
+            <Icon name="build-outline" type="ionicon" color="gray" />
             {getLabel("standard", lang)}
           </Text>
           <Text key="compliance">
@@ -182,7 +171,7 @@ const SecurityDetails = ({ result, closeModal }) => {
                 paddingLeft: 0,
                 paddingRight: 0,
                 paddingBottom: 0,
-                paddingTop: 0,
+                paddingTop: 10,
               }}
             />
           </Pressable>
