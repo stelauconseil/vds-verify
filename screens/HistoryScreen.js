@@ -28,63 +28,71 @@ const HistoryScreen = ({ navigation, lang }) => {
   };
 
   return (
-    <ScrollView style={styles.center}>
-      {history.map((l, i) => (
-        <ListItem
-          key={i}
-          style={
-            i === 0
-              ? styles.listTop
-              : i === Object.keys(history).length - 1
-                ? styles.listBotton
-                : styles.listMiddle
-          }
-          // onPress={() => navigation.navigate("ResultScreen", { result: l })}
-        >
-          <ListItem.Content>
-            <ListItem.Title>{formatData(l.timestamp, lang)}</ListItem.Title>
-            <ListItem.Subtitle>
-              {l.data.header["Type de document"]
-                ? l.data.header["Type de document"]
-                : getLabel("manifest_ID", lang) +
-                  ": " +
-                  l.data.header["manifest_ID"]}
-            </ListItem.Subtitle>
-          </ListItem.Content>
-        </ListItem>
-      ))}
+    <View style={styles.container}>
+      <ScrollView style={styles.center}>
+        {history.map((l, i) => (
+          <ListItem
+            key={i}
+            style={
+              i === 0
+                ? styles.listTop
+                : i === Object.keys(history).length - 1
+                  ? styles.listBotton
+                  : styles.listMiddle
+            }
+            // onPress={() => navigation.navigate("ResultScreen", { result: l })} // Navigate to ResultScreen with parameters
+          >
+            <ListItem.Content>
+              <ListItem.Title>{formatData(l.timestamp, lang)}</ListItem.Title>
+              <ListItem.Subtitle>
+                {l.data.header["Type de document"]
+                  ? l.data.header["Type de document"]
+                  : getLabel("manifest_ID", lang) +
+                    ": " +
+                    l.data.header["manifest_ID"]}
+              </ListItem.Subtitle>
+            </ListItem.Content>
+          </ListItem>
+        ))}
+      </ScrollView>
 
-      <Button
-        onPress={() => deleteHistory()}
-        title={getLabel("deleteHistory", lang)}
-        icon={<Icon name="trash-outline" type="ionicon" color="white" />}
-        iconRight={true}
-        titleStyle={{
-          // flex: 1,
-          textAlign: "center",
-          color: "white",
-        }}
-      />
-    </ScrollView>
+      <View style={styles.buttonContainer}>
+        <Button
+          onPress={() => deleteHistory()}
+          title={getLabel("deleteHistory", lang)}
+          icon={<Icon name="trash-outline" type="ionicon" color="white" />}
+          iconRight={true}
+          buttonStyle={styles.button}
+          titleStyle={styles.buttonTitle}
+        />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   center: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-    textAlign: "center",
-    // color: "#0069b4",
     paddingTop: 20,
     paddingBottom: 20,
   },
-  title: {
-    fontSize: 16,
-    textAlign: "left",
-    color: "gray",
-    margin: 20,
-    fontVariant: "small-caps",
+  buttonContainer: {
+    padding: 10,
+    backgroundColor: "#fff",
+  },
+  button: {
+    backgroundColor: "#0069b4",
+    borderWidth: 2,
+    borderColor: "#0069b4",
+    borderRadius: 10,
+  },
+  buttonTitle: {
+    textAlign: "center",
+    color: "white",
   },
   listTop: {
     width: "85%",
