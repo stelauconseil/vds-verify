@@ -262,7 +262,7 @@ const ResultScreen = ({
         swipeDirection="down" // Enable swipe down to close the modal
         onSwipeComplete={closeModal} // Handle swipe down event
       >
-        <SecurityDetails result={result} closeModal={closeModal} />
+        <SecurityDetails result={result} lang={lang} closeModal={closeModal} />
       </Modal>
     </View>
   );
