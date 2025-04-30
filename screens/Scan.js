@@ -172,17 +172,18 @@ const Scan = ({ lang }) => {
             </View>
           ) : (
             <>
-              {result &&
-                ResultScreen({
-                  result,
-                  lang,
-                  setResult,
-                  setErrorMessage,
-                  setScanned,
-                  modalVisible,
-                  setModalVisible,
-                  navigation,
-                })}
+              {result && (
+                <ResultScreen
+                  result={result}
+                  lang={lang}
+                  setResult={setResult}
+                  setErrorMessage={setErrorMessage}
+                  setScanned={setScanned}
+                  modalVisible={modalVisible}
+                  setModalVisible={setModalVisible}
+                  navigation={navigation}
+                />
+              )}
               {!!errorMessage && (
                 <View style={{ flex: 1, backgroundColor: "white" }}>
                   <ScrollView style={{ paddingHorizontal: "5%" }}>
