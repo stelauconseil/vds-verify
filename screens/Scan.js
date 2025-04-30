@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import {
+  useNavigation,
+  useIsFocused,
+  useRoute,
+} from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,11 +17,14 @@ import { Buffer } from "buffer";
 import PropTypes from "prop-types";
 
 const Scan = ({ lang }) => {
+  const route = useRoute();
   const isFocused = useIsFocused();
+  const { result: initialResult } = route.params || {}; // Access the result parameter
+
+  const [result, setResult] = useState(initialResult || null); // Initialize with the passed result
+  const [scanned, setScanned] = useState(!!initialResult); // Set scanned to true if result is passed
 
   const [permission, requestPermission] = useCameraPermissions();
-  const [scanned, setScanned] = useState(false);
-  const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [firstUrl, setFirstUrl] = useState(true);
@@ -32,6 +39,13 @@ const Scan = ({ lang }) => {
   useEffect(() => {
     requestPermission();
   }, []);
+
+  useEffect(() => {
+    if (initialResult) {
+      setResult(initialResult); // Ensure result is set
+      setScanned(true); // Ensure scanned is set to true
+    }
+  }, [initialResult]);
 
   useEffect(() => {
     Linking.getInitialURL().then((url) => setUrl(url));

@@ -40,7 +40,7 @@ const HistoryScreen = ({ navigation, lang }) => {
                   ? styles.listBotton
                   : styles.listMiddle
             }
-            // onPress={() => navigation.navigate("ResultScreen", { result: l })} // Navigate to ResultScreen with parameters
+            onPress={() => navigation.navigate("scan", { result: l.data })} // Navigate to ResultScreen with parameters
           >
             <ListItem.Content>
               <ListItem.Title>{formatData(l.timestamp, lang)}</ListItem.Title>
