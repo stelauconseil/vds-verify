@@ -15,7 +15,9 @@ const SettingsView = ({ navigation, lang, setLang }) => {
         <>
           <View>
             <Text style={styles.title}>{getLabel("information", lang)}</Text>
+
             <ListItem
+              key={1}
               style={styles.listTop}
               onPress={() => navigation.navigate("about")}
             >
@@ -29,7 +31,9 @@ const SettingsView = ({ navigation, lang, setLang }) => {
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
+
             <ListItem
+              key={2}
               style={styles.listMiddle}
               onPress={() => navigation.navigate("faq")}
             >
@@ -39,7 +43,9 @@ const SettingsView = ({ navigation, lang, setLang }) => {
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
+
             <ListItem
+              key={3}
               style={styles.listMiddle}
               onPress={() => navigation.navigate("usepolicy")}
             >
@@ -49,8 +55,10 @@ const SettingsView = ({ navigation, lang, setLang }) => {
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
+
             <ListItem
-              style={styles.listBotton}
+              key={4}
+              style={styles.listMiddle}
               onPress={() => navigation.navigate("privacypolicy")}
             >
               <Icon
@@ -65,7 +73,9 @@ const SettingsView = ({ navigation, lang, setLang }) => {
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
+
             <ListItem
+              key={5}
               style={styles.listBotton}
               onPress={() => navigation.navigate("history")}
             >
@@ -77,7 +87,6 @@ const SettingsView = ({ navigation, lang, setLang }) => {
             </ListItem>
 
             <Text style={styles.title}>{getLabel("language", lang)}</Text>
-
             <Picker
               style={styles.picker}
               itemStyle={styles.pickerItem}
