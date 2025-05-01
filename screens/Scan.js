@@ -22,7 +22,7 @@ const Scan = ({ lang }) => {
   const { result: initialResult } = route.params || {}; // Access the result parameter
 
   const [result, setResult] = useState(initialResult || null); // Initialize with the passed result
-  const [scanned, setScanned] = useState(!!initialResult); // Set scanned to true if result is passed
+  const [scanned, setScanned] = useState(!!initialResult || false); // Set scanned to true if result is passed
 
   const [permission, requestPermission] = useCameraPermissions();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -237,8 +237,8 @@ const Scan = ({ lang }) => {
                     titleStyle={{ color: "white" }}
                     onPress={() => {
                       setResult(null);
-                      setErrorMessage(null);
                       setScanned(false);
+                      setErrorMessage(null);
                     }}
                   />
                 </View>
