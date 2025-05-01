@@ -15,14 +15,12 @@ setTimeout(() => {
 
 const App = () => {
   return (
-    // <LanguageProvider>
     <SafeAreaProvider>
       <NavigationContainer style={{ flex: 1 }}>
         <StatusBar style="auto" />
         <MainTabNavigator />
       </NavigationContainer>
     </SafeAreaProvider>
-    // </LanguageProvider>
   );
 };
 
