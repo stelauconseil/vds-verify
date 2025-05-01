@@ -144,12 +144,14 @@ const getLabel = (key, lang) => {
 const getLang = async () => {
   try {
     const value = await AsyncStorage.getItem("lang");
-    if (value !== null) {
+    if (value !== null && label[value]) {
       return value;
     } else throw new Error("no lang");
   } catch (e) {
-    const l = getLocales();
-    return l[0].languageCode;
+    // If there is an error retrieving data, return default language
+    return "en";
+    // const l = getLocales();
+    // return l[0].languageCode;
   }
 };
 
