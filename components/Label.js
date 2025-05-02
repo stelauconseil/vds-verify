@@ -189,7 +189,7 @@ const formatString = (data) => {
       throw new Error("data is not a link");
     }
   } catch (error) {
-    return data.length > 22 ? `\n${data}` : data;
+    return data;
   }
 };
 
@@ -211,10 +211,9 @@ const formatData = (data, lang) => {
             timeZone: "UTC",
           });
           if (!d.toUTCString().includes("00:00:00")) {
-            const d = `${dateString} ${d.toLocaleTimeString(languageTag, { timeZone: "UTC", timeZoneName: "short" })}`;
-            return d.length > 22 ? `\n${d}` : d;
+            return `${dateString} ${d.toLocaleTimeString(languageTag, { timeZone: "UTC", timeZoneName: "short" })}`;
           }
-          return dateString.length > 22 ? `\n${dateString}` : dateString;
+          return dateString;
         } else {
           throw new Error("data is not a date");
         }
