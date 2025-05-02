@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     borderCurve: 10,
   },
   pickerItem: {
+    color: "gray",
     fontSize: "16",
   },
 });
