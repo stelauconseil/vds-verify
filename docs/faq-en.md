@@ -29,4 +29,4 @@ In order to verify the validity of a VDS, the VDS Verify application will:
 
 ## Are personal data stored?
 
-No, the VDS Verify application does not store any personal data. The VDS to decode is transmitted to our decoding API which performs the operations detailed above and transmits the results and the decoded data. This API processes these data in memory and no information is stored in any form. The API does not generate any logs.
+The VDS to decode is transmitted to our decoding API which performs the operations detailed above and transmits the result and the decoded data. This API processes this data in memory and no information is stored in any form. The API does not generate any logs. The VDS Verify mobile app keeps a local history file containing the decoded VDS.
