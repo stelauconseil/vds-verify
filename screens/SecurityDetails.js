@@ -33,6 +33,7 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
             <Icon name="browsers-outline" type="ionicon" color="gray" />
+            &nbsp;
             {getLabel("header", lang)}
           </Text>
           {Object.keys(result.header).map((key) => {
@@ -82,7 +83,9 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
                     ? "red"
                     : "orange"
               }
+              style={{ paddingRight: "10px" }}
             />
+            &nbsp;
             {getLabel("signer", lang)}
           </Text>
           {result.signer ? (
@@ -121,7 +124,13 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             }}
             style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
-            <Icon name="build-outline" type="ionicon" color="gray" />
+            <Icon
+              name="build-outline"
+              type="ionicon"
+              color="gray"
+              style={{ paddingRight: "10px" }}
+            />
+            &nbsp;
             {getLabel("standard", lang)}
           </Text>
           <Text key="compliance">
@@ -191,8 +200,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 90,
-    marginBottom: 75,
+    marginTop: 100,
+    marginBottom: 85,
   },
   modalView: {
     margin: 10,
