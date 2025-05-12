@@ -1,4 +1,4 @@
-# Politique d'Utilisation de VDS Verify
+# Conditions d'Utilisation de VDS Verify
 
 _Date d'effet : [22/11/2023]_
 

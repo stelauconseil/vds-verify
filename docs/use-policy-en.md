@@ -1,4 +1,4 @@
-# VDS Verify Usage Policy
+# VDS Verify Terms of Use
 
 _Effective Date: [2023/11/22]_
 
