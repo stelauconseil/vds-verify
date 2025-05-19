@@ -2,21 +2,26 @@
 
 ## Quel sont les types de CEV pris en charge ?
 
-L'application VDS Verify est en mesure de décoder et vérifier:
+L'application VDS Verify décode et vérifie:
 
-- Les 2D-Doc apposés sur les documents suivants:
+- Tous les 2D-Doc, dont ceux apposés sur les documents suivants:
+
   - Carte nationale d'identité française
   - Relevé d'information restreint (RIR)
+  - Attestation de droits à conduire sécurisée (ADCS)
   - Vignette Crit'Air
   - Facture d'énergie (EDF par exemple)
   - Facture de téléphone (Free par exemple)
   - ... et tout autre document conforme à la norme [2D-Doc](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc)
-- Tous les CEV conforme à la norme AFNOR xp-z42105, dont notamment ceux apposés sur :
 
-  - le justificatif d'identité à usage unique de [France Identité](https://france-identite.gouv.fr/justificatif/)
-  - la demande d'identité numérique certifiée de [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
+- Tous les CEV conforme à la norme AFNOR xp-z42105, dont ceux apposés sur les documents suivants:
 
-- Tous les CEV conforme à la norme ISO 22376:2023
+  - Justificatif d'identité à usage unique de [France Identité](https://france-identite.gouv.fr/justificatif/)
+  - Demande d'identité numérique certifiée de [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
+
+- Tous les CEV conforme à la norme ISO 22376:2023, dont ceux apposés sur les documents suivants:
+
+  - [Permis de conduire les bateaux de plaisance à moteur](https://www.mer.gouv.fr/le-permis-plaisance-permis-de-conduire-les-bateaux-de-plaisance-moteur#summary-target-0)
 
 ## Comment fonctionne la vérification d'un CEV ?
 
