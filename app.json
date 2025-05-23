@@ -35,12 +35,12 @@
           "autoVerify": true,
           "data": [
             {
+              "scheme": "vds"
+            },
+            {
               "scheme": "https",
               "host": "vds-verify.stelau.com",
               "pathPrefix": "/vds"
-            },
-            {
-              "scheme": "vds"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
