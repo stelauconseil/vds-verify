@@ -58,7 +58,11 @@ const Scan = ({ lang }) => {
   }, []);
 
   useEffect(() => {
-    if (url !== null && typeof url === "string" && url.startsWith("http")) {
+    if (
+      url !== null &&
+      typeof url === "string" &&
+      (url.startsWith("http") || url.startsWith("vds"))
+    ) {
       processResult({ data: url });
       setUrl(null);
     }
@@ -71,6 +75,8 @@ const Scan = ({ lang }) => {
         return null;
       }
       return Buffer.from(data.substring(lastIndex + 5)).toString("base64");
+    } else if (data.startsWith("vds")) {
+      return Buffer.from(data.substring(6)).toString("base64");
     } else {
       return Buffer.from(data).toString("base64");
     }
