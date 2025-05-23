@@ -21,7 +21,12 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.stelau.vdsverify",
-      "associatedDomains": ["applinks:vds-verify.stelau.com"]
+      "associatedDomains": [
+        "applinks:vds-verify.stelau.com",
+        "applinks:vds",
+        "webcredentials:vds",
+        "webcredentials:vds-verify.stelau.com"
+      ]
     },
     "android": {
       "permissions": [
