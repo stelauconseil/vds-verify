@@ -85,7 +85,7 @@ const formatResult = (data, key, lang) => {
             // .filter((k) => {
             //   return k !== null && k !== undefined && k !== "";
             // })
-            .map((k) => formatResult(data[key], k))}
+            .map((k) => formatResult(data[key], k), lang)}
         </View>
       </View>
     );
@@ -172,7 +172,7 @@ const ResultScreen = ({
               result.data[key] !== ""
             );
           })
-          .map((key) => formatResult(result.data, key))}
+          .map((key) => formatResult(result.data, key, lang))}
       </ScrollView>
       <Button
         onPress={() => openModal()}
