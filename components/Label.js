@@ -1,7 +1,5 @@
-import React from "react";
 import { Linking } from "react-native";
 import { Text } from "@rneui/themed";
-import { getLocales } from "expo-localization";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const label = {};
@@ -150,8 +148,6 @@ const getLang = async () => {
   } catch (e) {
     // If there is an error retrieving data, return default language
     return "en";
-    // const l = getLocales();
-    // return l[0].languageCode;
   }
 };
 
