@@ -40,7 +40,7 @@
               "pathPrefix": "/vds"
             },
             {
-              "schema": "vds"
+              "scheme": "vds"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
