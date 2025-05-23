@@ -38,6 +38,9 @@
               "scheme": "https",
               "host": "vds-verify.stelau.com",
               "pathPrefix": "/vds"
+            },
+            {
+              "schema": "vds"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
