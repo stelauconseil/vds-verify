@@ -1,7 +1,6 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
-// import { LanguageProvider } from "./LanguageContext";
 import { StatusBar } from "expo-status-bar";
 
 import * as SplashScreen from "expo-splash-screen";
