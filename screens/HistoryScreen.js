@@ -95,8 +95,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonTitle: {
+    fontSize: 16,
     textAlign: "center",
     color: "white",
+    padding: 10,
   },
   listTop: {
     width: "85%",
