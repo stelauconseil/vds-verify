@@ -194,7 +194,6 @@ const ResultScreen = ({
                   ? "red"
                   : "orange"
             }
-            style={{ marginLeft: 10 }}
           />
         }
         iconRight={true}
