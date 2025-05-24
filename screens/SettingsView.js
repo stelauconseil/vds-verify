@@ -1,13 +1,32 @@
-import React from "react";
-import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
-import { Text, ListItem, Icon } from "@rneui/themed";
+import { Text, ListItem, Icon, Switch } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel, saveLang } from "../components/Label";
 import PropTypes from "prop-types";
 
-const SettingsView = ({ navigation, lang, setLang }) => {
+const SettingsView = ({ lang, setLang }) => {
   const isFocused = useIsFocused();
+  const [historyEnabled, setHistoryEnabled] = useState(true);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    // Load the toggle state from AsyncStorage
+    AsyncStorage.getItem("historyEnabled").then((value) => {
+      if (value !== null) setHistoryEnabled(value === "true");
+    });
+  }, [isFocused]);
+
+  const toggleHistory = async (value) => {
+    setHistoryEnabled(value);
+    await AsyncStorage.setItem("historyEnabled", value.toString());
+    if (!value) {
+      await AsyncStorage.removeItem("scanHistory");
+    }
+  };
 
   return (
     <>
@@ -74,17 +93,35 @@ const SettingsView = ({ navigation, lang, setLang }) => {
               <ListItem.Chevron />
             </ListItem>
 
+            {/* History toggle */}
             <ListItem
               key={5}
-              style={styles.listBotton}
-              onPress={() => navigation.navigate("history")}
+              style={historyEnabled ? styles.listMiddle : styles.listBotton}
+              containerStyle={{ justifyContent: "space-between" }}
             >
               <Icon name="archive-outline" type="ionicon" color="gray" />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
+                <ListItem.Title>
+                  {getLabel("historytoggle", lang)}
+                </ListItem.Title>
               </ListItem.Content>
-              <ListItem.Chevron />
+              <Switch value={historyEnabled} onValueChange={toggleHistory} />
             </ListItem>
+
+            {/* History Button - only show if historyEnabled */}
+            {historyEnabled && (
+              <ListItem
+                key={6}
+                style={styles.listBotton}
+                onPress={() => navigation.navigate("history")}
+              >
+                <Icon name="eye-outline" type="ionicon" color="gray" />
+                <ListItem.Content>
+                  <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
+                </ListItem.Content>
+                <ListItem.Chevron />
+              </ListItem>
+            )}
 
             <Text style={styles.title}>{getLabel("language", lang)}</Text>
             <Picker
@@ -154,6 +191,7 @@ const styles = StyleSheet.create({
     // borderColor: "white",
     // borderWidth: 10,
     borderCurve: 10,
+    color: "gray",
   },
   pickerItem: {
     color: "gray",

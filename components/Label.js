@@ -63,7 +63,8 @@ label.fr = {
   "Type de document": "Type de document",
   Périmètre: "Périmètre",
   Pays: "Pays",
-  history: "Historique",
+  historytoggle: "Conserver l'historique",
+  history: "Voir l'historique",
   deleteHistory: "Supprimer l'historique",
 };
 
@@ -75,9 +76,9 @@ label.en = {
   about: "About",
   about_text: "VDS Verify is developed by Stelau.",
   close: "Close",
-  privacypolicy: "Privacy Policy",
+  privacypolicy: "Privacy policy",
   faq: "FAQ",
-  usepolicy: "Terms of Use",
+  usepolicy: "Terms of use",
   information: "Information",
   scan: "Scan",
   settings: "Settings",
@@ -126,8 +127,9 @@ label.en = {
   "Type de document": "Document Type",
   Périmètre: "Scope",
   Pays: "Country",
-  history: "History",
-  deleteHistory: "Delete History",
+  historytoggle: "Keep history",
+  history: "See history",
+  deleteHistory: "Delete history",
 };
 
 const getLabel = (key, lang) => {

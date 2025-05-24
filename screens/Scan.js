@@ -105,11 +105,16 @@ const Scan = ({ lang }) => {
 
       const { success, message, vds } = await response.json();
       if (success === true) {
-        const history =
-          JSON.parse(await AsyncStorage.getItem("scanHistory")) || [];
-        const newEntry = { timestamp: new Date().toISOString(), data: vds };
-        history.unshift(newEntry);
-        await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
+        // Only save to history if historyEnabled is true in AsyncStorage
+        const historyEnabled =
+          (await AsyncStorage.getItem("historyEnabled")) !== "false";
+        if (historyEnabled) {
+          const history =
+            JSON.parse(await AsyncStorage.getItem("scanHistory")) || [];
+          const newEntry = { timestamp: new Date().toISOString(), data: vds };
+          history.unshift(newEntry);
+          await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
+        }
         setResult(vds);
       } else {
         setErrorMessage(message);
@@ -278,7 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
   },
   helpText: {
-    color: "#fff",
+    color: "#ffffff",
   },
 });
 
