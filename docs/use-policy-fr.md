@@ -1,33 +1,41 @@
+{% include nav.html %}
+
 # Conditions d'Utilisation de VDS Verify
 
-_Date d'effet : [22/11/2023]_
+_Date d'effet : [25/05/2025]_
 
-## Objectif
+## 1. Objet du Service
 
-Ce document énonce les termes et conditions d'utilisation de notre service en ligne de décodage de Cachet Electronique Visible (CEV). Notre service est conçu pour décoder les CEV sans stocker ni conserver aucune donnée utilisateur afin de garantir la confidentialité.
+VDS Verify est un service en ligne proposé par Stelau Conseil permettant de lire, décoder et vérifier l'intégrité des Cachets Électroniques Visibles (CEV), tels que les 2D-Doc ou les CEV conformes à la norme ISO 22376:2023. Ce service est conçu pour fonctionner sans collecter ni stocker de données personnelles ou sensibles.
 
-## Collecte et Stockage des Données Utilisateurs
+## 2. Collecte et Stockage des Données Utilisateurs
 
-Notre service ne collecte ni ne stocke aucune information personnelle des utilisateurs pendant le processus de décodage des CEV. Nous nous engageons à assurer la confidentialité et la sécurité des données utilisateur.
+Nous ne recueillons aucune information personnelle identifiable lors de l'utilisation de VDS Verify. Les données contenues dans les CEV que vous soumettez sont traitées en temps réel pour vérifier leur authenticité et intégrité. Ces données ne sont ni enregistrées ni conservées après le traitement. Aucune trace de votre utilisation du service n'est conservée.
 
-## Sécurité des Données
+## 3. Sécurité des Données
 
-Nous accordons une grande importance à la sécurité des données utilisateur et mettons en place des mesures appropriées pour protéger contre tout accès non autorisé, divulgation, altération ou destruction d'informations.
+Bien que nous ne stockions aucune donnée personnelle, nous mettons en œuvre des mesures de sécurité appropriées pour protéger les informations traitées en temps réel contre tout accès non autorisé, divulgation, altération ou destruction.
 
-## Directives d'Utilisation
+## 4. Utilisation du Service
 
-- Les utilisateurs sont libres d'utiliser notre service de décodage de CEV à des fins personnelles ou commerciales.
-- Le service est fourni tel quel, et nous ne garantissons pas l'exactitude ou la disponibilité du service en permanence.
-- Il est interdit aux utilisateurs d'utiliser le service à des fins illégales ou malveillantes.
+- **Usage autorisé** : Le service est mis à disposition gratuitement pour un usage personnel ou professionnel, dans le respect des lois en vigueur.
 
-## Liens vers des Tiers
+- **Restrictions** : Il est interdit d'utiliser le service à des fins illégales, frauduleuses ou nuisibles, ou de tenter de perturber son bon fonctionnement.
+
+- **Absence de garantie** : Le service est fourni "tel quel", sans garantie quant à sa disponibilité, son exactitude ou son adéquation à un usage particulier.
+
+## 5. Propriété Intellectuelle
+
+Tous les éléments composant le service VDS Verify, y compris les textes, images, logos et logiciels, sont protégés par les lois sur la propriété intellectuelle et sont la propriété exclusive de Stelau Conseil ou de ses partenaires. Toute reproduction, représentation ou utilisation non autorisée de ces éléments est strictement interdite.
+
+## 6. Liens vers des Sites Tiers
 
 Notre service peut contenir des liens vers des sites Web tiers. Nous ne sommes pas responsables du contenu ou des pratiques de confidentialité de ces sites externes.
 
-## Modifications de la Politique d'Utilisation
+## 7. Modifications des Conditions d’Utilisation
 
-Nous nous réservons le droit de modifier cette politique d'utilisation à tout moment. Les utilisateurs seront informés de tout changement significatif.
+Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Toute modification sera effective dès sa publication sur cette page. Il est recommandé de consulter régulièrement cette page pour prendre connaissance des éventuelles mises à jour.
 
 ## Contact
 
-Si vous avez des questions ou des préoccupations concernant l'utilisation de notre service, veuillez nous contacter à [contact at stelau.com]
+Pour toute question ou préoccupation concernant ces conditions d'utilisation, veuillez nous contacter à l'adresse suivante : [privacy at stelau.com]

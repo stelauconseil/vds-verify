@@ -1,3 +1,5 @@
+{% include nav.html %}
+
 # VDS Verify
 
 Encodage et décodage de Visible Digital Seal - VDS, de Cachet Electronique Visible CEV et de 2D-Doc.

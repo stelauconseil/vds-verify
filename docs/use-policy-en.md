@@ -1,33 +1,39 @@
+{% include nav.html %}
+
 # VDS Verify Terms of Use
 
-_Effective Date: [2023/11/22]_
+_Effective Date: [2025/05/25]_
 
-## Purpose
+## 1. Introduction
 
-This document outlines the terms and conditions for the use of our VDS Verify decoding service. Our service is designed to decode Visible Digital Seal (VDS) without storing or retaining any user data for privacy protection.
+VDS Verify is a service provided by Stelau Conseil that allows users to read, decode, and verify the integrity of Visible Digital Seals (VDS), such as 2D-Doc or VDS compliant with ISO 22376:2023. This service is designed to operate without collecting or storing any personal or sensitive data.
 
-## User Data Collection and Storage
+## 2. Collection and Use of Information
 
-Our service does not collect or store any personal information from users during the VDS decoding process. We are committed to ensuring the privacy and security of user data.
+### 2.1. No Personal Data Collection
 
-## Data Security
+We do not collect any personally identifiable information when you use VDS Verify. No data such as your name, address, phone number, or any other personal information is recorded.
 
-We prioritize the security of user data and employ appropriate measures to safeguard against unauthorized access, disclosure, alteration, or destruction of information.
+### 2.2. No User Data Storage
 
-## Usage Guidelines
+The data contained in the VDS you submit is processed in real-time solely to verify its authenticity and integrity. This data is not stored or retained after processing. No logs or usage traces are kept.
 
-- Users are free to utilize our VDS decoding service for personal or commercial purposes.
-- The service is provided on an as-is basis, and we do not guarantee the accuracy or availability of the service at all times.
-- Users are prohibited from using the service for any illegal or malicious activities.
+## 3. Technical Data and Cookies
 
-## Third-Party Links
+We may collect non-identifiable technical data such as browser type, operating system, and aggregated usage information to improve performance and user experience. No persistent cookies are used for tracking purposes.
 
-Our service may contain links to third-party websites. We are not responsible for the content or privacy practices of these external sites.
+## 4. Data Security
 
-## Modifications to the Usage Policy
+Although we do not store any personal data, we implement appropriate security measures to protect the real-time processed data from unauthorized access, disclosure, alteration, or destruction.
 
-We reserve the right to modify this usage policy at any time. Users will be notified of any significant changes.
+## 5. Links to Third-Party Sites
 
-## Contact
+Our service may contain links to third-party websites. We are not responsible for the privacy practices of these sites and encourage you to review their respective privacy policies.
 
-If you have any questions or concerns regarding the usage of our service, please contact us at [contact at stelau.com].
+## 6. Changes to This Privacy Policy
+
+We reserve the right to update this privacy policy at any time. Any changes will take effect upon posting on this page.
+
+## 7. Contact
+
+If you have any questions or concerns about this privacy policy, please contact us at [privacy at stelau.com].

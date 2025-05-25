@@ -1,3 +1,5 @@
+{% include nav.html %}
+
 # Questions fréquentes
 
 ## Quel sont les types de CEV pris en charge ?

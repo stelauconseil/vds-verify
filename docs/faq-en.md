@@ -1,3 +1,5 @@
+{% include nav.html %}
+
 # Frequently Asked Questions
 
 ## What types of VDS are supported?
