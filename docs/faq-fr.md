@@ -27,12 +27,13 @@ L'application VDS Verify décode et vérifie:
 
 ## Comment fonctionne la vérification d'un CEV ?
 
-Afin de vérifier la validité d'un CEV, l'application VDS Verify va:
+Afin de vérifier la décoder un CEV, l'application VDS Verify :
 
-- Décoder le CEV
-- Récupérer les certificats de signature électronique dans une TrustedList (liste de confiance) émise par l'[ANTS](https://ants.gouv.fr/)
-- Vérifier la validité du certificat électronique de signature (date de validité et révocation)
-- Vérifier la signature électronique du CEV.
+- Flash et décode le QR Code
+- Récupére les certificats de signature électronique dans une Trusted List (liste de confiance) émise par l'[ANTS](https://ants.gouv.fr/)
+- Vérifie la validité du certificat électronique de signature (date de validité et révocation)
+- Vérifie la signature électronique du CEV.
+- Affiche les données décodées et les informations sur la signature électronique
 
 ## Les données personnelles sont-elles stockées ?
 

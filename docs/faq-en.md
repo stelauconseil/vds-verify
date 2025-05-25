@@ -22,12 +22,13 @@ VDS Verify is able to decode and verify:
 
 ## How does VDS verification work?
 
-In order to verify the validity of a VDS, the VDS Verify application will:
+To verify the decoding of a CEV, the VDS Verify :
 
-- Decode the VDS
-- Retrieve the electronic signature certificates in a TrustedList (trust list) issued by the [ANTS](https://ants.gouv.fr/)
-- Verify the validity of the electronic signature certificate (validity date and revocation)
-- Verify the electronic signature of the VDS.
+- Flashes and decodes the QR Code
+- Retrieves electronic signature certificates from a Trusted List issued by [ANTS](https://ants.gouv.fr/)
+- Checks the validity of the electronic signature certificate (validity date and revocation)
+- Verifies the CEV's electronic signature.
+- Displays decoded data and electronic signature information
 
 ## Are personal data stored?
 
