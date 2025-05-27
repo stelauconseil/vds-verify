@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SettingsView from "../screens/SettingsView";
+import SettingsView from "../screens/Settings";
 import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
 import PrivacyPolicy from "../screens/PrivacyPolicy";
@@ -27,7 +27,9 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <SettingsView {...props} {...{ lang, setLang }} />}
+        {(props) => (
+          <SettingsView key={"settings"} {...props} {...{ lang, setLang }} />
+        )}
       </Stack.Screen>
       <Stack.Screen
         name="about"
@@ -36,7 +38,7 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <About {...props} {...{ lang }} />}
+        {(props) => <About key={"about"} {...props} {...{ lang }} />}
       </Stack.Screen>
       <Stack.Screen
         name="faq"
@@ -45,7 +47,7 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <Faq {...props} {...{ lang }} />}
+        {(props) => <Faq key={"faq"} {...props} {...{ lang }} />}
       </Stack.Screen>
       <Stack.Screen
         name="usepolicy"
@@ -54,7 +56,7 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <UsePolicy {...props} {...{ lang }} />}
+        {(props) => <UsePolicy key={"usepolicy"} {...props} {...{ lang }} />}
       </Stack.Screen>
       <Stack.Screen
         name="privacypolicy"
@@ -63,7 +65,9 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <PrivacyPolicy {...props} {...{ lang }} />}
+        {(props) => (
+          <PrivacyPolicy key={"privacypolicy"} {...props} {...{ lang }} />
+        )}
       </Stack.Screen>
       <Stack.Screen
         name="history"
@@ -72,7 +76,7 @@ const InfoStack = ({ lang, setLang }) => {
           headerTitleAlign: "center",
         }}
       >
-        {(props) => <HistoryScreen {...props} {...{ lang }} />}
+        {(props) => <HistoryScreen key={"history"} {...props} {...{ lang }} />}
       </Stack.Screen>
     </Stack.Navigator>
   );

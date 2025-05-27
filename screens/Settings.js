@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import { Text, ListItem, Icon, Switch } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
@@ -7,11 +7,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel, saveLang } from "../components/Label";
 import PropTypes from "prop-types";
 
-const SettingsView = ({ lang, setLang }) => {
+function SettingsView({
+  navigation: navigation,
+  lang: lang,
+  setLang: setLang,
+}) {
   const isFocused = useIsFocused();
   const [historyEnabled, setHistoryEnabled] = useState(true);
-
-  const navigation = useNavigation();
 
   useEffect(() => {
     // Load the toggle state from AsyncStorage
@@ -141,10 +143,9 @@ const SettingsView = ({ lang, setLang }) => {
       )}
     </>
   );
-};
+}
 
 SettingsView.propTypes = {
-  navigation: PropTypes.object.isRequired,
   lang: PropTypes.string.isRequired,
   setLang: PropTypes.func.isRequired,
 };
