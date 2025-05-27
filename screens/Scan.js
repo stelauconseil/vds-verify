@@ -18,34 +18,56 @@ import PropTypes from "prop-types";
 
 const Scan = ({ lang }) => {
   const route = useRoute();
+  const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { result: initialResult } = route.params || {}; // Access the result parameter
-
-  const [result, setResult] = useState(initialResult || null); // Initialize with the passed result
-  const [scanned, setScanned] = useState(!!initialResult || false); // Set scanned to true if result is passed
-
+  const [result, setResult] = useState(null);
+  const [scanned, setScanned] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = React.useRef(null);
+
+  // Handle initial result from navigation
+  React.useEffect(() => {
+    if (initialResult && typeof initialResult === "object") {
+      // Process the result if it's valid
+      setResult(initialResult);
+      setScanned(true);
+    }
+  }, [initialResult]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [firstUrl, setFirstUrl] = useState(true);
   const [url, setUrl] = useState(null);
-
-  const navigation = useNavigation();
 
   const onChange = (event) => {
     setUrl(event.url);
   };
 
   useEffect(() => {
-    requestPermission();
-  }, []);
+    const getCameraPermission = async () => {
+      try {
+        const { status } = await requestPermission();
+        if (status !== "granted") {
+          setErrorMessage("error_camera_permission");
+        }
+      } catch (error) {
+        console.error("Camera permission error:", error);
+        setErrorMessage("error_camera_permission");
+      }
+    };
 
-  useEffect(() => {
-    if (initialResult) {
-      setResult(initialResult); // Ensure result is set
-      setScanned(true); // Ensure scanned is set to true
-    }
-  }, [initialResult]);
+    getCameraPermission();
+
+    return () => {
+      // Cleanup camera
+      if (cameraRef.current) {
+        cameraRef.current.stopAsync();
+      }
+    };
+  }, [requestPermission]);
+
+  // This effect is now handled in the component initialization above
+  // Removed to prevent duplicate state updates
 
   useEffect(() => {
     Linking.getInitialURL().then((url) => setUrl(url));
@@ -69,7 +91,7 @@ const Scan = ({ lang }) => {
   }, [url]);
 
   const parseData = (data) => {
-    if (data.startsWith("http")) {
+    if (data?.startsWith("http")) {
       const lastIndex = data.lastIndexOf("/vds#");
       if (lastIndex === -1 || lastIndex === data.length - 1) {
         return null;
@@ -179,7 +201,8 @@ const Scan = ({ lang }) => {
           {!scanned && permission ? (
             <View style={{ flex: 1 }}>
               <CameraView
-                zoom={0.02}
+                ref={cameraRef}
+                zoom={0.15}
                 barcodeScannerSettings={{
                   barcodeTypes: ["qr", "datamatrix", "aztec"],
                 }}
@@ -197,7 +220,7 @@ const Scan = ({ lang }) => {
             </View>
           ) : (
             <>
-              {result && (
+              {scanned && result && (
                 <ResultScreen
                   result={result}
                   lang={lang}
@@ -246,10 +269,28 @@ const Scan = ({ lang }) => {
                       paddingBottom: 0,
                     }}
                     titleStyle={{ color: "white" }}
-                    onPress={() => {
-                      setResult(null);
-                      setScanned(false);
-                      setErrorMessage(null);
+                    onPress={async () => {
+                      try {
+                        // Clear navigation state
+                        navigation.setParams({
+                          result: undefined,
+                        });
+
+                        // Stop camera if it's running
+                        if (cameraRef.current) {
+                          await cameraRef.current.stopAsync();
+                        }
+
+                        // Clear local state
+                        await Promise.all([
+                          setResult(null),
+                          setScanned(false),
+                          setErrorMessage(null),
+                        ]);
+                      } catch (error) {
+                        console.error("Error resetting scan state:", error);
+                        setErrorMessage("error_resetting_scan");
+                      }
                     }}
                   />
                 </View>
