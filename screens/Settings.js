@@ -13,7 +13,7 @@ function SettingsView({
   setLang: setLang,
 }) {
   const isFocused = useIsFocused();
-  const [historyEnabled, setHistoryEnabled] = useState(true);
+  const [historyEnabled, setHistoryEnabled] = useState(false);
 
   useEffect(() => {
     // Load the toggle state from AsyncStorage
