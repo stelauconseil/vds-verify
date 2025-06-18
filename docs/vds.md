@@ -1,3 +1,3 @@
 ---
-redirect_to: /index
+redirect_to: /
 ---
