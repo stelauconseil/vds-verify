@@ -11,7 +11,6 @@ const About = () => {
         {Application.applicationName} {Application.nativeApplicationVersion}{" "}
         (build {Application.nativeBuildVersion})
       </Text>
-      {/* <Text style={styles.title}>VDS Verify </Text> */}
       <Text
         style={styles.title}
         onPress={() => Linking.openURL("https://vds-verify.stelau.com")}
