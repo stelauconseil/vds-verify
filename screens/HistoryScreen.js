@@ -37,10 +37,10 @@ const HistoryScreen = ({ navigation, lang }) => {
         {history.map((l, i) => (
           <ListItem
             key={i}
-            style={
+            containerStyle={
               i === 0
                 ? styles.listTop
-                : i === Object.keys(history).length - 1
+                : i === history.length - 1
                   ? styles.listBotton
                   : styles.listMiddle
             }

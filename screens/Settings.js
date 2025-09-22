@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Text, ListItem, Icon, Switch } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -34,111 +34,103 @@ function SettingsView({
     <>
       {isFocused && (
         <>
-          <View>
-            <Text style={styles.title}>{getLabel("information", lang)}</Text>
+          <Text style={styles.title}>{getLabel("information", lang)}</Text>
 
+          <ListItem
+            key="settings-about"
+            containerStyle={styles.listTop}
+            onPress={() => navigation.navigate("about")}
+          >
+            <Icon name="chatbox-ellipses-outline" type="ionicon" color="gray" />
+            <ListItem.Content>
+              <ListItem.Title>{getLabel("about", lang)}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+
+          <ListItem
+            key="settings-faq"
+            containerStyle={styles.listMiddle}
+            onPress={() => navigation.navigate("faq")}
+          >
+            <Icon name="help-circle-outline" type="ionicon" color="gray" />
+            <ListItem.Content>
+              <ListItem.Title>{getLabel("faq", lang)}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+
+          <ListItem
+            key="settings-usepolicy"
+            containerStyle={styles.listMiddle}
+            onPress={() => navigation.navigate("usepolicy")}
+          >
+            <Icon name="receipt-outline" type="ionicon" color="gray" />
+            <ListItem.Content>
+              <ListItem.Title>{getLabel("usepolicy", lang)}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+
+          <ListItem
+            key="settings-privacypolicy"
+            containerStyle={styles.listMiddle}
+            onPress={() => navigation.navigate("privacypolicy")}
+          >
+            <Icon
+              name="information-circle-outline"
+              type="ionicon"
+              color="gray"
+            />
+            <ListItem.Content>
+              <ListItem.Title>{getLabel("privacypolicy", lang)}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+
+          {/* History toggle */}
+          <ListItem
+            key="settings-history-toggle"
+            containerStyle={[
+              historyEnabled ? styles.listMiddle : styles.listBotton,
+              { justifyContent: "space-between" },
+            ]}
+          >
+            <Icon name="archive-outline" type="ionicon" color="gray" />
+            <ListItem.Content>
+              <ListItem.Title>{getLabel("historytoggle", lang)}</ListItem.Title>
+            </ListItem.Content>
+            <Switch value={historyEnabled} onValueChange={toggleHistory} />
+          </ListItem>
+
+          {/* History Button - only show if historyEnabled */}
+          {historyEnabled && (
             <ListItem
-              key={1}
-              style={styles.listTop}
-              onPress={() => navigation.navigate("about")}
+              key="settings-history"
+              containerStyle={styles.listBotton}
+              onPress={() => navigation.navigate("history")}
             >
-              <Icon
-                name="chatbox-ellipses-outline"
-                type="ionicon"
-                color="gray"
-              />
+              <Icon name="eye-outline" type="ionicon" color="gray" />
               <ListItem.Content>
-                <ListItem.Title>{getLabel("about", lang)}</ListItem.Title>
+                <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
               </ListItem.Content>
               <ListItem.Chevron />
             </ListItem>
+          )}
 
-            <ListItem
-              key={2}
-              style={styles.listMiddle}
-              onPress={() => navigation.navigate("faq")}
-            >
-              <Icon name="help-circle-outline" type="ionicon" color="gray" />
-              <ListItem.Content>
-                <ListItem.Title>{getLabel("faq", lang)}</ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-
-            <ListItem
-              key={3}
-              style={styles.listMiddle}
-              onPress={() => navigation.navigate("usepolicy")}
-            >
-              <Icon name="receipt-outline" type="ionicon" color="gray" />
-              <ListItem.Content>
-                <ListItem.Title>{getLabel("usepolicy", lang)}</ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-
-            <ListItem
-              key={4}
-              style={styles.listMiddle}
-              onPress={() => navigation.navigate("privacypolicy")}
-            >
-              <Icon
-                name="information-circle-outline"
-                type="ionicon"
-                color="gray"
-              />
-              <ListItem.Content>
-                <ListItem.Title>
-                  {getLabel("privacypolicy", lang)}
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-
-            {/* History toggle */}
-            <ListItem
-              key={5}
-              style={historyEnabled ? styles.listMiddle : styles.listBotton}
-              containerStyle={{ justifyContent: "space-between" }}
-            >
-              <Icon name="archive-outline" type="ionicon" color="gray" />
-              <ListItem.Content>
-                <ListItem.Title>
-                  {getLabel("historytoggle", lang)}
-                </ListItem.Title>
-              </ListItem.Content>
-              <Switch value={historyEnabled} onValueChange={toggleHistory} />
-            </ListItem>
-
-            {/* History Button - only show if historyEnabled */}
-            {historyEnabled && (
-              <ListItem
-                key={6}
-                style={styles.listBotton}
-                onPress={() => navigation.navigate("history")}
-              >
-                <Icon name="eye-outline" type="ionicon" color="gray" />
-                <ListItem.Content>
-                  <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
-                </ListItem.Content>
-                <ListItem.Chevron />
-              </ListItem>
-            )}
-
-            <Text style={styles.title}>{getLabel("language", lang)}</Text>
-            <Picker
-              style={styles.picker}
-              itemStyle={styles.pickerItem}
-              selectedValue={lang || "en"} // Fallback to "en" if lang is undefined
-              onValueChange={(itemValue) => {
-                setLang(itemValue);
-                saveLang(itemValue);
-              }}
-            >
-              <Picker.Item label="English" value="en" />
-              <Picker.Item label="Français" value="fr" />
-            </Picker>
-          </View>
+          <Text style={styles.title}>{getLabel("language", lang)}</Text>
+          <Picker
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+            selectedValue={lang || "en"} // Fallback to "en" if lang is undefined
+            onValueChange={(itemValue) => {
+              setLang(itemValue);
+              saveLang(itemValue);
+            }}
+          >
+            <Picker.Item key="lang-en" label="English" value="en" />
+            <Picker.Item key="lang-fr" label="Français" value="fr" />
+          </Picker>
         </>
       )}
     </>
@@ -187,16 +179,12 @@ const styles = StyleSheet.create({
   picker: {
     width: "90%",
     alignSelf: "center",
-    // height: "2",
-    // backgroundColor: "#FFF0E0",
-    // borderColor: "white",
-    // borderWidth: 10,
-    borderCurve: 10,
+    borderRadius: 10,
     color: "gray",
   },
   pickerItem: {
     color: "gray",
-    fontSize: "16",
+    fontSize: 16,
   },
 });
 
