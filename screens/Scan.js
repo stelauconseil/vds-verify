@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,
   useIsFocused,
