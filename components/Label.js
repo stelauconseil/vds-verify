@@ -127,7 +127,7 @@ label.en = {
   "Type de document": "Document Type",
   Périmètre: "Scope",
   Pays: "Country",
-  historytoggle: "Keep history",
+  historytoggle: "Save history",
   history: "See history",
   deleteHistory: "Delete history",
 };
