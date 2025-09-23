@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text, ListItem, Icon, Switch } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -33,7 +33,7 @@ function SettingsView({
   return (
     <>
       {isFocused && (
-        <>
+        <View>
           <Text style={styles.title}>{getLabel("information", lang)}</Text>
 
           <ListItem
@@ -131,7 +131,7 @@ function SettingsView({
             <Picker.Item key="lang-en" label="English" value="en" />
             <Picker.Item key="lang-fr" label="Français" value="fr" />
           </Picker>
-        </>
+        </View>
       )}
     </>
   );
