@@ -25,6 +25,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel("settings", lang),
           headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
         }}
       >
         {(props) => (
@@ -36,6 +37,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel("about", lang),
           headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
         }}
       >
         {(props) => <About key={"about"} {...props} {...{ lang }} />}
@@ -45,6 +47,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel("faq", lang),
           headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
         }}
       >
         {(props) => <Faq key={"faq"} {...props} {...{ lang }} />}
@@ -54,6 +57,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel("usepolicy", lang),
           headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
         }}
       >
         {(props) => <UsePolicy key={"usepolicy"} {...props} {...{ lang }} />}
@@ -63,6 +67,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel("privacypolicy", lang),
           headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
         }}
       >
         {(props) => (
@@ -74,6 +79,7 @@ const InfoStack = ({ lang, setLang }) => {
         options={{
           headerTitle: getLabel("history", lang),
           headerTitleAlign: "center",
+          headerBackButtonDisplayMode: "minimal",
         }}
       >
         {(props) => <HistoryScreen key={"history"} {...props} {...{ lang }} />}

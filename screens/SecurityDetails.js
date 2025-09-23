@@ -32,9 +32,18 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             }}
             style={{ fontVariant: "small-caps", marginBottom: 5 }}
           >
-            <Icon name="browsers-outline" type="ionicon" color="gray" />
-            &nbsp;
-            {getLabel("header", lang)}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 5,
+              }}
+            >
+              <Icon name="browsers-outline" type="ionicon" color="gray" />
+              <Text style={{ fontVariant: "small-caps", marginLeft: 8 }}>
+                {getLabel("header", lang)}
+              </Text>
+            </View>
           </Text>
           {Object.keys(result.header).map((key) => {
             return (
