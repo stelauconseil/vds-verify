@@ -36,7 +36,7 @@ const HistoryScreen = ({ navigation, lang }) => {
       <ScrollView style={styles.center}>
         {history.map((l, i) => (
           <ListItem
-            key={item.timestamp}
+            key={l.timestamp}
             containerStyle={
               i === 0
                 ? styles.listTop
