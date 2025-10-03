@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 const formatResult = (data, key, lang) => {
   // If data[key] is a string or an array of strings, display it
   // else if data[key] is an object, display its keys and values
-  if (key.includes("Image") && isBase64(data[key])) {
+  if ((key.includes("Image") || key.includes("photo")) && isBase64(data[key])) {
     // try {
     //   const password = "1234";
     //   CryptoJS.algo.EvpKDF.cfg.hasher = CryptoJS.algo.SHA256.create();
@@ -40,7 +40,7 @@ const formatResult = (data, key, lang) => {
         <Image
           style={{
             width: 100,
-            height: 100,
+            height: 130,
           }}
           source={{
             uri: "data:image/webp;base64," + data[key],
