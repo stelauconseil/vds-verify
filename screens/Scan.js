@@ -200,7 +200,7 @@ const Scan = ({ lang }) => {
       {isFocused && (
         <SafeAreaView style={styles.container}>
           {!scanned && permission ? (
-            <View style={{ flex: 1 }}>
+            <>
               <CameraView
                 ref={cameraRef}
                 zoom={0.15}
@@ -218,7 +218,7 @@ const Scan = ({ lang }) => {
               <View style={styles.content}>
                 <ScannerView scanned={scanned} />
               </View>
-            </View>
+            </>
           ) : (
             <>
               {scanned && result && (
