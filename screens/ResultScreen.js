@@ -113,7 +113,17 @@ const ResultScreen = ({
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      }}
+    >
       {result.testdata && (
         <View
           style={{
@@ -137,7 +147,7 @@ const ResultScreen = ({
         </View>
       )}
       <ScrollView
-        style={{ paddingHorizontal: "5%", paddingTop: 10, paddingBottom: 10 }}
+        style={{ paddingHorizontal: "5%", paddingTop: 0, paddingBottom: 10 }}
         containerStyle={{
           paddingTop: 5,
           paddingBottom: 0,
