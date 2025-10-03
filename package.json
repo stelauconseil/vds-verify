@@ -21,7 +21,7 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
-    "expo": "54.0.10",
+    "expo": "54.0.12",
     "expo-application": "~7.0.7",
     "expo-camera": "~17.0.8",
     "expo-constants": "~18.0.9",
@@ -44,7 +44,7 @@
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-hooks": "^6.1.0",
     "prettier": "^3.6.2"
   },
   "expo": {
