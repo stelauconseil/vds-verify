@@ -198,9 +198,20 @@ const formatData = (data, lang) => {
       return data.join(" ").trim();
     } else if (typeof data === "boolean") {
       return data ? getLabel("true", lang) : getLabel("false", lang);
-    } else if (data.length < 10) {
-      throw new Error("data is not a date");
-    } else {
+    } else if (typeof data === "string") {
+      // Check if it's a phone number (starts with + and contains mostly digits)
+      if (data.startsWith("+") && /^\+[\d\s\-\(\)]+$/.test(data)) {
+        return formatString(data);
+      }
+
+      // Check if it looks like a date format (contains date separators or ISO format)
+      const datePattern =
+        /^\d{4}-\d{2}-\d{2}|^\d{2}\/\d{2}\/\d{4}|^\d{2}-\d{2}-\d{4}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+      if (!datePattern.test(data) || data.length < 8) {
+        return formatString(data);
+      }
+
+      // Try to parse as date only if it matches date patterns
       let newdate = Date.parse(data);
       if (newdate > 1000) {
         const d = new Date(newdate);
@@ -218,6 +229,8 @@ const formatData = (data, lang) => {
       } else {
         throw new Error("data is not a date");
       }
+    } else {
+      return formatString(data);
     }
   } catch (error) {
     return formatString(data);
