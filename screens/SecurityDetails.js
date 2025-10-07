@@ -17,34 +17,30 @@ const get_standard = (vds_standard) => {
   }
 };
 
+// New reusable homogeneous section title component
+const SectionTitle = ({ iconName, iconColor = "gray", label }) => (
+  <View style={styles.sectionTitleContainer}>
+    <Icon name={iconName} type="ionicon" color={iconColor} />
+    <Text
+      h4
+      h4Style={styles.sectionTitleText}
+      style={styles.sectionTitleTextInner}
+    >
+      {label}
+    </Text>
+  </View>
+);
+
 const SecurityDetails = ({ result, lang, closeModal }) => {
   return (
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
         <ScrollView>
-          <Text
-            h4={true}
-            key="header"
-            h4Style={{
-              color: "black",
-              marginTop: 10,
-              marginBottom: 5,
-            }}
-            style={{ fontVariant: "small-caps", marginBottom: 5 }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 5,
-              }}
-            >
-              <Icon name="browsers-outline" type="ionicon" color="gray" />
-              <Text style={{ fontVariant: "small-caps", marginLeft: 8 }}>
-                {getLabel("header", lang)}
-              </Text>
-            </View>
-          </Text>
+          {/* Homogeneous header title */}
+          <SectionTitle
+            iconName="browsers-outline"
+            label={getLabel("header", lang)}
+          />
           {Object.keys(result.header).map((key) => {
             return (
               result.header[key] !== null && (
@@ -67,36 +63,22 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             );
           })}
           <Divider style={{ marginVertical: 10 }} />
-          <Text
-            h4={true}
-            key="signer"
-            h4style={{
-              color: "black",
-              marginVertical: 10,
-            }}
-            style={{ fontVariant: "small-caps", marginBottom: 5 }}
-          >
-            <Icon
-              name={
-                // result.signer
-                result.sign_is_valid && result.signer
-                  ? "checkmark-circle-outline"
-                  : "alert-circle-outline"
-              }
-              type="ionicon"
-              // color={result.signer ? "green" : "orange"}
-              color={
-                result.sign_is_valid && result.signer
-                  ? "green"
-                  : result.signer
-                    ? "red"
-                    : "orange"
-              }
-              style={{ paddingRight: "10px" }}
-            />
-            &nbsp;
-            {getLabel("signer", lang)}
-          </Text>
+          {/* Homogeneous signer title with dynamic icon color */}
+          <SectionTitle
+            iconName={
+              result.sign_is_valid && result.signer
+                ? "checkmark-circle-outline"
+                : "alert-circle-outline"
+            }
+            iconColor={
+              result.sign_is_valid && result.signer
+                ? "green"
+                : result.signer
+                  ? "red"
+                  : "orange"
+            }
+            label={getLabel("signer", lang)}
+          />
           {result.signer ? (
             Object.keys(result.signer).map((key) => {
               return (
@@ -123,25 +105,11 @@ const SecurityDetails = ({ result, lang, closeModal }) => {
             </Text>
           )}
           <Divider style={{ marginVertical: 10 }} />
-          <Text
-            h4={true}
-            key="standard"
-            h4Style={{
-              color: "black",
-              marginTop: 10,
-              marginBottom: 5,
-            }}
-            style={{ fontVariant: "small-caps", marginBottom: 5 }}
-          >
-            <Icon
-              name="build-outline"
-              type="ionicon"
-              color="gray"
-              style={{ paddingRight: "10px" }}
-            />
-            &nbsp;
-            {getLabel("standard", lang)}
-          </Text>
+          {/* Homogeneous standard title */}
+          <SectionTitle
+            iconName="build-outline"
+            label={getLabel("standard", lang)}
+          />
           <Text key="compliance">
             {getLabel("compliance", lang)}:{" "}
             <Text
@@ -239,12 +207,34 @@ const styles = StyleSheet.create({
     // borderColor: "#d3fdc5",
     width: "100%",
   },
-  // buttonOpen: {
-  //   backgroundColor: "#F194FF",
-  // },
-  // buttonClose: {
-  //   backgroundColor: "#2196F3",
-  // },
+
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+
+  sectionTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 5,
+  },
+
+  sectionTitleText: {
+    color: "black",
+  },
+
+  sectionTitleTextInner: {
+    fontVariant: "small-caps",
+    marginLeft: 8,
+  },
+
   textStyle: {
     color: "white",
     fontWeight: "bold",
