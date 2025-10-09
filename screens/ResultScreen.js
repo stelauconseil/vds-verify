@@ -52,6 +52,7 @@ const formatResult = (data, key, lang) => {
   } else if (
     (typeof data[key] === "string" && data[key] !== "") ||
     typeof data[key] === "number" ||
+    typeof data[key] === "boolean" ||
     (Array.isArray(data[key]) &&
       data[key].every((e) => typeof e === "string" || typeof e === "number"))
   ) {
@@ -104,6 +105,7 @@ const ResultScreen = ({
   setModalVisible,
   navigation,
 }) => {
+  console.log(result);
   const openModal = () => {
     setModalVisible(true);
   };
