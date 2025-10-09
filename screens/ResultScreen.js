@@ -147,17 +147,12 @@ const ResultScreen = ({
         </View>
       )}
       <ScrollView
-        style={{ paddingHorizontal: "5%", paddingTop: 0, paddingBottom: 10 }}
-        containerStyle={{
-          paddingTop: 5,
-          paddingBottom: 0,
-        }}
+        style={{ paddingHorizontal: "5%", paddingTop: 5, paddingBottom: 0 }}
       >
         <Text
           h3={true}
           h3Style={{
             color: "#0069b4",
-            marginBottom: 10,
           }}
         >
           {result.header["Type de document"]}
