@@ -1,6 +1,5 @@
 import React, { type ReactNode } from "react";
-import { Linking } from "react-native";
-import { Text } from "@rneui/themed";
+import { Linking, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const label = {

@@ -1,4 +1,4 @@
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Platform, StyleProp, ViewStyle, View } from "react-native";
 import Constants from "expo-constants";
 import {

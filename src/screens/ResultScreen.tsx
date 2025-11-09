@@ -1,7 +1,8 @@
 import React, { type ReactNode } from "react";
-import { View, ScrollView, Modal, Image } from "react-native";
+import { View, ScrollView, Modal, Image, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text, Divider, Icon } from "@rneui/themed";
+import { Divider } from "@rneui/themed";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { Button as NativeUIButton } from "../components/Button";
 import { getLabel, formatData, isBase64 } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
@@ -121,7 +122,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
         style={{ paddingHorizontal: "5%", paddingTop: 0, paddingBottom: 10 }}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        <Text h3 h3Style={{ color: "#0069b4", marginBottom: 10 }}>
+        <Text style={{ color: "#0069b4", marginBottom: 10, fontSize: 24 }}>
           {result.header["Type de document"] as string}
         </Text>
         <Divider style={{ marginVertical: 10 }} />
@@ -145,7 +146,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
               : getLabel("nonverifiable", lang)
         }
         rightIcon={
-          <Icon
+          <Ionicons
             name="chevron-up-circle-outline"
             type="ionicon"
             size={20}
@@ -167,24 +168,6 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
           color: statusColorText,
           fontSize: 16,
         }}
-        containerStyle={{ padding: 0 }}
-      />
-      <NativeUIButton
-        title={getLabel("scanagain", lang)}
-        onPress={() => {
-          setResult(null);
-          setScanned(false);
-          navigation.navigate("scan");
-        }}
-        buttonStyle={{
-          backgroundColor: "#0069b4",
-          borderWidth: 3,
-          borderColor: "#0069b4",
-          borderRadius: 20,
-          width: "100%",
-          paddingVertical: 14,
-        }}
-        titleStyle={{ color: "white", fontSize: 16 }}
         containerStyle={{ padding: 0 }}
       />
       <Modal

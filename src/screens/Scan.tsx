@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import {
   useNavigation,
   useIsFocused,
   useRoute,
 } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text } from "@rneui/themed";
 import { Button } from "../components/Button";
 import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
@@ -23,7 +21,12 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
   const route = useRoute();
   const navigation = useNavigation<any>();
   const isFocused = useIsFocused();
-  const { result: initialResult } = (route as any).params || {};
+  const {
+    result: initialResult,
+    showStatus,
+    resetScan,
+    resultStatus: statusFromParams,
+  } = (route as any).params || {};
   const [result, setResult] = useState<VdsResult | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
   const [permission, requestPermission] = useCameraPermissions();
@@ -68,14 +71,21 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
   }, [firstUrl]);
 
   // Hide tab bar when showing the result overlay
+  // When a result is present, push its status to tab bar via setOptions
   useEffect(() => {
-    const parent = (navigation as any).getParent?.();
-    if (parent) {
-      parent.setOptions({
-        tabBarStyle: scanned && result ? { display: "none" } : undefined,
-      });
+    if (result) {
+      const status: "valid" | "invalid" | "nonverifiable" =
+        result.sign_is_valid && result.signer
+          ? "valid"
+          : result.signer
+            ? "invalid"
+            : "nonverifiable";
+      // Keep current status if provided via params (e.g., on status icon press)
+      navigation.setParams({ resultStatus: statusFromParams || status });
+    } else {
+      navigation.setParams({ resultStatus: undefined });
     }
-  }, [navigation, scanned, result]);
+  }, [result, statusFromParams, navigation]);
 
   useEffect(() => {
     const subscription: any = Linking.addEventListener("url", onChange);
@@ -92,6 +102,29 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
       setUrl(null);
     }
   }, [url]);
+
+  // Open status modal when requested from tab bar
+  useEffect(() => {
+    if (showStatus && result) {
+      setModalVisible(true);
+      // don't clear resultStatus; only clear the trigger
+      navigation.setParams({ showStatus: undefined } as any);
+    }
+  }, [showStatus, result, navigation]);
+
+  // Reset scanning when scan tab is pressed while a result exists
+  useEffect(() => {
+    if (resetScan) {
+      navigation.setParams({
+        resetScan: undefined,
+        result: undefined,
+        resultStatus: undefined,
+      } as any);
+      setResult(null);
+      setScanned(false);
+      setErrorMessage(null);
+    }
+  }, [resetScan, navigation]);
 
   const parseData = (data: string): string | null => {
     if (data?.startsWith("http")) {
@@ -243,7 +276,10 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
                       title={getLabel("scanagain", lang)}
                       onPress={async () => {
                         try {
-                          navigation.setParams({ result: undefined } as any);
+                          navigation.setParams({
+                            result: undefined,
+                            resultStatus: undefined,
+                          } as any);
                           if (cameraRef.current?.stopAsync) {
                             await cameraRef.current.stopAsync();
                           }

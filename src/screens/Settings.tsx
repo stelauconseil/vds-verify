@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { StyleSheet, View } from "react-native";
-import { Text, ListItem, Icon, Switch } from "@rneui/themed";
+import { StyleSheet, View, Text } from "react-native";
+import { ListItem, Switch } from "@rneui/themed";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel, saveLang } from "../components/Label";
@@ -38,13 +39,17 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     <>
       {isFocused && (
         <View>
-          <Text style={styles.title}>{getLabel("information", lang)}</Text>
+          <Text style={styles.title}>&nbsp;</Text>
           <ListItem
             key="settings-about"
             containerStyle={styles.listTop}
             onPress={() => navigation.navigate("about")}
           >
-            <Icon name="chatbox-ellipses-outline" type="ionicon" color="gray" />
+            <Ionicons
+              name="chatbox-ellipses-outline"
+              type="ionicon"
+              color="gray"
+            />
             <ListItem.Content>
               <ListItem.Title>{getLabel("about", lang)}</ListItem.Title>
             </ListItem.Content>
@@ -55,7 +60,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
             containerStyle={styles.listMiddle}
             onPress={() => navigation.navigate("faq")}
           >
-            <Icon name="help-circle-outline" type="ionicon" color="gray" />
+            <Ionicons name="help-circle-outline" type="ionicon" color="gray" />
             <ListItem.Content>
               <ListItem.Title>{getLabel("faq", lang)}</ListItem.Title>
             </ListItem.Content>
@@ -66,7 +71,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
             containerStyle={styles.listMiddle}
             onPress={() => navigation.navigate("usepolicy")}
           >
-            <Icon name="receipt-outline" type="ionicon" color="gray" />
+            <Ionicons name="receipt-outline" type="ionicon" color="gray" />
             <ListItem.Content>
               <ListItem.Title>{getLabel("usepolicy", lang)}</ListItem.Title>
             </ListItem.Content>
@@ -77,7 +82,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
             containerStyle={styles.listMiddle}
             onPress={() => navigation.navigate("privacypolicy")}
           >
-            <Icon
+            <Ionicons
               name="information-circle-outline"
               type="ionicon"
               color="gray"
@@ -94,7 +99,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
               { justifyContent: "space-between" },
             ]}
           >
-            <Icon name="archive-outline" type="ionicon" color="gray" />
+            <Ionicons name="archive-outline" type="ionicon" color="gray" />
             <ListItem.Content>
               <ListItem.Title>{getLabel("historytoggle", lang)}</ListItem.Title>
             </ListItem.Content>
@@ -106,7 +111,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
               containerStyle={styles.listBotton}
               onPress={() => navigation.navigate("history")}
             >
-              <Icon name="eye-outline" type="ionicon" color="gray" />
+              <Ionicons name="eye-outline" type="ionicon" color="gray" />
               <ListItem.Content>
                 <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
               </ListItem.Content>
@@ -137,7 +142,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "left",
     color: "gray",
-    margin: 20,
+    marginBottom: 0,
+    marginTop: 20,
+    marginLeft: 20,
   },
   listTop: {
     width: "90%",

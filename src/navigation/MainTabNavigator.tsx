@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "@rneui/themed";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { getLabel, getLang } from "../components/Label";
-import HeaderLogoText from "../components/HeaderLogo";
 import Scan from "../screens/Scan";
 import InfoStack from "./InfoStack";
+import CustomTabBar from "./CustomTabBar";
 
 type RootTabParamList = {
   scan: undefined;
@@ -35,17 +35,21 @@ const MainTabNavigator: React.FC = () => {
           } else {
             iconName = focused ? "settings" : "settings-outline";
           }
-          return (
-            <Icon type="ionicon" name={iconName} size={size} color={color} />
-          );
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#0069b4",
         tabBarInactiveTintColor: "gray",
       })}
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen
         name="scan"
-        options={{ title: getLabel("scan", lang || "en") }}
+        options={({ route }) => ({
+          title: getLabel("scan", lang || "en"),
+          // Allow Scan screen to push status into options for CustomTabBar via setOptions
+          // Default values
+          resultStatus: (route.params as any)?.resultStatus,
+        })}
       >
         {() => <Scan {...{ lang: lang || "en" }} />}
       </Tab.Screen>

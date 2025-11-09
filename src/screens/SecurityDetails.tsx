@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
-import { View, ScrollView, StyleSheet, Pressable } from "react-native";
-import { Text, Divider, Icon } from "@rneui/themed";
+import { View, ScrollView, StyleSheet, Pressable, Text } from "react-native";
+import { Divider } from "@rneui/themed";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { Button as NativeUIButton } from "../components/Button";
 import { getLabel, formatData } from "../components/Label";
 import type { VdsResult } from "../types/vds";
@@ -30,7 +31,7 @@ const SectionTitle: React.FC<{
   label: string;
 }> = ({ iconName, iconColor = "gray", label }) => (
   <View style={styles.sectionTitleContainer}>
-    <Icon name={iconName} type="ionicon" color={iconColor} />
+    <Ionicons name={iconName as any} type="ionicon" color={iconColor} />
     <Text
       h4
       h4Style={styles.sectionTitleText}

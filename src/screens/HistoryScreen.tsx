@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
-import { ListItem, Icon } from "@rneui/themed";
+import { ListItem } from "@rneui/themed";
 import { Button } from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";

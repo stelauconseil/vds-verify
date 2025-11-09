@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Image } from "react-native";
-import { Text } from "@rneui/themed";
+import { View, Image, Text } from "react-native";
 // Use require to avoid needing a .d.ts for image modules
 const vdsreaderLogo = require("../assets/icons/icon.png");
 
