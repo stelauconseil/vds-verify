@@ -1,7 +1,10 @@
+import React from "react";
 import { WebView } from "react-native-webview";
 import { getLabel } from "../components/Label";
 
-const Faq = ({ lang }) => {
+type Props = { lang: string };
+
+const Faq: React.FC<Props> = ({ lang }) => {
   return (
     <WebView
       source={{

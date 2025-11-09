@@ -1,3 +1,8 @@
+import type { VdsResult } from "./types/vds";
+
+// Declare from host context; this file just feeds test data.
+declare function setResult(value: VdsResult): void;
+
 setResult({
   data: {
     Genre: "Feminin",

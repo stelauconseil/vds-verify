@@ -1,10 +1,11 @@
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
-import PropTypes from "prop-types";
 
-export default function ScannerView({ scanned }) {
+type Props = { scanned: boolean };
+
+const ScannerView: React.FC<Props> = ({ scanned }) => {
   return (
-    // https://github.com/oblador/react-native-animatable
     <Animatable.View
       style={styles.scannerView}
       animation={scanned ? "fadeOut" : "pulse"}
@@ -16,10 +17,10 @@ export default function ScannerView({ scanned }) {
       <View style={styles.borderBottomRight} />
     </Animatable.View>
   );
-}
+};
 
 const BORDER = {
-  position: "absolute",
+  position: "absolute" as const,
   borderColor: "#fff",
   width: 55,
   height: 55,
@@ -28,10 +29,7 @@ const BORDER_WIDTH = 10;
 const BORDER_RADIUS = 35;
 
 const styles = StyleSheet.create({
-  scannerView: {
-    width: 220,
-    height: 220,
-  },
+  scannerView: { width: 220, height: 220 },
   borderTopLeft: {
     ...BORDER,
     top: 0,
@@ -66,6 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-ScannerView.propTypes = {
-  scanned: PropTypes.bool.isRequired,
-};
+export default ScannerView;

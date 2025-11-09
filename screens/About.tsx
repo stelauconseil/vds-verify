@@ -1,12 +1,11 @@
+import React from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import * as Application from "expo-application";
 import { Text } from "@rneui/themed";
-import PropTypes from "prop-types";
 
-const About = () => {
+const About: React.FC = () => {
   return (
     <View style={styles.left}>
-      {/* <Image style={{ width: 30, height: 30 }} source={logo} /> */}
       <Text style={styles.title}>
         {Application.applicationName} {Application.nativeApplicationVersion}{" "}
         (build {Application.nativeBuildVersion})
@@ -22,11 +21,8 @@ const About = () => {
 };
 
 const styles = StyleSheet.create({
-  center: {
+  left: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-    textAlign: "left",
   },
   title: {
     fontSize: 16,
@@ -34,9 +30,5 @@ const styles = StyleSheet.create({
     margin: 20,
   },
 });
-
-About.propTypes = {
-  lang: PropTypes.string.isRequired,
-};
 
 export default About;

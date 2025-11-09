@@ -1,8 +1,10 @@
+import React from "react";
 import { WebView } from "react-native-webview";
 import { getLabel } from "../components/Label";
-import PropTypes from "prop-types";
 
-const PrivacyPolicy = ({ lang }) => {
+type Props = { lang: string };
+
+const UsePolicy: React.FC<Props> = ({ lang }) => {
   return (
     <WebView
       source={{
@@ -12,8 +14,4 @@ const PrivacyPolicy = ({ lang }) => {
   );
 };
 
-PrivacyPolicy.propTypes = {
-  lang: PropTypes.string.isRequired,
-};
-
-export default PrivacyPolicy;
+export default UsePolicy;

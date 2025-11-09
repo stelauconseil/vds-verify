@@ -6,10 +6,15 @@ import HeaderLogoText from "../components/HeaderLogo";
 import Scan from "../screens/Scan";
 import InfoStack from "./InfoStack";
 
-const Tab = createBottomTabNavigator();
+type RootTabParamList = {
+  scan: undefined;
+  settings: undefined;
+};
 
-const MainTabNavigator = () => {
-  const [lang, setLang] = useState(null);
+const Tab = createBottomTabNavigator<RootTabParamList>();
+
+const MainTabNavigator: React.FC = () => {
+  const [lang, setLang] = useState<string | null>(null);
 
   useEffect(() => {
     const getLangAsync = async () => {
@@ -22,11 +27,12 @@ const MainTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName: string | undefined;
           if (route.name === "scan") {
             iconName = focused ? "qr-code-outline" : "qr-code";
-          } else if (route.name === "settings") {
+          } else {
             iconName = focused ? "settings" : "settings-outline";
           }
           return (
@@ -39,23 +45,15 @@ const MainTabNavigator = () => {
     >
       <Tab.Screen
         name="scan"
-        options={{
-          headerTitle: () => <HeaderLogoText />,
-          headerTitleAlign: "center",
-          title: getLabel("scan", lang),
-        }}
+        options={{ title: getLabel("scan", lang || "en") }}
       >
-        {() => <Scan {...{ lang }} />}
+        {() => <Scan {...{ lang: lang || "en" }} />}
       </Tab.Screen>
       <Tab.Screen
         name="settings"
-        options={{
-          headerTitle: () => <HeaderLogoText />,
-          headerTitleAlign: "center",
-          title: getLabel("settings", lang),
-        }}
+        options={{ title: getLabel("settings", lang || "en") }}
       >
-        {() => <InfoStack {...{ lang, setLang }} />}
+        {() => <InfoStack {...{ lang: lang || "en", setLang }} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

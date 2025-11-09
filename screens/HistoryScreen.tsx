@@ -2,19 +2,21 @@ import React, { useState, useCallback } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { ListItem, Button, Icon } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import PropTypes from "prop-types";
-import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import { useFocusEffect } from "@react-navigation/native";
 import { formatData, getLabel } from "../components/Label";
 
-const HistoryScreen = ({ navigation, lang }) => {
-  const [history, setHistory] = useState([]);
+type HistoryEntry = { timestamp: string; data: any };
+type Props = { navigation: any; lang: string };
 
-  // Fetch history whenever the screen comes into focus
+const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+
   useFocusEffect(
     useCallback(() => {
       const fetchHistory = async () => {
-        const storedHistory =
-          JSON.parse(await AsyncStorage.getItem("scanHistory")) || [];
+        const storedHistory = JSON.parse(
+          (await AsyncStorage.getItem("scanHistory")) || "[]"
+        ) as HistoryEntry[];
         setHistory(storedHistory);
       };
       fetchHistory();
@@ -23,9 +25,8 @@ const HistoryScreen = ({ navigation, lang }) => {
 
   const deleteHistory = async () => {
     try {
-      await AsyncStorage.removeItem("scanHistory"); // Remove the history from AsyncStorage
-      setHistory([]); // Clear the local state
-      console.log("History deleted successfully");
+      await AsyncStorage.removeItem("scanHistory");
+      setHistory([]);
     } catch (error) {
       console.error("Failed to delete history:", error);
     }
@@ -44,7 +45,7 @@ const HistoryScreen = ({ navigation, lang }) => {
                   ? styles.listBotton
                   : styles.listMiddle
             }
-            onPress={() => navigation.navigate("scan", { result: l.data })} // Navigate to Scan with parameters
+            onPress={() => navigation.navigate("scan", { result: l.data })}
           >
             <ListItem.Content>
               <ListItem.Title>{formatData(l.timestamp, lang)}</ListItem.Title>
@@ -59,13 +60,12 @@ const HistoryScreen = ({ navigation, lang }) => {
           </ListItem>
         ))}
       </ScrollView>
-
       <View style={styles.buttonContainer}>
         <Button
-          onPress={() => deleteHistory()}
+          onPress={deleteHistory}
           title={getLabel("deleteHistory", lang)}
           icon={<Icon name="trash-outline" type="ionicon" color="white" />}
-          iconRight={true}
+          iconRight
           buttonStyle={styles.button}
           titleStyle={styles.buttonTitle}
         />
@@ -75,19 +75,9 @@ const HistoryScreen = ({ navigation, lang }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  center: {
-    flex: 1,
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-  buttonContainer: {
-    padding: 10,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
+  center: { flex: 1, paddingTop: 20, paddingBottom: 20 },
+  buttonContainer: { padding: 10, backgroundColor: "#fff" },
   button: {
     backgroundColor: "#0069b4",
     borderWidth: 2,
@@ -107,11 +97,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
-  listMiddle: {
-    width: "85%",
-    alignSelf: "center",
-    overflow: "hidden",
-  },
+  listMiddle: { width: "85%", alignSelf: "center", overflow: "hidden" },
   listBotton: {
     width: "85%",
     alignSelf: "center",
@@ -120,9 +106,5 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
 });
-
-HistoryScreen.propTypes = {
-  lang: PropTypes.string.isRequired,
-};
 
 export default HistoryScreen;

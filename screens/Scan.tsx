@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,
   useIsFocused,
@@ -15,34 +14,33 @@ import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
-import PropTypes from "prop-types";
+import type { VdsResult } from "../types/vds";
 
-const Scan = ({ lang }) => {
+type ScanProps = { lang?: string };
+
+const Scan: React.FC<ScanProps> = ({ lang }) => {
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const isFocused = useIsFocused();
-  const { result: initialResult } = route.params || {}; // Access the result parameter
-  const [result, setResult] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  const { result: initialResult } = (route as any).params || {};
+  const [result, setResult] = useState<VdsResult | null>(null);
+  const [scanned, setScanned] = useState<boolean>(false);
   const [permission, requestPermission] = useCameraPermissions();
-  const cameraRef = React.useRef(null);
+  const cameraRef = useRef<any>(null);
 
-  // Handle initial result from navigation
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialResult && typeof initialResult === "object") {
-      // Process the result if it's valid
-      setResult(initialResult);
+      setResult(initialResult as VdsResult);
       setScanned(true);
     }
   }, [initialResult]);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [firstUrl, setFirstUrl] = useState(true);
-  const [url, setUrl] = useState(null);
 
-  const onChange = (event) => {
-    setUrl(event.url);
-  };
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [firstUrl, setFirstUrl] = useState<boolean>(true);
+  const [url, setUrl] = useState<string | null>(null);
+
+  const onChange = (event: { url: string }) => setUrl(event.url);
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -51,32 +49,35 @@ const Scan = ({ lang }) => {
         if (status !== "granted") {
           setErrorMessage("error_camera_permission");
         }
-      } catch (error) {
-        console.error("Camera permission error:", error);
+      } catch {
         setErrorMessage("error_camera_permission");
       }
     };
-
     getCameraPermission();
-
     return () => {
-      // Cleanup camera
-      if (cameraRef.current) {
+      if (cameraRef.current?.stopAsync) {
         cameraRef.current.stopAsync();
       }
     };
   }, [requestPermission]);
 
-  // This effect is now handled in the component initialization above
-  // Removed to prevent duplicate state updates
-
   useEffect(() => {
-    Linking.getInitialURL().then((url) => setUrl(url));
+    Linking.getInitialURL().then((u) => setUrl(u as string | null));
     setFirstUrl(false);
   }, [firstUrl]);
 
+  // Hide tab bar when showing the result overlay
   useEffect(() => {
-    const subscription = Linking.addEventListener("url", onChange);
+    const parent = (navigation as any).getParent?.();
+    if (parent) {
+      parent.setOptions({
+        tabBarStyle: scanned && result ? { display: "none" } : undefined,
+      });
+    }
+  }, [navigation, scanned, result]);
+
+  useEffect(() => {
+    const subscription: any = Linking.addEventListener("url", onChange);
     return () => subscription.remove();
   }, []);
 
@@ -91,12 +92,10 @@ const Scan = ({ lang }) => {
     }
   }, [url]);
 
-  const parseData = (data) => {
+  const parseData = (data: string): string | null => {
     if (data?.startsWith("http")) {
       const lastIndex = data.lastIndexOf("/vds#");
-      if (lastIndex === -1 || lastIndex === data.length - 1) {
-        return null;
-      }
+      if (lastIndex === -1 || lastIndex === data.length - 1) return null;
       return Buffer.from(data.substring(lastIndex + 5)).toString("base64");
     } else if (data.startsWith("vds")) {
       return Buffer.from(data.substring(6)).toString("base64");
@@ -105,15 +104,14 @@ const Scan = ({ lang }) => {
     }
   };
 
-  const processResult = async ({ data }) => {
-    const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL;
+  const processResult = async ({ data }: { data: string }) => {
+    const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
     setScanned(true);
-    let b64encodedvds = parseData(data);
+    const b64encodedvds = parseData(data);
     if (b64encodedvds === null) {
       setErrorMessage("error_invalid_qr");
       return;
     }
-
     try {
       const response = await fetch(`${apiUrl}/api/v1/decode`, {
         method: "POST",
@@ -121,28 +119,25 @@ const Scan = ({ lang }) => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          vds: b64encodedvds,
-        }),
+        body: JSON.stringify({ vds: b64encodedvds }),
       });
-
       const { success, message, vds } = await response.json();
       if (success === true) {
-        // Only save to history if historyEnabled is true in AsyncStorage
         const historyEnabled =
           (await AsyncStorage.getItem("historyEnabled")) !== "false";
         if (historyEnabled) {
-          const history =
-            JSON.parse(await AsyncStorage.getItem("scanHistory")) || [];
+          const history = JSON.parse(
+            (await AsyncStorage.getItem("scanHistory")) || "[]"
+          );
           const newEntry = { timestamp: new Date().toISOString(), data: vds };
           history.unshift(newEntry);
           await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
         }
-        setResult(vds);
+        setResult(vds as VdsResult);
       } else {
         setErrorMessage(message);
       }
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage(error.message);
     }
   };
@@ -156,7 +151,7 @@ const Scan = ({ lang }) => {
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ScrollView style={{ paddingHorizontal: "5%" }}>
           <Text
-            h1={true}
+            h1
             h1Style={{
               color: "#0069b4",
               alignSelf: "center",
@@ -166,13 +161,7 @@ const Scan = ({ lang }) => {
           >
             ⚠️ {getLabel("error", lang)}
           </Text>
-          <Text
-            style={{
-              color: "#0069b4",
-              alignSelf: "center",
-              fontSize: 20,
-            }}
-          >
+          <Text style={{ color: "#0069b4", alignSelf: "center", fontSize: 20 }}>
             {getLabel("cameraerror", lang)}
           </Text>
         </ScrollView>
@@ -184,10 +173,7 @@ const Scan = ({ lang }) => {
             borderColor: "#0069b4",
             width: "100%",
           }}
-          containerStyle={{
-            paddingTop: 5,
-            paddingBottom: 0,
-          }}
+          containerStyle={{ paddingTop: 5, paddingBottom: 0 }}
           titleStyle={{ color: "white" }}
           onPress={Linking.openSettings}
         />
@@ -198,16 +184,16 @@ const Scan = ({ lang }) => {
   return (
     <>
       {isFocused && (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
           {!scanned && permission ? (
-            <>
+            <View style={{ flex: 1 }}>
               <CameraView
                 ref={cameraRef}
                 zoom={0.15}
                 barcodeScannerSettings={{
                   barcodeTypes: ["qr", "datamatrix", "aztec"],
                 }}
-                onBarcodeScanned={scanned ? undefined : processResult}
+                onBarcodeScanned={scanned ? undefined : (processResult as any)}
                 style={StyleSheet.absoluteFillObject}
               />
               <View style={styles.helpTextWrapper}>
@@ -218,15 +204,14 @@ const Scan = ({ lang }) => {
               <View style={styles.content}>
                 <ScannerView scanned={scanned} />
               </View>
-            </>
+            </View>
           ) : (
             <>
               {scanned && result && (
                 <ResultScreen
                   result={result}
-                  lang={lang}
+                  lang={lang || "en"}
                   setResult={setResult}
-                  setErrorMessage={setErrorMessage}
                   setScanned={setScanned}
                   modalVisible={modalVisible}
                   setModalVisible={setModalVisible}
@@ -237,7 +222,7 @@ const Scan = ({ lang }) => {
                 <View style={{ flex: 1, backgroundColor: "white" }}>
                   <ScrollView style={{ paddingHorizontal: "5%" }}>
                     <Text
-                      h1={true}
+                      h1
                       h1Style={{
                         color: "#0069b4",
                         alignSelf: "center",
@@ -265,31 +250,18 @@ const Scan = ({ lang }) => {
                       borderColor: "#0069b4",
                       width: "100%",
                     }}
-                    containerStyle={{
-                      paddingTop: 5,
-                      paddingBottom: 0,
-                    }}
+                    containerStyle={{ paddingTop: 5, paddingBottom: 0 }}
                     titleStyle={{ color: "white" }}
                     onPress={async () => {
                       try {
-                        // Clear navigation state
-                        navigation.setParams({
-                          result: undefined,
-                        });
-
-                        // Stop camera if it's running
-                        if (cameraRef.current) {
+                        navigation.setParams({ result: undefined } as any);
+                        if (cameraRef.current?.stopAsync) {
                           await cameraRef.current.stopAsync();
                         }
-
-                        // Clear local state
-                        await Promise.all([
-                          setResult(null),
-                          setScanned(false),
-                          setErrorMessage(null),
-                        ]);
-                      } catch (error) {
-                        console.error("Error resetting scan state:", error);
+                        setResult(null);
+                        setScanned(false);
+                        setErrorMessage(null);
+                      } catch {
                         setErrorMessage("error_resetting_scan");
                       }
                     }}
@@ -298,7 +270,7 @@ const Scan = ({ lang }) => {
               )}
             </>
           )}
-        </SafeAreaView>
+        </View>
       )}
     </>
   );
@@ -307,8 +279,7 @@ const Scan = ({ lang }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#000",
   },
   content: {
     ...StyleSheet.absoluteFillObject,
@@ -328,9 +299,5 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
 });
-
-Scan.propTypes = {
-  lang: PropTypes.string,
-};
 
 export default Scan;

@@ -5,24 +5,28 @@ import { Text, ListItem, Icon, Switch } from "@rneui/themed";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel, saveLang } from "../components/Label";
-import PropTypes from "prop-types";
 
-function SettingsView({
-  navigation: navigation,
-  lang: lang,
-  setLang: setLang,
-}) {
+type SettingsViewProps = {
+  navigation: any;
+  lang: string;
+  setLang: (l: string) => void;
+};
+
+const SettingsView: React.FC<SettingsViewProps> = ({
+  navigation,
+  lang,
+  setLang,
+}) => {
   const isFocused = useIsFocused();
-  const [historyEnabled, setHistoryEnabled] = useState(false);
+  const [historyEnabled, setHistoryEnabled] = useState<boolean>(false);
 
   useEffect(() => {
-    // Load the toggle state from AsyncStorage
     AsyncStorage.getItem("historyEnabled").then((value) => {
       if (value !== null) setHistoryEnabled(value === "true");
     });
   }, [isFocused]);
 
-  const toggleHistory = async (value) => {
+  const toggleHistory = async (value: boolean) => {
     setHistoryEnabled(value);
     await AsyncStorage.setItem("historyEnabled", value.toString());
     if (!value) {
@@ -35,7 +39,6 @@ function SettingsView({
       {isFocused && (
         <View>
           <Text style={styles.title}>{getLabel("information", lang)}</Text>
-
           <ListItem
             key="settings-about"
             containerStyle={styles.listTop}
@@ -47,7 +50,6 @@ function SettingsView({
             </ListItem.Content>
             <ListItem.Chevron />
           </ListItem>
-
           <ListItem
             key="settings-faq"
             containerStyle={styles.listMiddle}
@@ -59,7 +61,6 @@ function SettingsView({
             </ListItem.Content>
             <ListItem.Chevron />
           </ListItem>
-
           <ListItem
             key="settings-usepolicy"
             containerStyle={styles.listMiddle}
@@ -71,7 +72,6 @@ function SettingsView({
             </ListItem.Content>
             <ListItem.Chevron />
           </ListItem>
-
           <ListItem
             key="settings-privacypolicy"
             containerStyle={styles.listMiddle}
@@ -87,8 +87,6 @@ function SettingsView({
             </ListItem.Content>
             <ListItem.Chevron />
           </ListItem>
-
-          {/* History toggle */}
           <ListItem
             key="settings-history-toggle"
             containerStyle={[
@@ -102,8 +100,6 @@ function SettingsView({
             </ListItem.Content>
             <Switch value={historyEnabled} onValueChange={toggleHistory} />
           </ListItem>
-
-          {/* History Button - only show if historyEnabled */}
           {historyEnabled && (
             <ListItem
               key="settings-history"
@@ -117,12 +113,11 @@ function SettingsView({
               <ListItem.Chevron />
             </ListItem>
           )}
-
           <Text style={styles.title}>{getLabel("language", lang)}</Text>
           <Picker
             style={styles.picker}
             itemStyle={styles.pickerItem}
-            selectedValue={lang || "en"} // Fallback to "en" if lang is undefined
+            selectedValue={lang || "en"}
             onValueChange={(itemValue) => {
               setLang(itemValue);
               saveLang(itemValue);
@@ -135,27 +130,14 @@ function SettingsView({
       )}
     </>
   );
-}
-
-SettingsView.propTypes = {
-  lang: PropTypes.string.isRequired,
-  setLang: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-    textAlign: "center",
-    // color: "#0069b4",
-  },
   title: {
     fontSize: 16,
     textAlign: "left",
     color: "gray",
     margin: 20,
-    fontVariant: "small-caps",
   },
   listTop: {
     width: "90%",
@@ -164,11 +146,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
-  listMiddle: {
-    width: "90%",
-    alignSelf: "center",
-    overflow: "hidden",
-  },
+  listMiddle: { width: "90%", alignSelf: "center", overflow: "hidden" },
   listBotton: {
     width: "90%",
     alignSelf: "center",
@@ -182,10 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     color: "gray",
   },
-  pickerItem: {
-    color: "gray",
-    fontSize: 16,
-  },
+  pickerItem: { color: "gray", fontSize: 16 },
 });
 
 export default SettingsView;

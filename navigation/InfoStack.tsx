@@ -1,3 +1,4 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SettingsView from "../screens/Settings";
 import About from "../screens/About";
@@ -6,19 +7,28 @@ import PrivacyPolicy from "../screens/PrivacyPolicy";
 import Faq from "../screens/Faq";
 import HistoryScreen from "../screens/HistoryScreen";
 import { getLabel } from "../components/Label";
-import PropTypes from "prop-types";
 
-const Stack = createNativeStackNavigator();
+type InfoStackParamList = {
+  settingsView: undefined;
+  about: undefined;
+  faq: undefined;
+  usepolicy: undefined;
+  privacypolicy: undefined;
+  history: undefined;
+};
 
-const InfoStack = ({ lang, setLang }) => {
+type InfoStackProps = {
+  lang: string;
+  setLang: (l: string) => void;
+};
+
+const Stack = createNativeStackNavigator<InfoStackParamList>();
+
+const InfoStack: React.FC<InfoStackProps> = ({ lang, setLang }) => {
   return (
     <Stack.Navigator
       initialRouteName="settingsView"
-      screenOptions={{
-        headerTitleAlign: "center",
-        // headerTintColor: "white",
-        // headerStyle: { backgroundColor: "#0069b4" },
-      }}
+      screenOptions={{ headerTitleAlign: "center" }}
     >
       <Stack.Screen
         name="settingsView"
@@ -86,11 +96,6 @@ const InfoStack = ({ lang, setLang }) => {
       </Stack.Screen>
     </Stack.Navigator>
   );
-};
-
-InfoStack.propTypes = {
-  lang: PropTypes.string.isRequired,
-  setLang: PropTypes.func.isRequired,
 };
 
 export default InfoStack;
