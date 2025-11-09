@@ -26,6 +26,7 @@ yarn-error.log*
 
 # expo
 .expo/*
+.expo/
 .env
 pc-api-7507057973859638017-998-e9dd35e8b4ec.json
 
@@ -33,6 +34,9 @@ pc-api-7507057973859638017-998-e9dd35e8b4ec.json
 ios/
 android/
 .idea/
+
+# bun
+bun.lock
 
 # github pages
 docs/_site/*

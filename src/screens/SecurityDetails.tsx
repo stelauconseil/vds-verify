@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
-import { Text, Button, Divider, Icon } from "@rneui/themed";
+import { Text, Divider, Icon } from "@rneui/themed";
+import { Button as NativeUIButton } from "../components/Button";
 import { getLabel, formatData } from "../components/Label";
 import type { VdsResult } from "../types/vds";
 
@@ -133,32 +134,12 @@ const SecurityDetails: React.FC<Props> = ({ result, lang, closeModal }) => {
         </ScrollView>
         <View style={{ width: "100%", paddingBottom: 10 }}>
           <Pressable>
-            <Button
+            <NativeUIButton
               onPress={closeModal}
               title={getLabel("close", lang)}
-              icon={
-                <Icon
-                  name="close-circle-outline"
-                  type="ionicon"
-                  color="white"
-                  style={{ marginLeft: 10 }}
-                />
-              }
-              buttonStyle={{
-                backgroundColor: "#0069b4",
-                borderWidth: 3,
-                borderRadius: 20,
-                borderColor: "#0069b4",
-                width: "100%",
-                flexDirection: "row",
-              }}
-              titleStyle={{ flex: 1, textAlign: "center", color: "white" }}
-              containerStyle={{
-                paddingLeft: 0,
-                paddingRight: 0,
-                paddingBottom: 0,
-                paddingTop: 10,
-              }}
+              variant="primary"
+              containerStyle={{ width: "100%" }}
+              titleStyle={{ color: "white", fontSize: 16 }}
             />
           </Pressable>
         </View>

@@ -8,7 +8,8 @@ import {
 import { CameraView, useCameraPermissions } from "expo-camera";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, Button } from "@rneui/themed";
+import { Text } from "@rneui/themed";
+import { Button } from "../components/Button";
 import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
@@ -165,18 +166,13 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
             {getLabel("cameraerror", lang)}
           </Text>
         </ScrollView>
-        <Button
-          title={getLabel("camerapermission", lang)}
-          buttonStyle={{
-            backgroundColor: "#0069b4",
-            borderWidth: 2,
-            borderColor: "#0069b4",
-            width: "100%",
-          }}
-          containerStyle={{ paddingTop: 5, paddingBottom: 0 }}
-          titleStyle={{ color: "white" }}
-          onPress={Linking.openSettings}
-        />
+        <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
+          <Button
+            title={getLabel("camerapermission", lang)}
+            onPress={Linking.openSettings}
+            containerStyle={{ width: "100%" }}
+          />
+        </View>
       </View>
     );
   }
@@ -242,30 +238,25 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
                       {getLabel(errorMessage, lang)}
                     </Text>
                   </ScrollView>
-                  <Button
-                    title={getLabel("scanagain", lang)}
-                    buttonStyle={{
-                      backgroundColor: "#0069b4",
-                      borderWidth: 2,
-                      borderColor: "#0069b4",
-                      width: "100%",
-                    }}
-                    containerStyle={{ paddingTop: 5, paddingBottom: 0 }}
-                    titleStyle={{ color: "white" }}
-                    onPress={async () => {
-                      try {
-                        navigation.setParams({ result: undefined } as any);
-                        if (cameraRef.current?.stopAsync) {
-                          await cameraRef.current.stopAsync();
+                  <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
+                    <Button
+                      title={getLabel("scanagain", lang)}
+                      onPress={async () => {
+                        try {
+                          navigation.setParams({ result: undefined } as any);
+                          if (cameraRef.current?.stopAsync) {
+                            await cameraRef.current.stopAsync();
+                          }
+                          setResult(null);
+                          setScanned(false);
+                          setErrorMessage(null);
+                        } catch {
+                          setErrorMessage("error_resetting_scan");
                         }
-                        setResult(null);
-                        setScanned(false);
-                        setErrorMessage(null);
-                      } catch {
-                        setErrorMessage("error_resetting_scan");
-                      }
-                    }}
-                  />
+                      }}
+                      containerStyle={{ width: "100%" }}
+                    />
+                  </View>
                 </View>
               )}
             </>

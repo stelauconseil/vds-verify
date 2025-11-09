@@ -15,5 +15,5 @@
     "types": ["react", "react-native"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "screens", "components", "navigation"]
 }

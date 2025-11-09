@@ -1,7 +1,8 @@
 import React, { type ReactNode } from "react";
 import { View, ScrollView, Modal, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text, Button, Divider, Icon } from "@rneui/themed";
+import { Text, Divider, Icon } from "@rneui/themed";
+import { Button as NativeUIButton } from "../components/Button";
 import { getLabel, formatData, isBase64 } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import type { VdsResult } from "../types/vds";
@@ -57,7 +58,7 @@ const formatResult = (
           </Text>
         )}
         <View style={{ marginLeft: 10 }}>
-          {Object.keys(data[key]).map((k) => formatResult(data[key], k), lang)}
+          {Object.keys(data[key]).map((k) => formatResult(data[key], k, lang))}
         </View>
       </View>
     );
@@ -90,6 +91,19 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
 
   const insets = useSafeAreaInsets();
 
+  const statusColorBg =
+    result.sign_is_valid && result.signer
+      ? "#d3fdc5"
+      : result.signer
+        ? "#ff95a1"
+        : "#ffcc99";
+  const statusColorText =
+    result.sign_is_valid && result.signer
+      ? "green"
+      : result.signer
+        ? "red"
+        : "orange";
+
   return (
     <View
       style={{
@@ -121,7 +135,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
           })
           .map((key) => formatResult(result.data, key, lang))}
       </ScrollView>
-      <Button
+      <NativeUIButton
         onPress={openModal}
         title={
           result.sign_is_valid && result.signer
@@ -130,66 +144,48 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
               ? getLabel("invalid", lang)
               : getLabel("nonverifiable", lang)
         }
-        icon={
+        rightIcon={
           <Icon
             name="chevron-up-circle-outline"
             type="ionicon"
-            color={
-              result.sign_is_valid && result.signer
-                ? "green"
-                : result.signer
-                  ? "red"
-                  : "orange"
-            }
+            size={20}
+            color={statusColorText}
           />
         }
-        iconRight
         buttonStyle={{
-          backgroundColor:
-            result.sign_is_valid && result.signer
-              ? "#d3fdc5"
-              : result.signer
-                ? "#ff95a1"
-                : "#ffcc99",
+          backgroundColor: statusColorBg,
           borderWidth: 3,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          borderColor:
-            result.sign_is_valid && result.signer
-              ? "#d3fdc5"
-              : result.signer
-                ? "#ff95a1"
-                : "#ffcc99",
+          borderRadius: 20,
+          borderColor: statusColorBg,
           width: "100%",
+          paddingVertical: 14,
+          alignItems: "center",
+          justifyContent: "center",
         }}
         titleStyle={{
-          flex: 1,
           textAlign: "center",
-          color:
-            result.sign_is_valid && result.signer
-              ? "green"
-              : result.signer
-                ? "red"
-                : "orange",
+          color: statusColorText,
+          fontSize: 16,
         }}
         containerStyle={{ padding: 0 }}
       />
-      <Button
+      <NativeUIButton
         title={getLabel("scanagain", lang)}
-        buttonStyle={{
-          backgroundColor: "#0069b4",
-          borderWidth: 3,
-          borderColor: "#0069b4",
-          borderRadius: 0,
-          width: "100%",
-        }}
-        containerStyle={{ padding: 0 }}
-        titleStyle={{ color: "white" }}
         onPress={() => {
           setResult(null);
           setScanned(false);
           navigation.navigate("scan");
         }}
+        buttonStyle={{
+          backgroundColor: "#0069b4",
+          borderWidth: 3,
+          borderColor: "#0069b4",
+          borderRadius: 20,
+          width: "100%",
+          paddingVertical: 14,
+        }}
+        titleStyle={{ color: "white", fontSize: 16 }}
+        containerStyle={{ padding: 0 }}
       />
       <Modal
         animationType="slide"

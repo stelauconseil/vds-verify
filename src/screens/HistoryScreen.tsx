@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
-import { ListItem, Button, Icon } from "@rneui/themed";
+import { ListItem, Icon } from "@rneui/themed";
+import { Button } from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatData, getLabel } from "../components/Label";
@@ -64,10 +65,8 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
         <Button
           onPress={deleteHistory}
           title={getLabel("deleteHistory", lang)}
-          icon={<Icon name="trash-outline" type="ionicon" color="white" />}
-          iconRight
-          buttonStyle={styles.button}
-          titleStyle={styles.buttonTitle}
+          variant="danger"
+          containerStyle={{ width: "100%" }}
         />
       </View>
     </View>
