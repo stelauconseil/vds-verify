@@ -1,10 +1,7 @@
 import React, { type ReactNode } from "react";
 import { View, ScrollView, Modal, Image, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Divider } from "@rneui/themed";
-import Ionicons from "@expo/vector-icons/build/Ionicons";
-import { Button as NativeUIButton } from "../components/Button";
-import { getLabel, formatData, isBase64 } from "../components/Label";
+import { formatData, isBase64 } from "../components/Label";
 import SecurityDetails from "./SecurityDetails";
 import type { VdsResult } from "../types/vds";
 
@@ -125,7 +122,6 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
         <Text style={{ color: "#0069b4", marginBottom: 10, fontSize: 24 }}>
           {result.header["Type de document"] as string}
         </Text>
-        <Divider style={{ marginVertical: 10 }} />
         {Object.keys(result.data)
           .filter((key) => {
             return (
@@ -136,40 +132,6 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
           })
           .map((key) => formatResult(result.data, key, lang))}
       </ScrollView>
-      <NativeUIButton
-        onPress={openModal}
-        title={
-          result.sign_is_valid && result.signer
-            ? getLabel("valid", lang)
-            : result.signer
-              ? getLabel("invalid", lang)
-              : getLabel("nonverifiable", lang)
-        }
-        rightIcon={
-          <Ionicons
-            name="chevron-up-circle-outline"
-            type="ionicon"
-            size={20}
-            color={statusColorText}
-          />
-        }
-        buttonStyle={{
-          backgroundColor: statusColorBg,
-          borderWidth: 3,
-          borderRadius: 20,
-          borderColor: statusColorBg,
-          width: "100%",
-          paddingVertical: 14,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        titleStyle={{
-          textAlign: "center",
-          color: statusColorText,
-          fontSize: 16,
-        }}
-        containerStyle={{ padding: 0 }}
-      />
       <Modal
         animationType="slide"
         transparent

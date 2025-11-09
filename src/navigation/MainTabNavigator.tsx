@@ -4,7 +4,6 @@ import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { getLabel, getLang } from "../components/Label";
 import Scan from "../screens/Scan";
 import InfoStack from "./InfoStack";
-import CustomTabBar from "./CustomTabBar";
 
 type RootTabParamList = {
   scan: undefined;
@@ -35,12 +34,12 @@ const MainTabNavigator: React.FC = () => {
           } else {
             iconName = focused ? "settings" : "settings-outline";
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#0069b4",
         tabBarInactiveTintColor: "gray",
       })}
-      tabBar={(props) => <CustomTabBar {...props} />}
+      tabBar={() => null}
     >
       <Tab.Screen
         name="scan"

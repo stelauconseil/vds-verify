@@ -1,5 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { TouchableOpacity } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import SettingsView from "../screens/Settings";
 import About from "../screens/About";
 import UsePolicy from "../screens/UsePolicy";
@@ -32,11 +34,21 @@ const InfoStack: React.FC<InfoStackProps> = ({ lang, setLang }) => {
     >
       <Stack.Screen
         name="settingsView"
-        options={{
+        options={({ navigation }) => ({
           headerTitle: getLabel("settings", lang),
           headerTitleAlign: "center",
           headerBackButtonDisplayMode: "minimal",
-        }}
+          headerLeft: () => (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={getLabel("scan", lang)}
+              onPress={() => navigation.navigate("scan" as never)}
+              style={{ paddingHorizontal: 6 }}
+            >
+              <Ionicons name="chevron-back-outline" size={24} color="#0069b4" />
+            </TouchableOpacity>
+          ),
+        })}
       >
         {(props) => (
           <SettingsView key={"settings"} {...props} {...{ lang, setLang }} />

@@ -1,117 +1,113 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
-import Ionicons from "@expo/vector-icons/build/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { BlurView } from "expo-blur";
 
-type CustomTabBarProps = BottomTabBarProps & {
-  // Injected via route params on scan screen when a result is present
-};
+type CustomTabBarProps = BottomTabBarProps;
 
 const CustomTabBar: React.FC<CustomTabBarProps> = ({
   state,
   descriptors,
   navigation,
 }) => {
-  // Detect if we are on the scan tab and if it has a result (via params)
-  const scanIndex = state.routes.findIndex((r) => r.name === "scan");
-  const scanRoute = state.routes[scanIndex];
-  // For future use: route params/state could drive conditional status icon
-  const scanOptions = descriptors[scanRoute?.key || ""]?.options as any;
+  // Determine if Scan has a result to alter appearance/behavior
+  const scanRoute = state.routes.find((r) => r.name === "scan");
+  const scanOptions = scanRoute
+    ? (descriptors[scanRoute.key]?.options as any)
+    : undefined;
   const resultStatus = scanOptions?.resultStatus as
     | "valid"
     | "invalid"
     | "nonverifiable"
     | undefined;
-
-  const statusMeta: Record<string, { color: string; icon: string }> = {
-    valid: { color: "green", icon: "shield-checkmark" },
-    invalid: { color: "red", icon: "shield" },
-    nonverifiable: { color: "orange", icon: "help-circle" },
-  };
+  const hasResult = !!resultStatus;
 
   return (
-    <View style={styles.container}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
+    <View style={styles.wrapper}>
+      <BlurView intensity={40} tint="light" style={styles.glass}>
+        <View style={styles.container}>
+          {state.routes.map((route, index) => {
+            const { options } = descriptors[route.key];
+            const label =
+              options.tabBarLabel !== undefined
+                ? options.tabBarLabel
+                : options.title !== undefined
+                  ? options.title
+                  : route.name;
 
-        const isFocused = state.index === index;
-        const isScan = route.name === "scan";
-        const hasResult = !!resultStatus;
+            const isFocused = state.index === index;
+            const isScan = route.name === "scan";
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (event.defaultPrevented) return;
-          // If we are on scan tab and a result exists, treat press as reset scan
-          if (isScan && hasResult) {
-            // Use a changing value to ensure params update even if already focused
-            navigation.navigate("scan", { resetScan: Date.now() });
-            return;
-          }
-          if (!isFocused) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            const onPress = () => {
+              const event = navigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (event.defaultPrevented) return;
+              if (isScan && hasResult) {
+                navigation.navigate("scan", { resetScan: Date.now() });
+                return;
+              }
+              if (!isFocused) {
+                navigation.navigate(route.name, route.params);
+              }
+            };
 
-        const iconName =
-          route.name === "scan"
-            ? isFocused
-              ? "qr-code-outline"
-              : "qr-code"
-            : isFocused
-              ? "settings"
-              : "settings-outline";
+            const iconName =
+              route.name === "scan"
+                ? isFocused
+                  ? "qr-code-outline"
+                  : "qr-code"
+                : isFocused
+                  ? "settings"
+                  : "settings-outline";
 
-        const iconColor =
-          isScan && hasResult ? "gray" : isFocused ? "#0069b4" : "gray";
-        return (
-          <View key={route.key} style={styles.tabWrapper}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              onPress={onPress}
-              style={styles.tab}
-            >
-              <Ionicons name={iconName} size={24} color={iconColor} />
-              <Text
-                style={{
-                  color: iconColor,
-                  fontSize: 12,
-                }}
-              >
-                {String(label)}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        );
-      })}
+            const iconColor =
+              isScan && hasResult ? "gray" : isFocused ? "#0069b4" : "gray";
 
-      {/* When on result screen (scan has result), show a status chip next to the scan icon */}
-      {/* We can leverage navigation.setParams via scan screen to toggle a headerRight-like action.
-          Since BottomTabBar doesn't accept arbitrary extra items inline easily per-tab, we add
-          a small floating chip aligned near the scan tab. The scan screen will pass colors/text
-          via tabBarBadge-like options. */}
+            return (
+              <View key={route.key} style={styles.tabWrapper}>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityState={isFocused ? { selected: true } : {}}
+                  onPress={onPress}
+                  style={styles.tab}
+                >
+                  <Ionicons
+                    name={iconName as any}
+                    size={24}
+                    color={iconColor}
+                  />
+                  <Text style={{ color: iconColor, fontSize: 12 }}>
+                    {String(label)}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </View>
+      </BlurView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    padding: 10,
+    paddingBottom: 18,
+    backgroundColor: "transparent",
+  },
+  glass: {
+    borderRadius: 20,
+    overflow: "hidden",
+  },
   container: {
     flexDirection: "row",
-    backgroundColor: "#fff",
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#ddd",
-    paddingBottom: 15,
-    paddingTop: 15,
+    backgroundColor: "rgba(255,255,255,0.6)",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
     justifyContent: "space-around",
     alignItems: "center",
   },
