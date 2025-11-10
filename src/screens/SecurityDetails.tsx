@@ -32,13 +32,7 @@ const SectionTitle: React.FC<{
 }> = ({ iconName, iconColor = "gray", label }) => (
   <View style={styles.sectionTitleContainer}>
     <Ionicons name={iconName as any} type="ionicon" color={iconColor} />
-    <Text
-      h4
-      h4Style={styles.sectionTitleText}
-      style={styles.sectionTitleTextInner}
-    >
-      {label}
-    </Text>
+    <Text style={styles.sectionTitleText}>{label}</Text>
   </View>
 );
 
@@ -182,8 +176,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
-  sectionTitleText: { color: "black" },
-  sectionTitleTextInner: { marginLeft: 8 },
+  sectionTitleText: { fontSize: 20, color: "black", marginLeft: 8 },
 });
 
 export default SecurityDetails;
