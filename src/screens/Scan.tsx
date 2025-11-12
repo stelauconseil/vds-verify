@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text as RNText,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import {
   useNavigation,
   useIsFocused,
@@ -14,15 +8,12 @@ import {
 import { CameraView, useCameraPermissions } from "expo-camera";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../components/Button";
-import { Text } from "@rneui/themed";
 import ScannerView from "./ScannerView";
 import ResultScreen from "./ResultScreen";
 import { getLabel } from "../components/Label";
 import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
 import type { VdsResult } from "../types/vds";
-import { BlurView } from "expo-blur";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ScanProps = { lang?: string };
@@ -81,15 +72,7 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
     setFirstUrl(false);
   }, [firstUrl]);
 
-  // Hide the bottom tab bar entirely while Scan is focused; we'll draw our own top glass bar
-  useEffect(() => {
-    const parent = (navigation as any).getParent?.();
-    if (parent) {
-      parent.setOptions({
-        tabBarStyle: isFocused ? { display: "none" } : undefined,
-      });
-    }
-  }, [isFocused, navigation]);
+  // Show global NativeTabs; no local hiding logic needed
 
   // Hide tab bar when showing the result overlay
   // When a result is present, push its status to tab bar via setOptions
@@ -235,8 +218,7 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
         <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
           <Button
             title={getLabel("camerapermission", lang)}
-            onPress={Linking.openSettings}
-            containerStyle={{ width: "100%" }}
+            onPress={() => Linking.openSettings()}
           />
         </View>
       </View>
@@ -247,99 +229,7 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
     <>
       {isFocused && (
         <View style={styles.container}>
-          {/* Bottom glass bar overlay (moved from top) */}
-          <View
-            style={{
-              position: "absolute",
-              bottom: Math.max(insets.bottom, 8) + 8,
-              left: 20,
-              right: 20,
-              zIndex: 10,
-            }}
-          >
-            <BlurView
-              intensity={70}
-              tint="light"
-              style={{ borderRadius: 26, overflow: "hidden" }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingVertical: 10,
-                  paddingHorizontal: 16,
-                  backgroundColor: "rgba(255, 255, 255, 0.4)",
-                }}
-              >
-                {/* Scan button (acts as Scan Again when result exists) */}
-                <TouchableOpacity
-                  onPress={() => {
-                    if (result) {
-                      navigation.setParams({
-                        resetScan: Date.now(),
-                        result: undefined,
-                        resultStatus: undefined,
-                      } as any);
-                    }
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel="scan"
-                  style={{ padding: 6 }}
-                >
-                  <Ionicons
-                    name={
-                      result ? ("qr-code-outline" as any) : ("qr-code" as any)
-                    }
-                    size={26}
-                    color={result ? "gray" : "#0069b4"}
-                  />
-                </TouchableOpacity>
-
-                {/* Status button (only when a result exists) */}
-                {displayStatus && (
-                  <TouchableOpacity
-                    onPress={() => setModalVisible(true)}
-                    accessibilityRole="button"
-                    accessibilityLabel="status"
-                    style={{ padding: 6 }}
-                  >
-                    <Ionicons
-                      name={
-                        (displayStatus === "valid"
-                          ? "shield-checkmark"
-                          : displayStatus === "invalid"
-                            ? "shield"
-                            : "shield-outline") as any
-                      }
-                      size={26}
-                      color={
-                        displayStatus === "valid"
-                          ? "#2ecc71"
-                          : displayStatus === "invalid"
-                            ? "#e74c3c"
-                            : "#f1c40f"
-                      }
-                    />
-                  </TouchableOpacity>
-                )}
-
-                {/* Settings button */}
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("settings" as never)}
-                  accessibilityRole="button"
-                  accessibilityLabel="settings"
-                  style={{ padding: 6 }}
-                >
-                  <Ionicons
-                    name={(result ? "settings-outline" : "settings") as any}
-                    size={26}
-                    color={result ? "gray" : "#0069b4"}
-                  />
-                </TouchableOpacity>
-              </View>
-            </BlurView>
-          </View>
+          {/* Local overlay removed in favor of global NativeTabs */}
           {!scanned && permission ? (
             <View style={{ flex: 1 }}>
               <CameraView
@@ -422,7 +312,6 @@ const Scan: React.FC<ScanProps> = ({ lang }) => {
                           setErrorMessage("error_resetting_scan");
                         }
                       }}
-                      containerStyle={{ width: "100%" }}
                     />
                   </View>
                 </View>

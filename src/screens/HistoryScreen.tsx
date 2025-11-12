@@ -1,16 +1,21 @@
 import React, { useState, useCallback } from "react";
-import { ScrollView, View, StyleSheet } from "react-native";
-import { ListItem } from "@rneui/themed";
+import { ScrollView, View, StyleSheet, Text, Pressable } from "react-native";
 import { Button } from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatData, getLabel } from "../components/Label";
+import { BlurView } from "expo-blur";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type HistoryEntry = { timestamp: string; data: any };
 type Props = { navigation: any; lang: string };
 
+const ROW_BG_1 = "#F7F9FC"; // very light blue-gray
+const ROW_BG_2 = "#EEF2F7"; // slightly darker
+
 const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -35,39 +40,93 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.center}>
-        {history.map((l, i) => (
-          <ListItem
-            key={l.timestamp}
-            containerStyle={
-              i === 0
-                ? styles.listTop
-                : i === history.length - 1
-                  ? styles.listBotton
-                  : styles.listMiddle
-            }
-            onPress={() => navigation.navigate("scan", { result: l.data })}
-          >
-            <ListItem.Content>
-              <ListItem.Title>{formatData(l.timestamp, lang)}</ListItem.Title>
-              <ListItem.Subtitle>
-                {l.data.header["Type de document"]
-                  ? l.data.header["Type de document"]
-                  : getLabel("manifest_ID", lang) +
-                    ": " +
-                    l.data.header["manifest_ID"]}
-              </ListItem.Subtitle>
-            </ListItem.Content>
-          </ListItem>
-        ))}
+      {/* Title header with safe area top inset */}
+      <View
+        style={{
+          paddingTop: insets.top + 8,
+          paddingHorizontal: "5%",
+          paddingBottom: 8,
+        }}
+      >
+        <Text style={{ fontSize: 22, fontWeight: "700", color: "#0F172A" }}>
+          {getLabel("history", lang)}
+        </Text>
+      </View>
+      <ScrollView
+        style={styles.center}
+        contentContainerStyle={{
+          paddingTop: 8,
+          paddingHorizontal: "5%",
+          paddingBottom: Math.max(insets.bottom, 8) + 8 + 70,
+        }}
+      >
+        {history.map((entry, index) => {
+          const docType = entry.data?.header?.["Type de document"] as
+            | string
+            | undefined;
+          const manifest = entry.data?.header?.["manifest_ID"] as
+            | string
+            | undefined;
+          const title = (formatData(entry.timestamp, lang) as string) || "";
+
+          return (
+            <Pressable
+              key={entry.timestamp}
+              onPress={() =>
+                navigation.navigate("scan", { result: entry.data })
+              }
+              style={{
+                backgroundColor: index % 2 === 0 ? ROW_BG_1 : ROW_BG_2,
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 10,
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={{ color: "#0F172A", fontSize: 16, fontWeight: "700" }}
+                >
+                  {title}
+                </Text>
+                <Text style={{ color: "#374151", fontSize: 12, marginTop: 2 }}>
+                  {docType
+                    ? docType
+                    : `${getLabel("manifest_ID", lang)}: ${manifest ?? ""}`}
+                </Text>
+              </View>
+            </Pressable>
+          );
+        })}
       </ScrollView>
-      <View style={styles.buttonContainer}>
-        <Button
-          onPress={deleteHistory}
-          title={getLabel("deleteHistory", lang)}
-          variant="danger"
-          containerStyle={{ width: "100%" }}
-        />
+
+      {/* Bottom glass bar overlay matching Scan tabbar position */}
+      <View
+        style={{
+          position: "absolute",
+          bottom: Math.max(insets.bottom, 8) + 8 + 70,
+          left: 10,
+          right: 10,
+          zIndex: 10,
+        }}
+      >
+        <BlurView
+          intensity={70}
+          tint="light"
+          style={{ borderRadius: 20, overflow: "hidden" }}
+        >
+          <View
+            style={{
+              paddingVertical: 10,
+              paddingHorizontal: 16,
+              backgroundColor: "rgba(255,255,255,0.2)",
+            }}
+          >
+            <Button
+              onPress={() => void deleteHistory()}
+              title={getLabel("deleteHistory", lang)}
+            />
+          </View>
+        </BlurView>
       </View>
     </View>
   );
@@ -75,8 +134,7 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-  center: { flex: 1, paddingTop: 20, paddingBottom: 20 },
-  buttonContainer: { padding: 10, backgroundColor: "#fff" },
+  center: { flex: 1 },
   button: {
     backgroundColor: "#0069b4",
     borderWidth: 2,
@@ -89,21 +147,9 @@ const styles = StyleSheet.create({
     color: "white",
     padding: 10,
   },
-  listTop: {
-    width: "85%",
-    alignSelf: "center",
-    overflow: "hidden",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  listMiddle: { width: "85%", alignSelf: "center", overflow: "hidden" },
-  listBotton: {
-    width: "85%",
-    alignSelf: "center",
-    overflow: "hidden",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
+  listTop: {},
+  listMiddle: {},
+  listBotton: {},
 });
 
 export default HistoryScreen;

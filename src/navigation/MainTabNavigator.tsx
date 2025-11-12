@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
+import CustomTabBar from "./CustomTabBar";
 import { getLabel, getLang } from "../components/Label";
 import Scan from "../screens/Scan";
 import InfoStack from "./InfoStack";
@@ -39,7 +40,7 @@ const MainTabNavigator: React.FC = () => {
         tabBarActiveTintColor: "#0069b4",
         tabBarInactiveTintColor: "gray",
       })}
-      tabBar={() => null}
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen
         name="scan"

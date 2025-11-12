@@ -1,8 +1,7 @@
 import React, { Fragment } from "react";
-import { View, ScrollView, StyleSheet, Pressable, Text } from "react-native";
-import { Divider } from "@rneui/themed";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
-import { Button as NativeUIButton } from "../components/Button";
+import { Button } from "../components/Button";
 import { getLabel, formatData } from "../components/Label";
 import type { VdsResult } from "../types/vds";
 
@@ -41,32 +40,31 @@ const SecurityDetails: React.FC<Props> = ({ result, lang, closeModal }) => {
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
         <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+          {/* Header section */}
           <SectionTitle
             iconName="browsers-outline"
             label={getLabel("header", lang)}
           />
-          {Object.keys(result.header).map(
-            (key) =>
-              result.header[key] !== null && (
-                <Fragment key={key}>
-                  <Text style={{ marginBottom: 5 }}>
-                    {getLabel(key, lang)}:{" "}
-                    <Text
-                      style={{
-                        color: "#0069b4",
-                        fontWeight: "bold",
-                        fontSize: 14,
-                        lineHeight: 30,
-                      }}
-                    >
-                      {formatData(result.header[key], lang)}
-                    </Text>
-                  </Text>
-                </Fragment>
-              )
-          )}
-          <Divider style={{ marginVertical: 10 }} />
+          <View style={styles.sectionCard}>
+            {Object.keys(result.header).map(
+              (key, idx, arr) =>
+                result.header[key] !== null && (
+                  <Fragment key={key}>
+                    <View style={styles.kvRow}>
+                      <Text style={styles.kvLabel}>{getLabel(key, lang)}</Text>
+                      <Text style={styles.kvValue}>
+                        {formatData(result.header[key], lang) as any}
+                      </Text>
+                    </View>
+                    {idx < arr.length - 1 && (
+                      <View style={styles.rowSeparator} />
+                    )}
+                  </Fragment>
+                )
+            )}
+          </View>
 
+          {/* Signature section */}
           <SectionTitle
             iconName={
               result.sign_is_valid && result.signer
@@ -75,68 +73,51 @@ const SecurityDetails: React.FC<Props> = ({ result, lang, closeModal }) => {
             }
             iconColor={
               result.sign_is_valid && result.signer
-                ? "green"
+                ? "#34C759"
                 : result.signer
-                  ? "red"
-                  : "orange"
+                  ? "#FF3B30"
+                  : "#FF9500"
             }
             label={getLabel("signer", lang)}
           />
-          {result.signer ? (
-            Object.keys(result.signer).map((key) => (
-              <Fragment key={key}>
-                <Text style={{ marginBottom: 5 }}>
-                  {getLabel(key, lang)}:{" "}
-                  <Text
-                    style={{
-                      color: "#0069b4",
-                      fontWeight: "bold",
-                      fontSize: 14,
-                      lineHeight: 30,
-                    }}
-                  >
-                    {formatData(result.signer?.[key], lang)}
-                  </Text>
+          <View style={styles.sectionCard}>
+            {result.signer ? (
+              Object.keys(result.signer).map((key, idx, arr) => (
+                <Fragment key={key}>
+                  <View style={styles.kvRow}>
+                    <Text style={styles.kvLabel}>{getLabel(key, lang)}</Text>
+                    <Text style={styles.kvValue}>
+                      {formatData(result.signer?.[key], lang) as any}
+                    </Text>
+                  </View>
+                  {idx < arr.length - 1 && <View style={styles.rowSeparator} />}
+                </Fragment>
+              ))
+            ) : (
+              <View style={styles.kvRowSingle}>
+                <Text style={styles.kvLabel}>
+                  {getLabel("sign_not_verified", lang)}
                 </Text>
-              </Fragment>
-            ))
-          ) : (
-            <Text style={{ marginTop: 5, marginBottom: 5 }}>
-              {getLabel("sign_not_verified", lang)}
-            </Text>
-          )}
+              </View>
+            )}
+          </View>
 
-          <Divider style={{ marginVertical: 10 }} />
+          {/* Standard section */}
           <SectionTitle
             iconName="build-outline"
             label={getLabel("standard", lang)}
           />
-          <Text key="compliance">
-            {getLabel("compliance", lang)}:{" "}
-            <Text
-              key="vds_standard"
-              style={{
-                color: "#0069b4",
-                fontWeight: "bold",
-                fontSize: 14,
-                lineHeight: 30,
-              }}
-            >
-              {get_standard(result.vds_standard)}
-            </Text>
-          </Text>
-          <Text>&nbsp;</Text>
+          <View style={styles.sectionCard}>
+            <View style={styles.kvRow}>
+              <Text style={styles.kvLabel}>{getLabel("compliance", lang)}</Text>
+              <Text style={styles.kvValue}>
+                {get_standard(result.vds_standard)}
+              </Text>
+            </View>
+          </View>
         </ScrollView>
         <View style={{ width: "100%", paddingBottom: 10 }}>
-          <Pressable>
-            <NativeUIButton
-              onPress={closeModal}
-              title={getLabel("close", lang)}
-              variant="primary"
-              containerStyle={{ width: "100%" }}
-              titleStyle={{ color: "white", fontSize: 16 }}
-            />
-          </Pressable>
+          <Button onPress={closeModal} title={getLabel("close", lang)} />
         </View>
       </View>
     </View>
@@ -160,7 +141,7 @@ const styles = StyleSheet.create({
     maxHeight: "80%",
     backgroundColor: "white",
     borderRadius: 20,
-    paddingTop: 20,
+    paddingTop: 10,
     padding: 20,
     paddingBottom: 0,
     alignItems: "stretch",
@@ -177,6 +158,43 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   sectionTitleText: { fontSize: 20, color: "black", marginLeft: 8 },
+  sectionCard: {
+    backgroundColor: "#F2F2F7",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#E5E7EB",
+  },
+  kvRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+    paddingVertical: 6,
+  },
+  kvRowSingle: {
+    paddingVertical: 6,
+  },
+  kvLabel: {
+    color: "#6B7280",
+    fontSize: 14,
+    flexShrink: 1,
+  },
+  kvValue: {
+    color: "#0069b4",
+    fontWeight: "600",
+    fontSize: 14,
+    lineHeight: 20,
+    marginLeft: 8,
+    flexShrink: 1,
+    textAlign: "right",
+  },
+  rowSeparator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "#E5E7EB",
+    marginVertical: 4,
+  },
 });
 
 export default SecurityDetails;

@@ -63,8 +63,15 @@
           "image": "./assets/icons/icon.png",
           "imageWidth": 100
         }
+      ],
+      [
+        "expo-router",
+        {
+          "origin": "https://vds-verify.stelau.com/"
+        }
       ]
     ],
+    "scheme": "vdsverify",
     "extra": {
       "eas": {
         "projectId": "2f5314e0-d7e8-4b1d-96bc-8c10bcb2e53d"

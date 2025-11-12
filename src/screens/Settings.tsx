@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { StyleSheet, View, Text } from "react-native";
-import { ListItem, Switch } from "@rneui/themed";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  Switch,
+  Platform,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
-import { Picker } from "@react-native-picker/picker";
+// import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getLabel, saveLang } from "../components/Label";
+import { getLabel } from "../components/Label";
+import { useSettings } from "../contexts/SettingsContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type SettingsViewProps = {
   navigation: any;
@@ -13,124 +21,162 @@ type SettingsViewProps = {
   setLang: (l: string) => void;
 };
 
-const SettingsView: React.FC<SettingsViewProps> = ({
-  navigation,
-  lang,
-  setLang,
-}) => {
+const SettingsView: React.FC<SettingsViewProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
-  const [historyEnabled, setHistoryEnabled] = useState<boolean>(false);
+  const { lang, setLang, historyEnabled, setHistoryEnabled } = useSettings();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    AsyncStorage.getItem("historyEnabled").then((value) => {
-      if (value !== null) setHistoryEnabled(value === "true");
-    });
+    (async () => {
+      try {
+        const stored = await AsyncStorage.getItem("historyEnabled");
+        const enabled = stored !== "false";
+        if (enabled !== historyEnabled) {
+          await setHistoryEnabled(enabled);
+        }
+      } catch {}
+    })();
   }, [isFocused]);
-
-  const toggleHistory = async (value: boolean) => {
-    setHistoryEnabled(value);
-    await AsyncStorage.setItem("historyEnabled", value.toString());
-    if (!value) {
-      await AsyncStorage.removeItem("scanHistory");
-    }
-  };
 
   return (
     <>
       {isFocused && (
-        <View>
-          <Text style={styles.title}>&nbsp;</Text>
-          <ListItem
-            key="settings-about"
-            containerStyle={styles.listTop}
-            onPress={() => navigation.navigate("about")}
-          >
-            <Ionicons
-              name="chatbox-ellipses-outline"
-              type="ionicon"
-              color="gray"
-            />
-            <ListItem.Content>
-              <ListItem.Title>{getLabel("about", lang)}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-          <ListItem
-            key="settings-faq"
-            containerStyle={styles.listMiddle}
-            onPress={() => navigation.navigate("faq")}
-          >
-            <Ionicons name="help-circle-outline" type="ionicon" color="gray" />
-            <ListItem.Content>
-              <ListItem.Title>{getLabel("faq", lang)}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-          <ListItem
-            key="settings-usepolicy"
-            containerStyle={styles.listMiddle}
-            onPress={() => navigation.navigate("usepolicy")}
-          >
-            <Ionicons name="receipt-outline" type="ionicon" color="gray" />
-            <ListItem.Content>
-              <ListItem.Title>{getLabel("usepolicy", lang)}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-          <ListItem
-            key="settings-privacypolicy"
-            containerStyle={styles.listMiddle}
-            onPress={() => navigation.navigate("privacypolicy")}
-          >
-            <Ionicons
-              name="information-circle-outline"
-              type="ionicon"
-              color="gray"
-            />
-            <ListItem.Content>
-              <ListItem.Title>{getLabel("privacypolicy", lang)}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-          <ListItem
-            key="settings-history-toggle"
-            containerStyle={[
-              historyEnabled ? styles.listMiddle : styles.listBotton,
-              { justifyContent: "space-between" },
-            ]}
-          >
-            <Ionicons name="archive-outline" type="ionicon" color="gray" />
-            <ListItem.Content>
-              <ListItem.Title>{getLabel("historytoggle", lang)}</ListItem.Title>
-            </ListItem.Content>
-            <Switch value={historyEnabled} onValueChange={toggleHistory} />
-          </ListItem>
-          {historyEnabled && (
-            <ListItem
-              key="settings-history"
-              containerStyle={styles.listBotton}
-              onPress={() => navigation.navigate("history")}
+        <View style={[styles.screen, { paddingTop: insets.top + 8 }]}>
+          {/* Info section */}
+          <View style={styles.section}>
+            <Pressable
+              style={styles.row}
+              onPress={() => navigation.navigate("about")}
             >
-              <Ionicons name="eye-outline" type="ionicon" color="gray" />
-              <ListItem.Content>
-                <ListItem.Title>{getLabel("history", lang)}</ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-          )}
-          <Text style={styles.title}>{getLabel("language", lang)}</Text>
-          <Picker
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            selectedValue={lang || "en"}
-            onValueChange={(itemValue) => {
-              setLang(itemValue);
-              saveLang(itemValue);
-            }}
-          >
-            <Picker.Item key="lang-en" label="English" value="en" />
-            <Picker.Item key="lang-fr" label="Français" value="fr" />
-          </Picker>
+              <Ionicons
+                name="chatbox-ellipses-outline"
+                size={22}
+                color="#8E8E93"
+              />
+              <Text style={styles.rowLabel}>{getLabel("about", lang)}</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color="#C7C7CC"
+                style={styles.chevron}
+              />
+            </Pressable>
+            <View style={styles.separator} />
+            <Pressable
+              style={styles.row}
+              onPress={() => navigation.navigate("faq")}
+            >
+              <Ionicons name="help-circle-outline" size={22} color="#8E8E93" />
+              <Text style={styles.rowLabel}>{getLabel("faq", lang)}</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color="#C7C7CC"
+                style={styles.chevron}
+              />
+            </Pressable>
+            <View style={styles.separator} />
+            <Pressable
+              style={styles.row}
+              onPress={() => navigation.navigate("usepolicy")}
+            >
+              <Ionicons name="receipt-outline" size={22} color="#8E8E93" />
+              <Text style={styles.rowLabel}>{getLabel("usepolicy", lang)}</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color="#C7C7CC"
+                style={styles.chevron}
+              />
+            </Pressable>
+            <View style={styles.separator} />
+            <Pressable
+              style={styles.row}
+              onPress={() => navigation.navigate("privacypolicy")}
+            >
+              <Ionicons
+                name="information-circle-outline"
+                size={22}
+                color="#8E8E93"
+              />
+              <Text style={styles.rowLabel}>
+                {getLabel("privacypolicy", lang)}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color="#C7C7CC"
+                style={styles.chevron}
+              />
+            </Pressable>
+          </View>
+
+          {/* History toggle section */}
+          <View style={styles.section}>
+            <View style={styles.row}>
+              <Ionicons name="archive-outline" size={22} color="#8E8E93" />
+              <Text style={styles.rowLabel}>
+                {getLabel("historytoggle", lang)}
+              </Text>
+              <View style={{ flex: 1 }} />
+              <Switch
+                style={styles.switch}
+                value={historyEnabled}
+                onValueChange={setHistoryEnabled}
+                trackColor={{ false: "#D1D5DB", true: "#34C759" }}
+                thumbColor={historyEnabled ? "#FFFFFF" : "#FFFFFF"}
+                ios_backgroundColor="#D1D5DB"
+              />
+            </View>
+          </View>
+
+          {/* Language picker */}
+          {/* Language selection (compact segmented) */}
+          <View style={styles.section}>
+            <View style={styles.row}>
+              <Ionicons name="globe-outline" size={22} color="#8E8E93" />
+              <Text style={styles.rowLabel}>{getLabel("language", lang)}</Text>
+              <View style={{ flex: 1 }} />
+              <View style={styles.segment}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: lang === "en" }}
+                  onPress={() => setLang("en")}
+                  style={[
+                    styles.segmentOption,
+                    lang === "en" && styles.segmentOptionActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      lang === "en" && styles.segmentTextActive,
+                    ]}
+                  >
+                    EN
+                  </Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: lang === "fr" }}
+                  onPress={() => setLang("fr")}
+                  style={[
+                    styles.segmentOption,
+                    lang === "fr" && styles.segmentOptionActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      lang === "fr" && styles.segmentTextActive,
+                    ]}
+                  >
+                    FR
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
         </View>
       )}
     </>
@@ -138,36 +184,82 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 };
 
 const styles = StyleSheet.create({
-  title: {
+  screen: {
+    flex: 1,
+    backgroundColor: "#F2F2F7", // iOS grouped background
+  },
+  section: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    marginHorizontal: "5%",
+    marginTop: 16,
+    overflow: "hidden",
+  },
+  sectionTitle: {
     fontSize: 16,
-    textAlign: "left",
-    color: "gray",
-    marginBottom: 0,
-    marginTop: 20,
-    marginLeft: 20,
+    color: "#6B7280",
+    marginTop: 24,
+    marginBottom: 8,
+    marginLeft: "5%",
   },
-  listTop: {
-    width: "90%",
-    alignSelf: "center",
-    overflow: "hidden",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    height: 56,
+    gap: 12,
+    backgroundColor: "#FFFFFF",
   },
-  listMiddle: { width: "90%", alignSelf: "center", overflow: "hidden" },
-  listBotton: {
-    width: "90%",
+  switch: {
     alignSelf: "center",
-    overflow: "hidden",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    ...(Platform.OS === "ios" ? { marginTop: -1 } : null),
+  },
+  rowLabel: {
+    fontSize: 16,
+    color: "#111827",
+    flexShrink: 1,
+  },
+  chevron: {
+    marginLeft: "auto",
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "#E5E7EB",
+    marginLeft: 16 + 22 + 12, // align under text after icon
   },
   picker: {
     width: "90%",
     alignSelf: "center",
-    borderRadius: 10,
+    borderRadius: 20,
     color: "gray",
+    backgroundColor: "#FFFFFF",
+    marginTop: 8,
   },
   pickerItem: { color: "gray", fontSize: 16 },
+  segment: {
+    flexDirection: "row",
+    backgroundColor: "#E5E7EB",
+    borderRadius: 8,
+    padding: 2,
+    gap: 4,
+  },
+  segmentOption: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    backgroundColor: "transparent",
+  },
+  segmentOptionActive: {
+    backgroundColor: "#007AFF",
+  },
+  segmentText: {
+    fontSize: 13,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  segmentTextActive: {
+    color: "#FFFFFF",
+  },
 });
 
 export default SettingsView;
