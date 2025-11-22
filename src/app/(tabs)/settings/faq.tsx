@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Faq from "../../../screens/Faq";
 import { getLang } from "../../../components/Label";
 

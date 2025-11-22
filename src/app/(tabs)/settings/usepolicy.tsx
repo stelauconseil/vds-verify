@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import UsePolicy from "../../../screens/UsePolicy";
 import { getLang } from "../../../components/Label";
 

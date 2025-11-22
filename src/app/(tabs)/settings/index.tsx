@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "expo-router";
 import SettingsView from "../../../screens/Settings";
 import { useSettings } from "../../../contexts/SettingsContext";
