@@ -12,6 +12,7 @@ import { Buffer } from "buffer";
 import type { VdsResult } from "../../types/vds";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScanStatus } from "../../contexts/ScanStatusContext";
+import * as Haptics from "expo-haptics";
 
 export default function ScanRoute() {
   const router = useRouter();
@@ -201,6 +202,12 @@ export default function ScanRoute() {
       });
       const { success, message, vds } = await response.json();
       if (success === true) {
+        // Light haptic feedback on successful scan
+        try {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch {
+          // Ignore haptics errors (e.g., unsupported device)
+        }
         const historyEnabled =
           (await AsyncStorage.getItem("historyEnabled")) !== "false";
         if (historyEnabled) {
