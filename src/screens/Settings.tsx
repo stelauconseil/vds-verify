@@ -42,6 +42,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({ navigation }) => {
     <>
       {isFocused && (
         <View style={[styles.screen, { paddingTop: insets.top + 8 }]}>
+          {/* Title */}
+          <Text style={styles.title}>{getLabel("settings", lang)}</Text>
           {/* Info section */}
           <View style={styles.section}>
             <Pressable
@@ -187,6 +189,13 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#F2F2F7", // iOS grouped background
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#0F172A",
+    marginHorizontal: "5%",
+    marginBottom: 8,
   },
   section: {
     backgroundColor: "#FFFFFF",
