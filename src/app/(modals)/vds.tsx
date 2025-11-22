@@ -11,20 +11,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Divider } from "@rneui/themed";
-
-const get_standard = (vds_standard?: string): string => {
-  switch (vds_standard) {
-    case "DOC_ISO22376_2023":
-      return "ISO 22376:2023";
-    case "DOC_105":
-      return "AFNOR XP Z42 105";
-    case "DOC_101":
-      return "AFNOR XP Z42 101 - 104";
-    default:
-      return vds_standard ?? "";
-  }
-};
 
 const formatResult = (
   data: Record<string, any>,
@@ -234,7 +220,6 @@ export default function VdsModal() {
                   </Fragment>
                 )
             )}
-            <Divider style={{ marginVertical: 10 }} />
 
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons
@@ -280,7 +265,6 @@ export default function VdsModal() {
               </Text>
             )}
 
-            <Divider style={{ marginVertical: 10 }} />
             <Text style={{ fontSize: 20, color: "black" }}>Standard</Text>
             <Text>
               Compliance:{" "}
