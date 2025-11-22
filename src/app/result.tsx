@@ -12,7 +12,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScanStatus } from "../contexts/ScanStatusContext";
 import { getLang, formatData, isBase64, getLabel } from "../components/Label";
-import { Divider } from "@rneui/themed";
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 
@@ -160,9 +159,12 @@ export default function ResultScreen() {
   if (!result) return <Redirect href="/" />;
 
   const close = () => {
+    // Clear result context first so Scan screen restores camera state
     setContextResult(null);
     setStatus(null);
-    router.replace("/");
+    // Use back() to pop the stack so the transition animates left-to-right
+    // (reverse of the push animation) instead of replacing with a forward animation.
+    router.back();
   };
 
   return (
@@ -300,12 +302,19 @@ export default function ResultScreen() {
         >
           {/* Security details */}
           <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontSize: 20, color: "black" }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "600",
+                fontVariant: ["small-caps"],
+                color: "black",
+                marginTop: 14,
+              }}
+            >
               {getLabel("header", lang)}
             </Text>
           </View>
           {headerRows}
-          <Divider style={{ marginVertical: 10 }} />
 
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Ionicons
@@ -315,6 +324,7 @@ export default function ResultScreen() {
                   : "alert-circle-outline"
               }
               size={20}
+              style={{ marginTop: 14 }}
               color={
                 result.sign_is_valid && result.signer
                   ? "green"
@@ -323,7 +333,17 @@ export default function ResultScreen() {
                     : "orange"
               }
             />
-            <Text style={{ marginLeft: 6, fontSize: 20, color: "black" }}>
+
+            <Text
+              style={{
+                marginLeft: 6,
+                fontSize: 20,
+                fontWeight: "600",
+                fontVariant: ["small-caps"],
+                color: "black",
+                marginTop: 14,
+              }}
+            >
               {getLabel("signer", lang)}
             </Text>
           </View>
@@ -335,8 +355,15 @@ export default function ResultScreen() {
             </Text>
           )}
 
-          <Divider style={{ marginVertical: 10 }} />
-          <Text style={{ fontSize: 20, color: "black" }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "600",
+              fontVariant: ["small-caps"],
+              color: "black",
+              marginTop: 14,
+            }}
+          >
             {getLabel("standard", lang)}
           </Text>
           <AttributeRow
