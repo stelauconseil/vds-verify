@@ -11,7 +11,7 @@ const About: React.FC = () => {
       </Text>
       <Text
         style={styles.title}
-        onPress={() => Linking.openURL("https://vds-verify.stelau.com")}
+        onPress={() => Linking.openURL("https://www.stelau.com")}
       >
         ©️ {new Date().getFullYear()} Stelau
       </Text>
