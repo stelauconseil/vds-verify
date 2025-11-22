@@ -130,11 +130,13 @@ export default function ScanRoute() {
         const parsedResult = JSON.parse(params.result as string);
         setResult(parsedResult);
         setScanned(true);
+        // Clear the param so the camera route no longer treats this as an active result
+        router.setParams({ result: undefined });
       } catch {
         // Invalid result param
       }
     }
-  }, [params.result]);
+  }, [params.result, router]);
 
   const parseData = (data: string): string | null => {
     if (data?.startsWith("http")) {

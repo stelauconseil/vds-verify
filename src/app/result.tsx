@@ -7,7 +7,7 @@ import {
   Image,
   Platform,
 } from "react-native";
-import { Redirect, useRouter } from "expo-router";
+import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScanStatus } from "../contexts/ScanStatusContext";
@@ -73,6 +73,7 @@ function AttributeRow({
 
 export default function ResultScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { result, setResult: setContextResult, setStatus } = useScanStatus();
   const [lang, setLang] = useState<string>("en");
   const [tab, setTab] = useState<"vds" | "security">("vds");
@@ -156,7 +157,33 @@ export default function ResultScreen() {
     getLangAsync();
   }, []);
 
+  // If no result in context but a route param is present (history navigation), load it
+  useEffect(() => {
+    if (!result && params.result && typeof params.result === "string") {
+      try {
+        const parsed = JSON.parse(params.result as string);
+        setContextResult(parsed);
+        if (parsed.sign_is_valid && parsed.signer) {
+          setStatus("valid");
+        } else if (parsed.signer) {
+          setStatus("invalid");
+        } else {
+          setStatus("unsigned");
+        }
+      } catch {
+        // Invalid JSON: ignore and let redirect happen
+      }
+    }
+  }, [params.result, result, setContextResult, setStatus]);
+
   if (!result) return <Redirect href="/" />;
+
+  const securityStatus: "valid" | "invalid" | "unsigned" =
+    result.sign_is_valid && result.signer
+      ? "valid"
+      : result.signer
+        ? "invalid"
+        : "unsigned";
 
   const close = () => {
     // Clear result context first so Scan screen restores camera state
@@ -271,14 +298,29 @@ export default function ResultScreen() {
                 backgroundColor: tab === "security" ? "#0069b4" : "transparent",
               }}
             >
-              <Text
-                style={{
-                  fontWeight: "700",
-                  color: tab === "security" ? "#fff" : "#374151",
-                }}
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
               >
-                {getLabel("security", lang)}
-              </Text>
+                <Ionicons
+                  name={
+                    securityStatus === "valid"
+                      ? "shield-checkmark-outline"
+                      : securityStatus === "invalid"
+                        ? "shield-outline"
+                        : "shield-half-outline"
+                  }
+                  size={16}
+                  color={tab === "security" ? "#fff" : "#4B5563"}
+                />
+                <Text
+                  style={{
+                    fontWeight: "700",
+                    color: tab === "security" ? "#fff" : "#374151",
+                  }}
+                >
+                  {getLabel("security", lang)}
+                </Text>
+              </View>
             </View>
           </Pressable>
         </View>

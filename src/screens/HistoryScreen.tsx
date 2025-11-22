@@ -102,7 +102,7 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
             <Pressable
               key={entry.timestamp}
               onPress={() =>
-                navigation.navigate("scan", { result: entry.data })
+                navigation.navigate("result", { result: entry.data })
               }
               style={{
                 backgroundColor: index % 2 === 0 ? ROW_BG_1 : ROW_BG_2,
