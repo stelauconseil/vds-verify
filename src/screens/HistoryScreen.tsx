@@ -1,5 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { ScrollView, View, StyleSheet, Text, Pressable } from "react-native";
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  Alert,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatData, getLabel } from "../components/Label";
@@ -51,9 +58,7 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
           justifyContent: "space-between",
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: "700", color: "#0F172A" }}>
-          {getLabel("history", lang)}
-        </Text>
+        <Text style={styles.title}>{getLabel("history", lang)}</Text>
         {history.length > 0 && (
           <BlurView
             intensity={70}
@@ -61,7 +66,25 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
             style={{ borderRadius: 18, overflow: "hidden" }}
           >
             <Pressable
-              onPress={() => void deleteHistory()}
+              onPress={() =>
+                Alert.alert(
+                  getLabel("deleteHistory", lang) || "Clear history",
+                  getLabel("deleteHistoryMessage", lang) ||
+                    "Do you really want to delete all history entries?",
+                  [
+                    {
+                      text: getLabel("cancel", lang) || "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: getLabel("ok", lang) || "Ok",
+                      style: "destructive",
+                      onPress: () => void deleteHistory(),
+                    },
+                  ],
+                  { cancelable: true }
+                )
+              }
               hitSlop={10}
               accessibilityRole="button"
               accessibilityLabel={getLabel("deleteHistory", lang)}
@@ -158,6 +181,11 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#0F172A",
+  },
   center: { flex: 1 },
   button: {
     backgroundColor: "#0069b4",
