@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { ScrollView, View, StyleSheet, Text, Pressable } from "react-native";
-import { Button } from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatData, getLabel } from "../components/Label";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 type HistoryEntry = { timestamp: string; data: any };
 type Props = { navigation: any; lang: string };
@@ -40,17 +40,46 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
 
   return (
     <View style={styles.container}>
-      {/* Title header with safe area top inset */}
+      {/* Title header with safe area top inset and trash icon */}
       <View
         style={{
           paddingTop: insets.top + 8,
           paddingHorizontal: "5%",
           paddingBottom: 8,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Text style={{ fontSize: 22, fontWeight: "700", color: "#0F172A" }}>
           {getLabel("history", lang)}
         </Text>
+        {history.length > 0 && (
+          <BlurView
+            intensity={70}
+            tint="light"
+            style={{ borderRadius: 18, overflow: "hidden" }}
+          >
+            <Pressable
+              onPress={() => void deleteHistory()}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel={getLabel("deleteHistory", lang)}
+            >
+              <View
+                style={{
+                  width: 36,
+                  height: 36,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(255,255,255,0.3)",
+                }}
+              >
+                <Ionicons name="trash" size={20} color="#6b7280" />
+              </View>
+            </Pressable>
+          </BlurView>
+        )}
       </View>
       <ScrollView
         style={styles.center}
@@ -67,7 +96,7 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
           const manifest = entry.data?.header?.["manifest_ID"] as
             | string
             | undefined;
-          const title = (formatData(entry.timestamp, lang) as string) || "";
+          const date = (formatData(entry.timestamp, lang) as string) || "";
 
           return (
             <Pressable
@@ -86,12 +115,12 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
                 <Text
                   style={{ color: "#0F172A", fontSize: 16, fontWeight: "700" }}
                 >
-                  {title}
-                </Text>
-                <Text style={{ color: "#374151", fontSize: 12, marginTop: 2 }}>
                   {docType
                     ? docType
                     : `${getLabel("manifest_ID", lang)}: ${manifest ?? ""}`}
+                </Text>
+                <Text style={{ color: "#374151", fontSize: 12, marginTop: 2 }}>
+                  {date}
                 </Text>
               </View>
             </Pressable>
@@ -99,7 +128,7 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
         })}
       </ScrollView>
 
-      {/* Bottom glass bar overlay matching Scan tabbar position */}
+      {/* Bottom glass bar overlay kept for visual consistency; empty for now */}
       <View
         style={{
           position: "absolute",
@@ -120,12 +149,7 @@ const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
               paddingHorizontal: 16,
               backgroundColor: "rgba(255,255,255,0.2)",
             }}
-          >
-            <Button
-              onPress={() => void deleteHistory()}
-              title={getLabel("deleteHistory", lang)}
-            />
-          </View>
+          />
         </BlurView>
       </View>
     </View>
