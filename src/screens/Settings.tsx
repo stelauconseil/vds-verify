@@ -22,7 +22,14 @@ type SettingsViewProps = {
 
 const SettingsView: FC<SettingsViewProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
-  const { lang, setLang, historyEnabled, setHistoryEnabled } = useSettings();
+  const {
+    lang,
+    setLang,
+    historyEnabled,
+    setHistoryEnabled,
+    advancedMode,
+    setAdvancedMode,
+  } = useSettings();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -131,6 +138,29 @@ const SettingsView: FC<SettingsViewProps> = ({ navigation }) => {
             </View>
           </View>
 
+          {/* Advanced mode toggle */}
+          <View style={styles.section}>
+            <View style={styles.row}>
+              <Ionicons name="code-slash-outline" size={22} color="#8E8E93" />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.rowLabel}>
+                  {getLabel("advancedmode", lang) || "Advanced mode"}
+                </Text>
+                <Text style={styles.rowSubLabel}>
+                  {getLabel("advancedmode_info", lang)}
+                </Text>
+              </View>
+              <Switch
+                style={styles.switch}
+                value={advancedMode}
+                onValueChange={setAdvancedMode}
+                trackColor={{ false: "#D1D5DB", true: "#34C759" }}
+                thumbColor={advancedMode ? "#FFFFFF" : "#FFFFFF"}
+                ios_backgroundColor="#D1D5DB"
+              />
+            </View>
+          </View>
+
           {/* Language picker */}
           {/* Language selection (compact segmented) */}
           <View style={styles.section}>
@@ -226,6 +256,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#111827",
     flexShrink: 1,
+  },
+  rowSubLabel: {
+    fontSize: 13,
+    color: "#6B7280",
+    marginTop: 2,
   },
   chevron: {
     marginLeft: "auto",

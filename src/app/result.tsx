@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import {
   View,
   ScrollView,
@@ -11,6 +11,7 @@ import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
@@ -43,10 +44,11 @@ function AttributeRow({
   index,
 }: {
   label: string;
-  value: React.ReactNode;
+  value: ReactNode;
   index: number;
 }) {
   const bg = index % 2 === 0 ? ROW_BG_1 : ROW_BG_2;
+  const isEmptyString = typeof value === "string" && value.trim() === "";
   return (
     <View
       style={{
@@ -61,9 +63,19 @@ function AttributeRow({
         {label}
       </Text>
       {typeof value === "string" || typeof value === "number" ? (
-        <Text style={{ color: "#0F172A", fontSize: 16, fontWeight: "600" }}>
-          {value}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={{ color: "#111827", fontSize: 16, fontWeight: "600" }}>
+            {value}
+          </Text>
+          {isEmptyString && (
+            <Ionicons
+              name="alert-circle-outline"
+              size={14}
+              color="#9CA3AF"
+              style={{ marginLeft: 6 }}
+            />
+          )}
+        </View>
       ) : (
         value
       )}
@@ -75,15 +87,29 @@ export default function ResultScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { result, setResult: setContextResult, setStatus } = useScanStatus();
+  const { advancedMode } = useSettings();
   const [lang, setLang] = useState<string>("en");
   const [tab, setTab] = useState<"vds" | "security">("vds");
   const insets = useSafeAreaInsets();
   // Precompute rows to avoid heavy work each render while also keeping hooks at top-level
   const dataRows = useMemo(() => {
-    if (!result) return [] as React.ReactNode[];
+    if (!result) return [] as ReactNode[];
     const keys = Object.keys(result.data).filter((key) => {
       const v = result.data[key];
-      return v !== null && v !== undefined && v !== "";
+      if (advancedMode) {
+        // In advanced mode, include all keys, even empty/placeholder
+        return true;
+      }
+      if (v === null || v === undefined) return false;
+      if (typeof v === "string" && v.trim() === "") return false;
+      if (
+        Array.isArray(v) &&
+        v.length === 1 &&
+        (v[0] === "" || v[0] === null || v[0] === undefined)
+      ) {
+        return false;
+      }
+      return true;
     });
     return keys.map((key, i) => {
       const v = result.data[key];
@@ -119,13 +145,26 @@ export default function ResultScreen() {
       }
       return null;
     });
-  }, [result, lang]);
+  }, [result, lang, advancedMode]);
 
   const headerRows = useMemo(() => {
-    if (!result) return [] as React.ReactNode[];
-    const keys = Object.keys(result.header).filter(
-      (k) => result.header[k] !== null && result.header[k] !== undefined
-    );
+    if (!result) return [] as ReactNode[];
+    const keys = Object.keys(result.header).filter((k) => {
+      const v = result.header[k];
+      if (advancedMode) {
+        return true;
+      }
+      if (v === null || v === undefined) return false;
+      if (typeof v === "string" && v.trim() === "") return false;
+      if (
+        Array.isArray(v) &&
+        v.length === 1 &&
+        (v[0] === "" || v[0] === null || v[0] === undefined)
+      ) {
+        return false;
+      }
+      return true;
+    });
     return keys.map((k, i) => (
       <AttributeRow
         key={`header-${k}`}
@@ -134,11 +173,26 @@ export default function ResultScreen() {
         index={i}
       />
     ));
-  }, [result, lang]);
+  }, [result, lang, advancedMode]);
 
   const signerRows = useMemo(() => {
-    if (!result || !result.signer) return [] as React.ReactNode[];
-    const sKeys = Object.keys(result.signer);
+    if (!result || !result.signer) return [] as ReactNode[];
+    const sKeys = Object.keys(result.signer).filter((k) => {
+      const v = result.signer?.[k];
+      if (advancedMode) {
+        return true;
+      }
+      if (v === null || v === undefined) return false;
+      if (typeof v === "string" && v.trim() === "") return false;
+      if (
+        Array.isArray(v) &&
+        v.length === 1 &&
+        (v[0] === "" || v[0] === null || v[0] === undefined)
+      ) {
+        return false;
+      }
+      return true;
+    });
     return sKeys.map((k, i) => (
       <AttributeRow
         key={`signer-${k}`}
@@ -147,7 +201,7 @@ export default function ResultScreen() {
         index={i}
       />
     ));
-  }, [result, lang]);
+  }, [result, lang, advancedMode]);
 
   useEffect(() => {
     const getLangAsync = async () => {
@@ -204,8 +258,8 @@ export default function ResultScreen() {
         accessibilityLabel={getLabel("close", lang)}
         style={{
           position: "absolute",
-          top: insets.top + 8,
-          left: 12,
+          top: insets.top + 14,
+          left: 20,
           zIndex: 10,
         }}
       >
@@ -217,24 +271,24 @@ export default function ResultScreen() {
           >
             <View
               style={{
-                width: 36,
-                height: 36,
+                width: 40,
+                height: 40,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: "rgba(255,255,255,0.3)",
               }}
             >
-              <Ionicons name="close" size={20} color="#222" />
+              <Ionicons name="close" size={22} color="#222" />
             </View>
           </BlurView>
         ) : (
           <View
             style={{
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 18,
+              borderRadius: 20,
               backgroundColor: "rgba(255,255,255,0.85)",
               borderWidth: 1,
               borderColor: "#e5e7eb",
@@ -244,7 +298,7 @@ export default function ResultScreen() {
               elevation: 3,
             }}
           >
-            <Ionicons name="close" size={20} color="#222" />
+            <Ionicons name="close" size={22} color="#222" />
           </View>
         )}
       </Pressable>
@@ -253,7 +307,7 @@ export default function ResultScreen() {
       <View
         style={{
           alignItems: "center",
-          paddingVertical: 12,
+          paddingVertical: 14,
           borderBottomWidth: 1,
           borderBottomColor: "#eee",
         }}
@@ -262,20 +316,20 @@ export default function ResultScreen() {
           style={{
             flexDirection: "row",
             backgroundColor: "#EEF2F7",
-            padding: 2,
-            borderRadius: 16,
-            gap: 2,
+            padding: 3,
+            borderRadius: 18,
+            gap: 4,
           }}
         >
           <Pressable
             onPress={() => setTab("vds")}
-            style={{ borderRadius: 16, overflow: "hidden" }}
+            style={{ borderRadius: 18, overflow: "hidden" }}
           >
             <View
               style={{
-                paddingVertical: 6,
-                paddingHorizontal: 14,
-                borderRadius: 16,
+                paddingVertical: 8,
+                paddingHorizontal: 18,
+                borderRadius: 18,
                 backgroundColor: tab === "vds" ? "#0069b4" : "transparent",
               }}
             >
@@ -291,13 +345,13 @@ export default function ResultScreen() {
           </Pressable>
           <Pressable
             onPress={() => setTab("security")}
-            style={{ borderRadius: 16, overflow: "hidden" }}
+            style={{ borderRadius: 18, overflow: "hidden" }}
           >
             <View
               style={{
-                paddingVertical: 6,
-                paddingHorizontal: 14,
-                borderRadius: 16,
+                paddingVertical: 8,
+                paddingHorizontal: 18,
+                borderRadius: 18,
                 backgroundColor: tab === "security" ? "#0069b4" : "transparent",
               }}
             >
@@ -334,7 +388,7 @@ export default function ResultScreen() {
           style={{ paddingHorizontal: "5%" }}
           contentContainerStyle={{ paddingBottom: 24 }}
         >
-          <Text style={{ color: "#0069b4", marginBottom: 10, fontSize: 24 }}>
+          <Text style={{ color: "#111827", marginBottom: 10, fontSize: 24 }}>
             {(result.header["Type de document"] as string) ||
               getLabel("result", lang)}
           </Text>
@@ -352,7 +406,7 @@ export default function ResultScreen() {
                 fontSize: 20,
                 fontWeight: "600",
                 fontVariant: ["small-caps"],
-                color: "black",
+                color: "#111827",
                 marginTop: 14,
               }}
             >
@@ -385,7 +439,7 @@ export default function ResultScreen() {
                 fontSize: 20,
                 fontWeight: "600",
                 fontVariant: ["small-caps"],
-                color: "black",
+                color: "#111827",
                 marginTop: 14,
               }}
             >
@@ -405,7 +459,7 @@ export default function ResultScreen() {
               fontSize: 20,
               fontWeight: "600",
               fontVariant: ["small-caps"],
-              color: "black",
+              color: "#111827",
               marginTop: 14,
             }}
           >

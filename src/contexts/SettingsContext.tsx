@@ -16,6 +16,8 @@ type SettingsContextType = {
   setLang: (l: string) => Promise<void>;
   historyEnabled: boolean;
   setHistoryEnabled: (v: boolean) => Promise<void>;
+  advancedMode: boolean;
+  setAdvancedMode: (v: boolean) => Promise<void>;
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
@@ -25,6 +27,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<string>("en");
   const [historyEnabled, setHistoryEnabledState] = useState<boolean>(true);
+  const [advancedMode, setAdvancedModeState] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -33,6 +36,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       try {
         const stored = await AsyncStorage.getItem("historyEnabled");
         setHistoryEnabledState(stored !== "false");
+        const storedAdvanced = await AsyncStorage.getItem("advancedMode");
+        setAdvancedModeState(storedAdvanced === "true");
       } catch {
         setHistoryEnabledState(true);
       }
@@ -56,9 +61,25 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const setAdvancedMode = async (v: boolean) => {
+    setAdvancedModeState(v);
+    try {
+      await AsyncStorage.setItem("advancedMode", v ? "true" : "false");
+    } catch {
+      // noop
+    }
+  };
+
   return (
     <SettingsContext.Provider
-      value={{ lang, setLang, historyEnabled, setHistoryEnabled }}
+      value={{
+        lang,
+        setLang,
+        historyEnabled,
+        setHistoryEnabled,
+        advancedMode,
+        setAdvancedMode,
+      }}
     >
       {children}
     </SettingsContext.Provider>

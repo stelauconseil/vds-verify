@@ -70,6 +70,9 @@ const label = {
     deleteHistory: "Supprimer l'historique",
     deleteHistoryMessage:
       "Etes-vous certain de vouloir supprimer toutes les entrées de l'historique ?",
+    advancedmode: "Mode avancé",
+    advancedmode_info:
+      "Affiche les champs vides ou techniques dans le résultat",
     ok: "Ok",
     cancel: "Annuler",
   },
@@ -139,6 +142,8 @@ const label = {
     history: "History",
     deleteHistory: "Clear history",
     deleteHistoryMessage: "Do you really want to delete all history entries?",
+    advancedmode: "Advanced mode",
+    advancedmode_info: "Show empty or technical fields in the result",
     ok: "Ok",
     cancel: "Cancel",
   },
