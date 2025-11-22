@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Animated from "react-native-reanimated";
 
-import { theme } from "../theme";
+import { theme } from "@/theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

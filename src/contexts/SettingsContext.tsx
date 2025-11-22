@@ -1,9 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getLang as getLangFromLabels,
   saveLang as saveLangToStorage,
-} from "../components/Label";
+} from "@/components/Label";
 
 type SettingsContextType = {
   lang: string;
@@ -16,7 +22,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(
   undefined
 );
 
-export function SettingsProvider({ children }: { children: React.ReactNode }) {
+export function SettingsProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<string>("en");
   const [historyEnabled, setHistoryEnabledState] = useState<boolean>(true);
 

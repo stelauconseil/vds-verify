@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import type { VdsResult } from "../types/vds";
+import { createContext, useContext, useState, ReactNode } from "react";
+import type { VdsResult } from "@/types/vds";
 
 type ScanStatus = "valid" | "invalid" | "unsigned" | null;
 

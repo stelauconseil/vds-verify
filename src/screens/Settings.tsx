@@ -9,10 +9,9 @@ import {
   Platform,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
-// import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getLabel } from "../components/Label";
-import { useSettings } from "../contexts/SettingsContext";
+import { getLabel } from "@/components/Label";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type SettingsViewProps = {

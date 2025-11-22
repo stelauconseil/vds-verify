@@ -1,24 +1,25 @@
 import { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, ScrollView, Text, Image } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import { captureRef } from "react-native-view-shot";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Button } from "../../components/Button";
-import ScannerView from "../../screens/ScannerView";
-import { getLabel, getLang } from "../../components/Label";
 import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
-import type { VdsResult } from "../../types/vds";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useScanStatus } from "../../contexts/ScanStatusContext";
 import * as Haptics from "expo-haptics";
+
+import { useSettings } from "@/contexts/SettingsContext";
+import ScannerView from "@/screens/ScannerView";
+import { useScanStatus } from "@/contexts/ScanStatusContext";
+import { getLabel } from "@/components/Label";
+import type { VdsResult } from "@/types/vds";
 
 export default function ScanRoute() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useLocalSearchParams();
-  const [lang, setLang] = useState<string>("en");
+  const { lang } = useSettings();
   const [result, setResult] = useState<VdsResult | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
@@ -37,14 +38,6 @@ export default function ScanRoute() {
   // Prevent double navigation / double processing
   const presentedRef = useRef(false);
   const processingRef = useRef(false);
-
-  useEffect(() => {
-    const getLangAsync = async () => {
-      const l = await getLang();
-      setLang(l);
-    };
-    getLangAsync();
-  }, []);
 
   useEffect(() => {
     const getCameraPermission = async () => {

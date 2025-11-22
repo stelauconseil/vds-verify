@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { FC, useState, useCallback } from "react";
 import {
   ScrollView,
   View,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-import { formatData, getLabel } from "../components/Label";
+import { formatData, getLabel } from "@/components/Label";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,7 +20,7 @@ type Props = { navigation: any; lang: string };
 const ROW_BG_1 = "#F7F9FC"; // very light blue-gray
 const ROW_BG_2 = "#EEF2F7"; // slightly darker
 
-const HistoryScreen: React.FC<Props> = ({ navigation, lang }) => {
+const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const insets = useSafeAreaInsets();
 

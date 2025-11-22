@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
-import { getLabel } from "../../../components/Label";
-import { useSettings } from "../../../contexts/SettingsContext";
+import { getLabel } from "@/components/Label";
+import { useSettings } from "@/contexts/SettingsContext";
 
 export default function SettingsLayout() {
   const { lang } = useSettings();

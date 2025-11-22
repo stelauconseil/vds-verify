@@ -3,17 +3,17 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import * as NavigationBar from "expo-navigation-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Platform, useColorScheme, StyleSheet } from "react-native";
-import { useThemeColor } from "../components/Themed";
-import { theme } from "../theme";
-import { ScanStatusProvider } from "../contexts/ScanStatusContext";
-import { SettingsProvider } from "../contexts/SettingsContext";
+import { useThemeColor } from "@/components/Themed";
+import { theme } from "@/theme";
+import { ScanStatusProvider } from "@/contexts/ScanStatusContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme() || "light";

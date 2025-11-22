@@ -1,10 +1,9 @@
+import { useEffect, useState } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { Redirect } from "expo-router";
-import { useScanStatus } from "../../contexts/ScanStatusContext";
-import { useEffect, useState } from "react";
-import { getLang, formatData, isBase64 } from "../../components/Label";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { theme } from "../../theme";
+import { useScanStatus } from "@/contexts/ScanStatusContext";
+import { getLang, formatData, isBase64 } from "@/components/Label";
 import { Image } from "react-native";
 
 const formatResult = (

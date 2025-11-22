@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   View,
   ScrollView,
@@ -10,8 +10,8 @@ import {
 import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useScanStatus } from "../contexts/ScanStatusContext";
-import { getLang, formatData, isBase64, getLabel } from "../components/Label";
+import { useScanStatus } from "@/contexts/ScanStatusContext";
+import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 

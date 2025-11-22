@@ -3,7 +3,7 @@ import { Pressable } from "react-native-gesture-handler";
 
 import { ThemedText, useThemeColor } from "./Themed";
 
-import { theme } from "../theme";
+import { theme } from "@/theme";
 
 export function Button({
   title,

@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
-import SettingsView from "../../../screens/Settings";
-import { useSettings } from "../../../contexts/SettingsContext";
+import SettingsView from "@/screens/Settings";
+import { useSettings } from "@/contexts/SettingsContext";
 
 export default function SettingsIndex() {
   const { lang, setLang } = useSettings();

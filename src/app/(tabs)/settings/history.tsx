@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
-import HistoryScreen from "../../../screens/HistoryScreen";
-import { getLang } from "../../../components/Label";
+import HistoryScreen from "@/screens/HistoryScreen";
+import { getLang } from "@/components/Label";
 
 export default function HistoryRoute() {
   const [lang, setLang] = useState<string>("en");

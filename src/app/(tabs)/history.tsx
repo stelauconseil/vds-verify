@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "expo-router";
-import HistoryScreen from "../../screens/HistoryScreen";
-import { useSettings } from "../../contexts/SettingsContext";
+import HistoryScreen from "@/screens/HistoryScreen";
+import { useSettings } from "@/contexts/SettingsContext";
 
 export default function HistoryRoute() {
   const { lang } = useSettings();

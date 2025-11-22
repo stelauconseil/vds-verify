@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Faq from "../../../screens/Faq";
-import { getLang } from "../../../components/Label";
+import Faq from "@/screens/Faq";
+import { getLang } from "@/components/Label";
 
 export default function FaqRoute() {
   const [lang, setLang] = useState<string>("en");
