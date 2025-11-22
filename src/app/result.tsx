@@ -267,12 +267,15 @@ export default function ResultScreen() {
             gap: 2,
           }}
         >
-          <Pressable onPress={() => setTab("vds")} style={{ borderRadius: 14 }}>
+          <Pressable
+            onPress={() => setTab("vds")}
+            style={{ borderRadius: 16, overflow: "hidden" }}
+          >
             <View
               style={{
                 paddingVertical: 6,
                 paddingHorizontal: 14,
-                borderRadius: 14,
+                borderRadius: 16,
                 backgroundColor: tab === "vds" ? "#0069b4" : "transparent",
               }}
             >
@@ -288,13 +291,13 @@ export default function ResultScreen() {
           </Pressable>
           <Pressable
             onPress={() => setTab("security")}
-            style={{ borderRadius: 14 }}
+            style={{ borderRadius: 16, overflow: "hidden" }}
           >
             <View
               style={{
                 paddingVertical: 6,
                 paddingHorizontal: 14,
-                borderRadius: 14,
+                borderRadius: 16,
                 backgroundColor: tab === "security" ? "#0069b4" : "transparent",
               }}
             >
