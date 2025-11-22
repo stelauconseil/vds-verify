@@ -185,6 +185,7 @@ export default function ScanRoute() {
     const b64encodedvds = parseData(data);
     if (b64encodedvds === null) {
       setErrorMessage("error_invalid_qr");
+      setTimeout(() => setErrorMessage(null), 3000);
       return;
     }
     try {
@@ -212,54 +213,14 @@ export default function ScanRoute() {
         setResult(vds as VdsResult);
       } else {
         setErrorMessage(message);
+        setTimeout(() => setErrorMessage(null), 3000);
       }
     } catch (error: any) {
       setErrorMessage(error.message);
+      setTimeout(() => setErrorMessage(null), 3000);
     }
     processingRef.current = false;
   };
-
-  if (!permission?.granted) {
-    return (
-      <View style={{ flex: 1, backgroundColor: "white" }}>
-        <ScrollView style={{ paddingHorizontal: "5%" }}>
-          <Text
-            style={{
-              color: "#0069b4",
-              alignSelf: "center",
-              marginTop: 50,
-              marginBottom: 50,
-              fontSize: 32,
-              fontWeight: "700",
-            }}
-          >
-            ⚠️ {getLabel("error", lang)}
-          </Text>
-          <Text style={{ color: "#0069b4", alignSelf: "center", fontSize: 20 }}>
-            {getLabel("cameraerror", lang)}
-          </Text>
-        </ScrollView>
-        <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
-          <View style={{ gap: 10 }}>
-            <Button
-              title={getLabel("camerapermission", lang)}
-              onPress={() => {
-                (async () => {
-                  try {
-                    await requestPermission();
-                  } catch {}
-                })();
-              }}
-            />
-            <Button
-              title={getLabel("opensettings", lang) || "Open Settings"}
-              onPress={Linking.openSettings}
-            />
-          </View>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -300,52 +261,13 @@ export default function ScanRoute() {
           )
         )}
       </View>
-
-      {/* Error overlay when needed */}
+      {/* Transient error message toast above camera */}
       {!!errorMessage && (
-        <View style={{ flex: 1, backgroundColor: "white" }}>
-          <ScrollView style={{ paddingHorizontal: "5%" }}>
-            <Text
-              style={{
-                color: "#0069b4",
-                alignSelf: "center",
-                marginTop: 50,
-                marginBottom: 50,
-                fontSize: 32,
-                fontWeight: "700",
-              }}
-            >
-              ⚠️ {getLabel("error", lang)}
-            </Text>
-            <Text
-              style={{
-                color: "#0069b4",
-                alignSelf: "center",
-                fontSize: 20,
-              }}
-            >
-              {getLabel(errorMessage, lang)}
-            </Text>
-          </ScrollView>
-          <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
-            <Button
-              title={getLabel("scanagain", lang)}
-              onPress={() => {
-                (async () => {
-                  try {
-                    if (cameraRef.current?.stopAsync) {
-                      await cameraRef.current.stopAsync();
-                    }
-                    setResult(null);
-                    setScanned(false);
-                    setErrorMessage(null);
-                  } catch {
-                    setErrorMessage("error_resetting_scan");
-                  }
-                })();
-              }}
-            />
-          </View>
+        <View style={[styles.errorToast, { top: insets.top + 12 }]}>
+          <Text style={styles.errorToastTitle}>{getLabel("error", lang)}</Text>
+          <Text style={styles.errorToastText}>
+            {getLabel(errorMessage, lang) || errorMessage}
+          </Text>
         </View>
       )}
     </View>
@@ -373,5 +295,26 @@ const styles = StyleSheet.create({
   },
   helpText: {
     color: "#ffffff",
+  },
+  errorToast: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "rgba(239,68,68,0.9)",
+  },
+  errorToastTitle: {
+    color: "#fff",
+    fontWeight: "700",
+    marginBottom: 2,
+    fontSize: 14,
+    textAlign: "center",
+  },
+  errorToastText: {
+    color: "#fff",
+    fontSize: 13,
+    textAlign: "center",
   },
 });
