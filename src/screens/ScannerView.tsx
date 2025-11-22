@@ -1,10 +1,10 @@
-import React from "react";
+import { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 
 type Props = { scanned: boolean };
 
-const ScannerView: React.FC<Props> = ({ scanned }) => {
+const ScannerView: FC<Props> = ({ scanned }) => {
   return (
     <Animatable.View
       style={styles.scannerView}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { FC, useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
   StyleSheet,
@@ -20,7 +20,7 @@ type SettingsViewProps = {
   setLang: (l: string) => void;
 };
 
-const SettingsView: React.FC<SettingsViewProps> = ({ navigation }) => {
+const SettingsView: FC<SettingsViewProps> = ({ navigation }) => {
   const isFocused = useIsFocused();
   const { lang, setLang, historyEnabled, setHistoryEnabled } = useSettings();
   const insets = useSafeAreaInsets();

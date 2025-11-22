@@ -1,8 +1,8 @@
-import React from "react";
+import { FC } from "react";
 import { View, StyleSheet, Linking, Text } from "react-native";
 import * as Application from "expo-application";
 
-const About: React.FC = () => {
+const About: FC = () => {
   return (
     <View style={styles.left}>
       <Text style={styles.title}>
