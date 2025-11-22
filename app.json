@@ -9,8 +9,8 @@
     "newArchEnabled": true,
     "assetBundlePatterns": ["**/*"],
     "locales": {
-      "fr": "./languages/french.json",
-      "en": "./languages/english.json"
+      "fr": "./src/languages/french.json",
+      "en": "./src/languages/english.json"
     },
     "ios": {
       "icon": "./assets/icons/vds-verify-icon.icon",
@@ -25,7 +25,8 @@
       "associatedDomains": [
         "applinks:vds-verify.stelau.com",
         "webcredentials:vds-verify.stelau.com"
-      ]
+      ],
+      "appleTeamId": "D3ZX4B4V4U"
     },
     "android": {
       "permissions": [
