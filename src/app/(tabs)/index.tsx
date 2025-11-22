@@ -198,7 +198,6 @@ export default function ScanRoute() {
         body: JSON.stringify({ vds: b64encodedvds }),
       });
       const { success, message, vds } = await response.json();
-      console.log("Decode response:", vds);
       if (success === true) {
         const historyEnabled =
           (await AsyncStorage.getItem("historyEnabled")) !== "false";
