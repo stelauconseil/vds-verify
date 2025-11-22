@@ -399,77 +399,102 @@ export default function ResultScreen() {
           style={{ paddingHorizontal: "5%" }}
           contentContainerStyle={{ paddingBottom: 24 }}
         >
-          {/* Security details */}
-          <View style={{ marginBottom: 10 }}>
+          {/* Header section card */}
+          <View
+            style={{
+              marginTop: 14,
+              marginBottom: 12,
+              borderRadius: 16,
+              backgroundColor: "#F9FAFB",
+              padding: 12,
+            }}
+          >
             <Text
               style={{
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: "600",
                 fontVariant: ["small-caps"],
                 color: "#111827",
-                marginTop: 14,
+                marginBottom: 8,
               }}
             >
               {getLabel("header", lang)}
             </Text>
+            {headerRows}
           </View>
-          {headerRows}
 
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Ionicons
-              name={
-                result.sign_is_valid && result.signer
-                  ? "checkmark-circle-outline"
-                  : "alert-circle-outline"
-              }
-              size={20}
-              style={{ marginTop: 14 }}
-              color={
-                result.sign_is_valid && result.signer
-                  ? "green"
-                  : result.signer
-                    ? "red"
-                    : "orange"
-              }
-            />
+          {/* Signature section card */}
+          <View
+            style={{
+              marginBottom: 12,
+              borderRadius: 16,
+              backgroundColor: "#F9FAFB",
+              padding: 12,
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons
+                name={
+                  result.sign_is_valid && result.signer
+                    ? "checkmark-circle-outline"
+                    : "alert-circle-outline"
+                }
+                size={20}
+                color={
+                  result.sign_is_valid && result.signer
+                    ? "green"
+                    : result.signer
+                      ? "red"
+                      : "orange"
+                }
+              />
+              <Text
+                style={{
+                  marginLeft: 6,
+                  fontSize: 18,
+                  fontWeight: "600",
+                  fontVariant: ["small-caps"],
+                  color: "#111827",
+                }}
+              >
+                {getLabel("signer", lang)}
+              </Text>
+            </View>
+            {result.signer ? (
+              <View style={{ marginTop: 10 }}>{signerRows}</View>
+            ) : (
+              <Text style={{ marginTop: 8 }}>
+                {getLabel("sign_not_verified", lang)}
+              </Text>
+            )}
+          </View>
 
+          {/* Standard/compliance section card */}
+          <View
+            style={{
+              marginBottom: 12,
+              borderRadius: 16,
+              backgroundColor: "#F9FAFB",
+              padding: 12,
+            }}
+          >
             <Text
               style={{
-                marginLeft: 6,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: "600",
                 fontVariant: ["small-caps"],
                 color: "#111827",
-                marginTop: 14,
+                marginBottom: 8,
               }}
             >
-              {getLabel("signer", lang)}
+              {getLabel("standard", lang)}
             </Text>
+            <AttributeRow
+              label={getLabel("compliance", lang)}
+              value={get_standard(result.vds_standard)}
+              index={0}
+            />
           </View>
-          {result.signer ? (
-            signerRows
-          ) : (
-            <Text style={{ marginTop: 5, marginBottom: 5 }}>
-              {getLabel("sign_not_verified", lang)}
-            </Text>
-          )}
-
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "600",
-              fontVariant: ["small-caps"],
-              color: "#111827",
-              marginTop: 14,
-            }}
-          >
-            {getLabel("standard", lang)}
-          </Text>
-          <AttributeRow
-            label={getLabel("compliance", lang)}
-            value={get_standard(result.vds_standard)}
-            index={0}
-          />
         </ScrollView>
       )}
     </View>
