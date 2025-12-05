@@ -4,8 +4,8 @@ import {
   View,
   StyleSheet,
   Text,
-  Pressable,
   Alert,
+  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -150,31 +150,6 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
           );
         })}
       </ScrollView>
-
-      {/* Bottom glass bar overlay kept for visual consistency; empty for now */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: Math.max(insets.bottom, 8) + 8 + 70,
-          left: 10,
-          right: 10,
-          zIndex: 10,
-        }}
-      >
-        <BlurView
-          intensity={70}
-          tint="light"
-          style={{ borderRadius: 20, overflow: "hidden" }}
-        >
-          <View
-            style={{
-              paddingVertical: 10,
-              paddingHorizontal: 16,
-              backgroundColor: "rgba(255,255,255,0.2)",
-            }}
-          />
-        </BlurView>
-      </View>
     </View>
   );
 };

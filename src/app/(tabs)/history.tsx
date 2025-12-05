@@ -11,7 +11,7 @@ export default function HistoryRoute() {
       lang={lang}
       navigation={{
         navigate: (route: string, params?: any) => {
-          if (route === "result") {
+          if (route === "result" || route === "result/data") {
             router.push({
               pathname: "/result",
               params: params ? { result: JSON.stringify(params.result) } : {},

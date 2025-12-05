@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Text,
   View,
@@ -28,6 +27,7 @@ export type TextProps = ThemeProps & {
   italic?: boolean;
   animated?: boolean;
 } & Text["props"];
+
 export type ViewProps = ThemeProps & View["props"] & { animated?: boolean };
 
 export function useThemeColor<T, U>(props: { light: T; dark: U }) {

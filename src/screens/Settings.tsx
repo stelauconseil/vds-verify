@@ -4,9 +4,9 @@ import {
   StyleSheet,
   View,
   Text,
-  Pressable,
   Switch,
   Platform,
+  Pressable,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";

@@ -119,10 +119,7 @@ export default function TabsLayout() {
         </NativeTabs.Trigger>
       )}
 
-      <NativeTabs.Trigger
-        name="settings"
-        role={isLiquidGlassAvailable() ? "search" : undefined}
-      >
+      <NativeTabs.Trigger name="settings">
         {Platform.select({
           ios: <Icon sf="gearshape" />,
           android: (
@@ -137,7 +134,9 @@ export default function TabsLayout() {
             />
           ),
         })}
-        <Label>{getLabel("settings", lang || "en")}</Label>
+        <Label selectedStyle={labelSelectedStyle}>
+          {getLabel("settings", lang || "en")}
+        </Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
