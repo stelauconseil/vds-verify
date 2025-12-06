@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import type { VdsResult } from "@/types/vds";
 
-type ScanStatus = "valid" | "invalid" | "unsigned" | null;
+type ScanStatus = "valid" | "invalid" | "unsigned" | "nonverifiable" | null;
 
 interface ScanStatusContextType {
   status: ScanStatus;

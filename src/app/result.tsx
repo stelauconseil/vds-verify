@@ -322,7 +322,7 @@ export default function ResultScreen() {
       ? "valid"
       : result.signer
         ? "invalid"
-        : "unsigned";
+        : "nonverifiable";
 
   const rawType = result.header["Type de document"] as string | undefined;
 
