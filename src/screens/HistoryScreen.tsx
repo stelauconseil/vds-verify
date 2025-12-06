@@ -113,9 +113,15 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
         }}
       >
         {history.map((entry, index) => {
-          const docType = entry.data?.header?.["Type de document"] as
+          const rawDocType = entry.data?.header?.["Type de document"] as
             | string
             | undefined;
+          const docType = rawDocType
+            ? rawDocType
+                .split(" ")
+                .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ""))
+                .join(" ")
+            : undefined;
           const manifest = entry.data?.header?.["manifest_ID"] as
             | string
             | undefined;
