@@ -126,22 +126,33 @@ function Section({
 }
 
 // Status badge component
-function StatusBadge({ status }: { status: "valid" | "invalid" | "unsigned" }) {
+function StatusBadge({
+  status,
+  lang,
+}: {
+  status: "valid" | "invalid" | "unsigned" | "nonverifiable";
+  lang: string;
+}) {
   const statusConfig = {
     valid: {
       icon: "checkmark-circle",
       color: theme.color.success,
-      text: "Valid",
+      text: getLabel("valid", lang),
     },
     invalid: {
       icon: "close-circle",
       color: theme.color.error,
-      text: "Invalid",
+      text: getLabel("invalid", lang),
     },
     unsigned: {
       icon: "alert-circle",
       color: theme.color.warning,
-      text: "Unsigned",
+      text: getLabel("unsigned", lang),
+    },
+    nonverifiable: {
+      icon: "help-circle",
+      color: theme.color.warning,
+      text: getLabel("nonverifiable", lang),
     },
   };
 
@@ -163,6 +174,7 @@ export default function ResultScreen() {
   const { result, setResult: setContextResult, setStatus } = useScanStatus();
   const { advancedMode } = useSettings();
   const [lang, setLang] = useState<string>("en");
+  const [selectedTab, setSelectedTab] = useState<"data" | "details">("data");
   const insets = useSafeAreaInsets();
   // Precompute rows to avoid heavy work each render while also keeping hooks at top-level
   const dataRows = useMemo(() => {
@@ -295,7 +307,7 @@ export default function ResultScreen() {
         } else if (parsed.signer) {
           setStatus("invalid");
         } else {
-          setStatus("unsigned");
+          setStatus("nonverifiable");
         }
       } catch {
         // Invalid JSON: ignore and let redirect happen
@@ -305,15 +317,22 @@ export default function ResultScreen() {
 
   if (!result) return <Redirect href="/" />;
 
-  const securityStatus: "valid" | "invalid" | "unsigned" =
+  const securityStatus: "valid" | "invalid" | "unsigned" | "nonverifiable" =
     result.sign_is_valid && result.signer
       ? "valid"
       : result.signer
         ? "invalid"
         : "unsigned";
 
+  const rawType = result.header["Type de document"] as string | undefined;
+
   const documentType =
-    (result.header["Type de document"] as string) || getLabel("result", lang);
+    (rawType
+      ? rawType
+          .split(" ")
+          .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ""))
+          .join(" ")
+      : undefined) || getLabel("result", lang);
 
   const close = () => {
     setContextResult(null);
@@ -368,92 +387,174 @@ export default function ResultScreen() {
             />
           </View>
           <Text style={styles.documentTitle}>{documentType}</Text>
-          <StatusBadge status={securityStatus} />
+          <StatusBadge status={securityStatus} lang={lang} />
+
+          {/* Segmented tabs like Day 1 / Day 2 in React Conf */}
+          {Platform.OS === "ios" && isLiquidGlassAvailable() ? (
+            <BlurView
+              intensity={50}
+              tint="light"
+              style={styles.tabGlassWrapper}
+            >
+              <View style={styles.tabContainer}>
+                <Pressable
+                  onPress={() => setSelectedTab("data")}
+                  style={[
+                    styles.tabPill,
+                    selectedTab === "data" && styles.tabPillActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tabLabel,
+                      selectedTab === "data" && styles.tabLabelActive,
+                    ]}
+                  >
+                    {getLabel("data", lang)}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setSelectedTab("details")}
+                  style={[
+                    styles.tabPill,
+                    selectedTab === "details" && styles.tabPillActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tabLabel,
+                      selectedTab === "details" && styles.tabLabelActive,
+                    ]}
+                  >
+                    {getLabel("security", lang)}
+                  </Text>
+                </Pressable>
+              </View>
+            </BlurView>
+          ) : (
+            <View style={styles.tabContainerFallback}>
+              <Pressable
+                onPress={() => setSelectedTab("data")}
+                style={[
+                  styles.tabPill,
+                  selectedTab === "data" && styles.tabPillActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    selectedTab === "data" && styles.tabLabelActive,
+                  ]}
+                >
+                  {getLabel("data", lang)}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedTab("details")}
+                style={[
+                  styles.tabPill,
+                  selectedTab === "details" && styles.tabPillActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    selectedTab === "details" && styles.tabLabelActive,
+                  ]}
+                >
+                  {getLabel("details", lang)}
+                </Text>
+              </Pressable>
+            </View>
+          )}
         </View>
 
-        {/* Data section */}
-        <Section
-          title={getLabel("data", lang)}
-          icon={
-            <Ionicons
-              name="document-text-outline"
-              size={20}
-              color={theme.color.textPrimary}
-              style={{ marginRight: theme.space8 }}
-            />
-          }
-        >
-          <View style={styles.sectionContent}>{dataRows}</View>
-        </Section>
-
-        {/* Header information section */}
-        <Section
-          title={getLabel("header", lang)}
-          icon={
-            <Ionicons
-              name="information-circle-outline"
-              size={20}
-              color={theme.color.textPrimary}
-              style={{ marginRight: theme.space8 }}
-            />
-          }
-        >
-          <View style={styles.sectionContent}>{headerRows}</View>
-        </Section>
-
-        {/* Signature section */}
-        <Section
-          title={getLabel("signer", lang)}
-          icon={
-            <Ionicons
-              name={
-                securityStatus === "valid"
-                  ? "shield-checkmark"
-                  : securityStatus === "invalid"
-                    ? "shield"
-                    : "shield-half"
+        {selectedTab === "data" ? (
+          <Section
+            title={getLabel("data", lang)}
+            icon={
+              <Ionicons
+                name="document-text-outline"
+                size={20}
+                color={theme.color.textPrimary}
+                style={{ marginRight: theme.space8 }}
+              />
+            }
+          >
+            <View style={styles.sectionContent}>{dataRows}</View>
+          </Section>
+        ) : (
+          <>
+            {/* Header information section */}
+            <Section
+              title={getLabel("header", lang)}
+              icon={
+                <Ionicons
+                  name="information-circle-outline"
+                  size={20}
+                  color={theme.color.textPrimary}
+                  style={{ marginRight: theme.space8 }}
+                />
               }
-              size={20}
-              color={
-                securityStatus === "valid"
-                  ? theme.color.success
-                  : securityStatus === "invalid"
-                    ? theme.color.error
-                    : theme.color.warning
-              }
-              style={{ marginRight: theme.space8 }}
-            />
-          }
-        >
-          {result.signer ? (
-            <View style={styles.sectionContent}>{signerRows}</View>
-          ) : (
-            <Text style={styles.noSignerText}>
-              {getLabel("sign_not_verified", lang)}
-            </Text>
-          )}
-        </Section>
+            >
+              <View style={styles.sectionContent}>{headerRows}</View>
+            </Section>
 
-        {/* Compliance section */}
-        <Section
-          title={getLabel("standard", lang)}
-          icon={
-            <Ionicons
-              name="checkmark-done-circle-outline"
-              size={20}
-              color={theme.color.textPrimary}
-              style={{ marginRight: theme.space8 }}
-            />
-          }
-        >
-          <View style={styles.sectionContent}>
-            <AttributeRow
-              label={getLabel("compliance", lang)}
-              value={get_standard(result.vds_standard)}
-              index={0}
-            />
-          </View>
-        </Section>
+            {/* Signature section */}
+            <Section
+              title={getLabel("signer", lang)}
+              icon={
+                <Ionicons
+                  name={
+                    securityStatus === "valid"
+                      ? "shield-checkmark"
+                      : securityStatus === "invalid"
+                        ? "shield"
+                        : "shield-half"
+                  }
+                  size={20}
+                  color={
+                    securityStatus === "valid"
+                      ? theme.color.success
+                      : securityStatus === "invalid"
+                        ? theme.color.error
+                        : theme.color.warning
+                  }
+                  style={{ marginRight: theme.space8 }}
+                />
+              }
+            >
+              {result.signer ? (
+                <View style={styles.sectionContent}>{signerRows}</View>
+              ) : (
+                <Text style={styles.noSignerText}>
+                  {getLabel("sign_not_verified", lang)}
+                </Text>
+              )}
+            </Section>
+
+            {/* Compliance section */}
+            <Section
+              title={getLabel("standard", lang)}
+              icon={
+                <Ionicons
+                  name="checkmark-done-circle-outline"
+                  size={20}
+                  color={theme.color.textPrimary}
+                  style={{ marginRight: theme.space8 }}
+                />
+              }
+            >
+              <View style={styles.sectionContent}>
+                <AttributeRow
+                  label={getLabel("compliance", lang)}
+                  value={get_standard(result.vds_standard)}
+                  index={0}
+                />
+              </View>
+            </Section>
+          </>
+        )}
       </ScrollView>
     </View>
   );
@@ -522,6 +623,57 @@ const styles = StyleSheet.create({
     color: theme.color.textPrimary,
     textAlign: "center",
     marginBottom: theme.space12,
+  },
+  tabGlassWrapper: {
+    borderRadius: theme.borderRadius20,
+    overflow: "hidden",
+    marginTop: theme.space16,
+    alignSelf: "stretch",
+    marginHorizontal: theme.space16,
+  },
+  tabContainer: {
+    flexDirection: "row",
+    borderRadius: theme.borderRadius20,
+    paddingHorizontal: theme.space4,
+    paddingVertical: theme.space4,
+    gap: theme.space4,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    //backgroundColor: "rgba(15, 23, 42, 0.3)", // darker glass
+  },
+  tabContainerFallback: {
+    flexDirection: "row",
+    borderRadius: theme.borderRadius20,
+    paddingHorizontal: theme.space4,
+    paddingVertical: theme.space4,
+    gap: theme.space4,
+    marginTop: theme.space16,
+    backgroundColor: theme.color.backgroundSecondary,
+  },
+  tabPill: {
+    flex: 1,
+    borderRadius: theme.borderRadius20,
+    paddingVertical: theme.space8,
+    minHeight: 36,
+    paddingHorizontal: theme.space12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabPillActive: {
+    backgroundColor: theme.color.primary,
+    // extra elevation to mimic glass highlight
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  tabLabel: {
+    fontSize: theme.fontSize14,
+    fontWeight: "600",
+    color: theme.color.textSecondary,
+  },
+  tabLabelActive: {
+    color: "#FFFFFF",
   },
   statusBadge: {
     flexDirection: "row",
