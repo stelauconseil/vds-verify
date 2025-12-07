@@ -113,14 +113,31 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
         }}
       >
         {history.map((entry, index) => {
-          const rawDocType = entry.data?.header?.["Type de document"] as
+          const typeField = entry.data?.header?.["Type de document"] as
             | string
+            | { [code: string]: string }
             | undefined;
-          const docType = rawDocType
-            ? rawDocType
-                .split(" ")
-                .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ""))
-                .join(" ")
+
+          let localizedType: string | undefined;
+          if (typeField && typeof typeField === "object") {
+            const lowerLang = lang?.toLowerCase();
+            localizedType =
+              typeField[lowerLang] ||
+              typeField[lowerLang?.slice(0, 2) || ""] ||
+              Object.values(typeField)[0];
+          } else if (typeof typeField === "string") {
+            localizedType = typeField;
+          }
+
+          const docType = localizedType
+            ? (() => {
+                const trimmed = localizedType.trim();
+                if (!trimmed) return "";
+                return (
+                  trimmed.charAt(0).toUpperCase() +
+                  trimmed.slice(1).toLowerCase()
+                );
+              })()
             : undefined;
           const manifest = entry.data?.header?.["manifest_ID"] as
             | string

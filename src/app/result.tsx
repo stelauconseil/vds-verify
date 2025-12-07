@@ -250,14 +250,66 @@ export default function ResultScreen() {
       }
       return true;
     });
-    return keys.map((k, i) => (
-      <AttributeRow
-        key={`header-${k}`}
-        label={labelForKey(k, lang)}
-        value={formatData(result.header[k], lang) as any}
-        index={i}
-      />
-    ));
+    return keys.map((k, i) => {
+      const headerValue = result.header[k];
+
+      // For "Type de document", reuse the same localized, title-cased
+      // string used in the hero section instead of showing the raw object.
+      if (k === "Type de document") {
+        const typeField = headerValue as
+          | string
+          | { [code: string]: string }
+          | undefined;
+
+        let localizedType: string | undefined;
+        if (typeField && typeof typeField === "object") {
+          const lowerLang = lang?.toLowerCase();
+          localizedType =
+            typeField[lowerLang] ||
+            typeField[lowerLang?.slice(0, 2) || ""] ||
+            Object.values(typeField)[0];
+        } else if (typeof typeField === "string") {
+          localizedType = typeField;
+        }
+
+        const displayType = localizedType
+          ? (() => {
+              const trimmed = localizedType.trim();
+              if (!trimmed) return "";
+              return (
+                trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+              );
+            })()
+          : undefined;
+
+        return (
+          <AttributeRow
+            key={`header-${k}`}
+            label={labelForKey(k, lang)}
+            value={displayType ?? ""}
+            index={i}
+          />
+        );
+      }
+
+      const isObjectValue =
+        headerValue !== null &&
+        typeof headerValue === "object" &&
+        !Array.isArray(headerValue);
+
+      const displayValue = isObjectValue
+        ? JSON.stringify(headerValue)
+        : (formatData(headerValue, lang) as any);
+
+      return (
+        <AttributeRow
+          key={`header-${k}`}
+          label={labelForKey(k, lang)}
+          value={displayValue}
+          index={i}
+        />
+      );
+    });
   }, [result, lang, advancedMode]);
 
   const signerRows = useMemo(() => {
@@ -323,15 +375,29 @@ export default function ResultScreen() {
       : result.signer
         ? "invalid"
         : "nonverifiable";
-
-  const rawType = result.header["Type de document"] as string | undefined;
-
+  const typeField = result.header["Type de document"] as
+    | string
+    | { [code: string]: string }
+    | undefined;
+  let localizedType: string | undefined;
+  if (typeField && typeof typeField === "object") {
+    const lowerLang = lang?.toLowerCase();
+    localizedType =
+      typeField[lowerLang] ||
+      typeField[lowerLang?.slice(0, 2) || ""] ||
+      Object.values(typeField)[0];
+  } else if (typeof typeField === "string") {
+    localizedType = typeField;
+  }
   const documentType =
-    (rawType
-      ? rawType
-          .split(" ")
-          .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ""))
-          .join(" ")
+    (localizedType
+      ? (() => {
+          const trimmed = localizedType.trim();
+          if (!trimmed) return "";
+          return (
+            trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+          );
+        })()
       : undefined) || getLabel("result", lang);
 
   const close = () => {
@@ -481,19 +547,7 @@ export default function ResultScreen() {
         </View>
 
         {selectedTab === "data" ? (
-          <Section
-            title={getLabel("data", lang)}
-            icon={
-              <Ionicons
-                name="document-text-outline"
-                size={20}
-                color={theme.color.textPrimary}
-                style={{ marginRight: theme.space8 }}
-              />
-            }
-          >
-            <View style={styles.sectionContent}>{dataRows}</View>
-          </Section>
+          <View style={styles.sectionContent}>{dataRows}</View>
         ) : (
           <>
             {/* Header information section */}
@@ -501,7 +555,7 @@ export default function ResultScreen() {
               title={getLabel("header", lang)}
               icon={
                 <Ionicons
-                  name="information-circle-outline"
+                  name="browsers-outline"
                   size={20}
                   color={theme.color.textPrimary}
                   style={{ marginRight: theme.space8 }}
