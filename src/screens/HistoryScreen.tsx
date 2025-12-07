@@ -133,10 +133,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
             ? (() => {
                 const trimmed = localizedType.trim();
                 if (!trimmed) return "";
-                return (
-                  trimmed.charAt(0).toUpperCase() +
-                  trimmed.slice(1).toLowerCase()
-                );
+                return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
               })()
             : undefined;
           const manifest = entry.data?.header?.["manifest_ID"] as

@@ -276,9 +276,7 @@ export default function ResultScreen() {
           ? (() => {
               const trimmed = localizedType.trim();
               if (!trimmed) return "";
-              return (
-                trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
-              );
+              return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
             })()
           : undefined;
 
@@ -394,9 +392,7 @@ export default function ResultScreen() {
       ? (() => {
           const trimmed = localizedType.trim();
           if (!trimmed) return "";
-          return (
-            trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
-          );
+          return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
         })()
       : undefined) || getLabel("result", lang);
 
