@@ -462,7 +462,7 @@ export default function ResultScreen() {
                     selectedTab === "details" && styles.tabLabelActive,
                   ]}
                 >
-                  {getLabel("details", lang)}
+                  {getLabel("security", lang)}
                 </Text>
               </Pressable>
             </View>
