@@ -370,6 +370,10 @@ export default function ResultScreen() {
         contentContainerStyle={[
           styles.scrollViewContent,
           {
+            paddingTop: Platform.select({
+              android: insets.top + theme.space24, // was just theme.space24
+              default: theme.space24,
+            }),
             paddingBottom: Platform.select({
               android: 100 + insets.bottom,
               default: theme.space24,
@@ -377,12 +381,19 @@ export default function ResultScreen() {
           },
         ]}
       >
+        {result.testdata && (
+          <View style={styles.testdataBanner}>
+            <Text style={styles.testdataBannerText}>
+              {getLabel("testdata", lang)}
+            </Text>
+          </View>
+        )}
         {/* Hero section - centered document info and status */}
         <View style={styles.heroSection}>
           <View style={styles.documentIconContainer}>
             <Ionicons
               name="document-text"
-              size={48}
+              size={42}
               color={theme.color.primary}
             />
           </View>
@@ -600,15 +611,31 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     paddingHorizontal: theme.space16,
-    paddingTop: theme.space24,
+  },
+  testdataBanner: {
+    paddingVertical: theme.space8,
+    paddingHorizontal: theme.space12,
+    borderRadius: theme.borderRadius20,
+    backgroundColor: "#FEE2E2",
+    borderWidth: 1,
+    borderColor: "#FCA5A5",
+    marginBottom: theme.space16,
+    alignItems: "center",
+  },
+  testdataBannerText: {
+    fontSize: theme.fontSize12,
+    fontWeight: "600",
+    color: "#B91C1C",
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
   heroSection: {
     alignItems: "center",
     marginBottom: theme.space32,
   },
   documentIconContainer: {
-    width: 72,
-    height: 72,
+    width: 66,
+    height: 66,
     borderRadius: 36,
     backgroundColor: theme.color.backgroundSecondary,
     alignItems: "center",
@@ -618,7 +645,7 @@ const styles = StyleSheet.create({
     borderColor: theme.color.border,
   },
   documentTitle: {
-    fontSize: theme.fontSize24,
+    fontSize: theme.fontSize20,
     fontWeight: "600",
     color: theme.color.textPrimary,
     textAlign: "center",
