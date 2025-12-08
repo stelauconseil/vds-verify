@@ -8,6 +8,7 @@ import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import { useIsFocused } from "@react-navigation/native";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import ScannerView from "@/screens/ScannerView";
@@ -20,6 +21,7 @@ export default function ScanRoute() {
   const pathname = usePathname();
   const params = useLocalSearchParams();
   const { lang } = useSettings();
+  const isFocused = useIsFocused();
   const [result, setResult] = useState<VdsResult | null>(null);
   const [scanned, setScanned] = useState<boolean>(false);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
@@ -227,7 +229,7 @@ export default function ScanRoute() {
     <View style={styles.container}>
       <View style={{ flex: 1 }} ref={cameraContainerRef}>
         {/* Mount camera only while no decoded result exists */}
-        {!result ? (
+        {!result && isFocused ? (
           <>
             <CameraView
               ref={cameraRef}
@@ -235,7 +237,9 @@ export default function ScanRoute() {
               barcodeScannerSettings={{
                 barcodeTypes: ["qr", "datamatrix", "aztec"],
               }}
-              onBarcodeScanned={result ? undefined : (processResult as any)}
+              onBarcodeScanned={
+                result || !isFocused ? undefined : (processResult as any)
+              }
               style={StyleSheet.absoluteFillObject}
             />
             <View
