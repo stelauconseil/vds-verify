@@ -6,3 +6,6 @@ show_downloads: false
 google_analytics:
 theme: jekyll-theme-minimal
 include: [".well-known"]
+plugins:
+  - jekyll-compress-images
+  - jekyll-sitemap
