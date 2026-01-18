@@ -180,7 +180,7 @@ const saveLang = async (lang: string): Promise<void> => {
 
 const isBase64 = (value: string): boolean =>
   /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(
-    value
+    value,
   );
 
 const formatString = (data: string): ReactNode | string => {
@@ -215,7 +215,7 @@ const formatData = (data: any, lang?: string): ReactNode | string => {
       return data.join(" ").trim();
     } else if (typeof data === "boolean") {
       return data ? getLabel("true", lang) : getLabel("false", lang);
-    } else if (typeof data === "string" && data.length < 10) {
+    } else if (typeof data === "string" && data.length != 10) {
       throw new Error("data is not a date");
     } else {
       const parsed = Date.parse(data);
