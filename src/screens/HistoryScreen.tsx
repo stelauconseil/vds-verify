@@ -1,4 +1,4 @@
-import { FC, useState, useCallback, useRef } from "react";
+import { FC, useState, useCallback, useEffect, useRef } from "react";
 import {
   FlatList,
   View,
@@ -6,6 +6,10 @@ import {
   Text,
   Alert,
   Pressable,
+  Animated,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -23,124 +27,178 @@ const ROW_BG_2 = "#EEF2F7"; // slightly darker
 const FULL_SWIPE_MIN_PX = 160;
 const FULL_SWIPE_MAX_PX = 240;
 
-const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const insets = useSafeAreaInsets();
-  const openSwipeableRef = useRef<any>(null);
+type HistoryRowProps = {
+  item: HistoryEntry;
+  index: number;
+  lang: string;
+  navigation: any;
+  openSwipeableRef: React.MutableRefObject<any>;
+  deleteHistoryEntryImmediate: (timestamp: string) => void;
+};
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchHistory = async () => {
-        const storedHistory = JSON.parse(
-          (await AsyncStorage.getItem("scanHistory")) || "[]",
-        ) as HistoryEntry[];
-        setHistory(storedHistory);
-      };
-      fetchHistory();
-    }, []),
-  );
+const HistoryRow: FC<HistoryRowProps> = ({
+  item,
+  index,
+  lang,
+  navigation,
+  openSwipeableRef,
+  deleteHistoryEntryImmediate,
+}) => {
+  const swipeableRowRef = useRef<any>(null);
+  const dragListenerIdRef = useRef<string | null>(null);
+  const fullSwipeArmedRef = useRef(false);
 
-  const deleteHistory = async () => {
+  const measuredHeightRef = useRef<number | null>(null);
+  const animatedHeight = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const [hasMeasured, setHasMeasured] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const cleanupDragListener = useCallback(() => {
+    const row = swipeableRowRef.current;
+    const id = dragListenerIdRef.current;
     try {
-      await AsyncStorage.removeItem("scanHistory");
-      setHistory([]);
-    } catch (error) {
-      console.error("Failed to delete history:", error);
+      if (id && row?.state?.dragX?.removeListener) {
+        row.state.dragX.removeListener(id);
+      }
+    } catch {
+      // no-op
     }
-  };
-
-  const deleteHistoryEntry = useCallback(async (timestamp: string) => {
-    setHistory((prev) => {
-      const next = prev.filter((e) => e.timestamp !== timestamp);
-      void AsyncStorage.setItem("scanHistory", JSON.stringify(next));
-      return next;
-    });
+    dragListenerIdRef.current = null;
+    fullSwipeArmedRef.current = false;
   }, []);
 
-  const renderItem = useCallback(
-    ({ item, index }: { item: HistoryEntry; index: number }) => {
-      let swipeableRow: any = null;
-      let dragListenerId: string | null = null;
-      let fullSwipeArmed = false;
+  useEffect(() => cleanupDragListener, [cleanupDragListener]);
 
-      const cleanupDragListener = () => {
-        try {
-          if (dragListenerId && swipeableRow?.state?.dragX?.removeListener) {
-            swipeableRow.state.dragX.removeListener(dragListenerId);
-          }
-        } catch {
-          // no-op
-        }
-        dragListenerId = null;
-        fullSwipeArmed = false;
-      };
+  const getFullSwipeActivationDistance = useCallback(() => {
+    const row = swipeableRowRef.current;
+    const rowWidth = row?.state?.rowWidth as number | undefined;
+    if (typeof rowWidth === "number" && rowWidth > 0) {
+      const scaled = rowWidth * 0.6;
+      return Math.min(FULL_SWIPE_MAX_PX, Math.max(FULL_SWIPE_MIN_PX, scaled));
+    }
+    return FULL_SWIPE_MIN_PX;
+  }, []);
 
-      const getFullSwipeActivationDistance = () => {
-        const rowWidth = swipeableRow?.state?.rowWidth as number | undefined;
-        if (typeof rowWidth === "number" && rowWidth > 0) {
-          const scaled = rowWidth * 0.6;
-          return Math.min(
-            FULL_SWIPE_MAX_PX,
-            Math.max(FULL_SWIPE_MIN_PX, scaled),
-          );
-        }
-        return FULL_SWIPE_MIN_PX;
-      };
+  const onDelete = useCallback(() => {
+    if (isDeleting) return;
 
-      const typeField = item.data?.header?.["Type de document"] as
-        | string
-        | { [code: string]: string }
-        | undefined;
+    setIsDeleting(true);
+    cleanupDragListener();
 
-      let localizedType: string | undefined;
-      if (typeField && typeof typeField === "object") {
-        const lowerLang = lang?.toLowerCase();
-        localizedType =
-          typeField[lowerLang] ||
-          typeField[lowerLang?.slice(0, 2) || ""] ||
-          Object.values(typeField)[0];
-      } else if (typeof typeField === "string") {
-        localizedType = typeField;
+    const row = swipeableRowRef.current;
+    row?.close?.();
+    if (openSwipeableRef.current === row) {
+      openSwipeableRef.current = null;
+    }
+
+    const height = measuredHeightRef.current ?? 0;
+    if (height > 0) {
+      animatedHeight.setValue(height);
+    }
+
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(translateX, {
+          toValue: -24,
+          duration: 120,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 160,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Height cannot be driven by native driver; animate it on an outer wrapper.
+      Animated.timing(animatedHeight, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start(({ finished }) => {
+      if (finished) {
+        deleteHistoryEntryImmediate(item.timestamp);
       }
+    });
+  }, [
+    animatedHeight,
+    cleanupDragListener,
+    deleteHistoryEntryImmediate,
+    isDeleting,
+    item.timestamp,
+    openSwipeableRef,
+    opacity,
+    translateX,
+  ]);
 
-      const docType = localizedType
-        ? (() => {
-            const trimmed = localizedType.trim();
-            if (!trimmed) return "";
-            return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-          })()
-        : undefined;
-      const manifest = item.data?.header?.["manifest_ID"] as string | undefined;
-      const date = (formatData(item.timestamp, lang) as string) || "";
+  const typeField = item.data?.header?.["Type de document"] as
+    | string
+    | { [code: string]: string }
+    | undefined;
 
-      return (
-        <View
-          style={{
-            borderRadius: 12,
-            overflow: "hidden",
-            marginBottom: 10,
-          }}
-        >
+  let localizedType: string | undefined;
+  if (typeField && typeof typeField === "object") {
+    const lowerLang = lang?.toLowerCase();
+    localizedType =
+      typeField[lowerLang] ||
+      typeField[lowerLang?.slice(0, 2) || ""] ||
+      Object.values(typeField)[0];
+  } else if (typeof typeField === "string") {
+    localizedType = typeField;
+  }
+
+  const docType = localizedType
+    ? (() => {
+        const trimmed = localizedType.trim();
+        if (!trimmed) return "";
+        return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+      })()
+    : undefined;
+  const manifest = item.data?.header?.["manifest_ID"] as string | undefined;
+  const date = (formatData(item.timestamp, lang) as string) || "";
+
+  return (
+    <Animated.View
+      style={{
+        borderRadius: 12,
+        overflow: "hidden",
+        marginBottom: 10,
+        ...(hasMeasured ? { height: animatedHeight } : null),
+      }}
+      pointerEvents={isDeleting ? "none" : "auto"}
+    >
+      <View
+        onLayout={(e) => {
+          const h = e.nativeEvent.layout.height;
+          if (!hasMeasured && h > 0) {
+            measuredHeightRef.current = h;
+            animatedHeight.setValue(h);
+            setHasMeasured(true);
+          }
+        }}
+      >
+        <Animated.View style={{ opacity, transform: [{ translateX }] }}>
           <Swipeable
-            ref={(ref) => {
-              swipeableRow = ref;
-            }}
+            ref={swipeableRowRef}
             friction={2}
             rightThreshold={40}
             overshootRight
             overshootFriction={8}
             onSwipeableWillOpen={() => {
+              const row = swipeableRowRef.current;
               if (
                 openSwipeableRef.current &&
-                openSwipeableRef.current !== swipeableRow
+                openSwipeableRef.current !== row
               ) {
                 openSwipeableRef.current.close();
               }
-              openSwipeableRef.current = swipeableRow;
+              openSwipeableRef.current = row;
             }}
             onSwipeableWillClose={() => {
               cleanupDragListener();
-              if (openSwipeableRef.current === swipeableRow) {
+              if (openSwipeableRef.current === swipeableRowRef.current) {
                 openSwipeableRef.current = null;
               }
             }}
@@ -148,40 +206,27 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
               if (direction !== "right") return;
 
               cleanupDragListener();
-              const dragX = swipeableRow?.state?.dragX;
+              const row = swipeableRowRef.current;
+              const dragX = row?.state?.dragX;
               if (dragX?.addListener) {
-                dragListenerId = dragX.addListener(
+                dragListenerIdRef.current = dragX.addListener(
                   ({ value }: { value: number }) => {
                     if (value <= -getFullSwipeActivationDistance()) {
-                      fullSwipeArmed = true;
+                      fullSwipeArmedRef.current = true;
                     }
                   },
                 );
               }
             }}
-            onSwipeableOpen={(direction, swipeable) => {
+            onSwipeableOpen={(direction) => {
               if (direction !== "right") return;
-
-              const shouldAutoDelete = fullSwipeArmed;
+              const shouldAutoDelete = fullSwipeArmedRef.current;
               cleanupDragListener();
-
-              if (!shouldAutoDelete) return;
-
-              swipeable?.close();
-              if (openSwipeableRef.current === swipeable) {
-                openSwipeableRef.current = null;
-              }
-              void deleteHistoryEntry(item.timestamp);
+              if (shouldAutoDelete) onDelete();
             }}
             renderRightActions={() => (
               <Pressable
-                onPress={() => {
-                  swipeableRow?.close();
-                  if (openSwipeableRef.current === swipeableRow) {
-                    openSwipeableRef.current = null;
-                  }
-                  void deleteHistoryEntry(item.timestamp);
-                }}
+                onPress={onDelete}
                 style={styles.deleteAction}
                 accessibilityRole="button"
                 accessibilityLabel={getLabel("delete", lang)}
@@ -195,8 +240,8 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
           >
             <Pressable
               onPress={() => {
-                swipeableRow?.close();
-                if (openSwipeableRef.current === swipeableRow) {
+                swipeableRowRef.current?.close();
+                if (openSwipeableRef.current === swipeableRowRef.current) {
                   openSwipeableRef.current = null;
                 }
                 navigation.navigate("result", { result: item.data });
@@ -230,10 +275,80 @@ const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
               </View>
             </Pressable>
           </Swipeable>
-        </View>
-      );
-    },
-    [deleteHistoryEntry, lang, navigation],
+        </Animated.View>
+      </View>
+    </Animated.View>
+  );
+};
+
+const HistoryScreen: FC<Props> = ({ navigation, lang }) => {
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const insets = useSafeAreaInsets();
+  const openSwipeableRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (
+      Platform.OS === "android" &&
+      typeof UIManager.setLayoutAnimationEnabledExperimental === "function"
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchHistory = async () => {
+        const storedHistory = JSON.parse(
+          (await AsyncStorage.getItem("scanHistory")) || "[]",
+        ) as HistoryEntry[];
+        setHistory(storedHistory);
+      };
+      fetchHistory();
+    }, []),
+  );
+
+  const deleteHistory = async () => {
+    try {
+      await AsyncStorage.removeItem("scanHistory");
+
+      LayoutAnimation.configureNext({
+        duration: 220,
+        create: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+          property: LayoutAnimation.Properties.opacity,
+        },
+        update: { type: LayoutAnimation.Types.easeInEaseOut },
+        delete: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+          property: LayoutAnimation.Properties.opacity,
+        },
+      });
+      setHistory([]);
+    } catch (error) {
+      console.error("Failed to delete history:", error);
+    }
+  };
+
+  const deleteHistoryEntryImmediate = useCallback((timestamp: string) => {
+    setHistory((prev) => {
+      const next = prev.filter((e) => e.timestamp !== timestamp);
+      void AsyncStorage.setItem("scanHistory", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: HistoryEntry; index: number }) => (
+      <HistoryRow
+        item={item}
+        index={index}
+        lang={lang}
+        navigation={navigation}
+        openSwipeableRef={openSwipeableRef}
+        deleteHistoryEntryImmediate={deleteHistoryEntryImmediate}
+      />
+    ),
+    [deleteHistoryEntryImmediate, lang, navigation],
   );
 
   return (
