@@ -75,6 +75,7 @@ const label = {
       "Affiche les champs vides ou techniques dans le résultat",
     ok: "Ok",
     cancel: "Annuler",
+    delete: "Supprimer",
   },
   en: {
     code: "en",
@@ -146,6 +147,7 @@ const label = {
     advancedmode_info: "Show empty or technical fields in the result",
     ok: "Ok",
     cancel: "Cancel",
+    delete: "Delete",
   },
 };
 
