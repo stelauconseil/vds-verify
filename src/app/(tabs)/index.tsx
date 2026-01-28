@@ -69,7 +69,7 @@ export default function ScanRoute() {
       "url",
       (event: { url: string }) => {
         setUrl(event.url);
-      }
+      },
     );
     return () => subscription.remove();
   }, []);
@@ -149,80 +149,87 @@ export default function ScanRoute() {
   const processResult = async ({ data }: { data: string }) => {
     if (processingRef.current) return; // guard against rapid duplicate scans
     processingRef.current = true;
-    const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
-    // Try to capture a preview frame before unmounting the camera
     try {
-      if (!previewUri) {
-        // Prefer a view snapshot for reliability across CameraView versions
-        try {
-          const snapUri = await captureRef(
-            cameraRef.current ?? cameraContainerRef,
-            {
-              format: "jpg",
-              quality: 0.8,
-              result: "tmpfile",
+      const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
+      // Try to capture a preview frame before unmounting the camera
+      try {
+        if (!previewUri) {
+          // Prefer a view snapshot for reliability across CameraView versions
+          try {
+            const snapUri = await captureRef(
+              cameraRef.current ?? cameraContainerRef,
+              {
+                format: "jpg",
+                quality: 0.8,
+                result: "tmpfile",
+              },
+            );
+            if (snapUri) setPreviewUri(snapUri as string);
+          } catch {
+            // Fallback to camera capture if available
+            if (cameraRef.current?.takePictureAsync) {
+              const photo = await cameraRef.current.takePictureAsync({
+                quality: 0.8,
+                skipProcessing: true,
+              });
+              if (photo?.uri) setPreviewUri(photo.uri);
             }
-          );
-          if (snapUri) setPreviewUri(snapUri as string);
-        } catch {
-          // Fallback to camera capture if available
-          if (cameraRef.current?.takePictureAsync) {
-            const photo = await cameraRef.current.takePictureAsync({
-              quality: 0.8,
-              skipProcessing: true,
-            });
-            if (photo?.uri) setPreviewUri(photo.uri);
           }
         }
+      } catch {
+        // Ignore capture errors, continue processing
       }
-    } catch {
-      // Ignore capture errors, continue processing
-    }
-    // Unmount camera on next render
-    setScanned(true);
-    const b64encodedvds = parseData(data);
-    if (b64encodedvds === null) {
-      setErrorMessage("error_invalid_qr");
-      setTimeout(() => setErrorMessage(null), 3000);
-      return;
-    }
-    try {
-      const response = await fetch(`${apiUrl}/api/v1/decode`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ vds: b64encodedvds }),
-      });
-      const { success, message, vds } = await response.json();
-      if (success === true) {
-        // Light haptic feedback on successful scan
-        try {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        } catch {
-          // Ignore haptics errors (e.g., unsupported device)
+      // Unmount camera on next render
+      setScanned(true);
+      const b64encodedvds = parseData(data);
+      if (b64encodedvds === null) {
+        setErrorMessage("error_invalid_qr");
+        setTimeout(() => setErrorMessage(null), 3000);
+        return;
+      }
+      try {
+        const response = await fetch(`${apiUrl}/api/v1/decode`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ vds: b64encodedvds }),
+        });
+        const { success, message, vds } = await response.json();
+        if (success === true) {
+          // Light haptic feedback on successful scan
+          try {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          } catch {
+            // Ignore haptics errors (e.g., unsupported device)
+          }
+          const historyEnabled =
+            (await AsyncStorage.getItem("historyEnabled")) !== "false";
+          if (historyEnabled) {
+            const history = JSON.parse(
+              (await AsyncStorage.getItem("scanHistory")) || "[]",
+            );
+            const newEntry = { timestamp: new Date().toISOString(), data: vds };
+            history.unshift(newEntry);
+            await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
+          }
+          setResult(vds as VdsResult);
+        } else {
+          setErrorMessage(message);
+          setTimeout(() => setErrorMessage(null), 3000);
         }
-        const historyEnabled =
-          (await AsyncStorage.getItem("historyEnabled")) !== "false";
-        if (historyEnabled) {
-          const history = JSON.parse(
-            (await AsyncStorage.getItem("scanHistory")) || "[]"
-          );
-          const newEntry = { timestamp: new Date().toISOString(), data: vds };
-          history.unshift(newEntry);
-          await AsyncStorage.setItem("scanHistory", JSON.stringify(history));
-        }
-        setResult(vds as VdsResult);
-      } else {
-        setErrorMessage(message);
+      } catch (error: any) {
+        setErrorMessage(
+          error.message
+            ? getLabel(error.message, lang)
+            : getLabel("error", lang),
+        );
         setTimeout(() => setErrorMessage(null), 3000);
       }
-    } catch (error: any) {
-      setErrorMessage(error.message);
-      setTimeout(() => setErrorMessage(null), 3000);
+    } finally {
+      processingRef.current = false;
     }
-    processingRef.current = false;
   };
 
   return (
