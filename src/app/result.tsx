@@ -228,6 +228,69 @@ export default function ResultScreen() {
           />
         );
       }
+      if (v && typeof v === "object" && !Array.isArray(v)) {
+        const entries = Object.entries(v).filter(([, value]) => {
+          if (advancedMode) return true;
+          if (value === null || value === undefined) return false;
+          if (typeof value === "string" && value.trim() === "") return false;
+          if (
+            Array.isArray(value) &&
+            value.length === 1 &&
+            (value[0] === "" || value[0] === null || value[0] === undefined)
+          ) {
+            return false;
+          }
+          return true;
+        });
+
+        if (entries.length === 0) return null;
+
+        return (
+          <AttributeRow
+            key={key}
+            label={labelForKey(key, lang)}
+            value={
+              <View style={styles.nestedObjectContainer}>
+                {entries.map(([subKey, subValue]) => {
+                  const isSimpleValue =
+                    typeof subValue === "string" ||
+                    typeof subValue === "number" ||
+                    typeof subValue === "boolean" ||
+                    (Array.isArray(subValue) &&
+                      subValue.every(
+                        (e) => typeof e === "string" || typeof e === "number",
+                      ));
+
+                  const displayValue = isSimpleValue
+                    ? formatData(subValue, lang)
+                    : JSON.stringify(subValue);
+
+                  return (
+                    <View key={`${key}-${subKey}`} style={styles.nestedRow}>
+                      <View style={styles.nestedLine}>
+                        <Text style={styles.attributeLabel}>
+                          {labelForKey(subKey, lang)}
+                        </Text>
+                      </View>
+                      <View style={styles.nestedLine}>
+                        {typeof displayValue === "string" ||
+                        typeof displayValue === "number" ? (
+                          <Text style={styles.attributeValue}>
+                            {displayValue}
+                          </Text>
+                        ) : (
+                          displayValue
+                        )}
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            }
+            index={i}
+          />
+        );
+      }
       return null;
     });
   }, [result, lang, advancedMode]);
@@ -814,5 +877,22 @@ const styles = StyleSheet.create({
     color: theme.color.textPrimary,
     fontSize: theme.fontSize16,
     fontWeight: "600",
+  },
+  nestedObjectContainer: {
+    paddingLeft: theme.space12,
+    gap: theme.space8,
+  },
+  nestedRow: {
+    gap: theme.space4,
+  },
+  nestedLine: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  nestedBullet: {
+    color: theme.color.textSecondary,
+    fontSize: theme.fontSize12,
+    marginRight: theme.space8,
+    marginTop: 2,
   },
 });
