@@ -30,6 +30,7 @@ export default function ScanRoute() {
   const cameraContainerRef = useRef<View | null>(null);
   const insets = useSafeAreaInsets();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Modal state unused after switching to sheet-based VDS
   const [url, setUrl] = useState<string | null>(null);
   const {
@@ -146,6 +147,28 @@ export default function ScanRoute() {
     }
   };
 
+  const normalizeErrorMessage = (message?: string | null): string => {
+    if (!message) return "error";
+    if (
+      message === "Une erreur est survenue lors du décodage" ||
+      message === "Unknown QR code format or error during decoding" ||
+      message === "error_invalid_qr"
+    ) {
+      return "error_invalid_qr";
+    }
+    return message;
+  };
+
+  const showError = (message?: string | null) => {
+    const normalized = normalizeErrorMessage(message);
+    const localized = getLabel(normalized, lang) || normalized;
+    setErrorMessage(localized);
+    if (errorTimerRef.current) {
+      clearTimeout(errorTimerRef.current);
+    }
+    errorTimerRef.current = setTimeout(() => setErrorMessage(null), 3000);
+  };
+
   const processResult = async ({ data }: { data: string }) => {
     if (processingRef.current) return; // guard against rapid duplicate scans
     processingRef.current = true;
@@ -183,8 +206,7 @@ export default function ScanRoute() {
       setScanned(true);
       const b64encodedvds = parseData(data);
       if (b64encodedvds === null) {
-        setErrorMessage("error_invalid_qr");
-        setTimeout(() => setErrorMessage(null), 3000);
+        showError("error_invalid_qr");
         return;
       }
       try {
@@ -216,16 +238,10 @@ export default function ScanRoute() {
           }
           setResult(vds as VdsResult);
         } else {
-          setErrorMessage(message);
-          setTimeout(() => setErrorMessage(null), 3000);
+          showError(message);
         }
       } catch (error: any) {
-        setErrorMessage(
-          error.message
-            ? getLabel(error.message, lang)
-            : getLabel("error", lang),
-        );
-        setTimeout(() => setErrorMessage(null), 3000);
+        showError(error?.message ?? "error");
       }
     } finally {
       processingRef.current = false;
