@@ -1,83 +1,83 @@
 {
-  "expo": {
-    "name": "VDS Verify",
-    "slug": "vds-verify",
-    "version": "2.1.1",
-    "orientation": "portrait",
-    "icon": "./assets/icons/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "assetBundlePatterns": ["**/*"],
-    "locales": {
-      "fr": "./src/languages/french.json",
-      "en": "./src/languages/english.json"
-    },
-    "ios": {
-      "icon": "./assets/icons/vds-verify-icon.icon",
-      "supportsTablet": true,
-      "infoPlist": {
-        "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["en", "fr"],
-        "CFBundleDevelopmentRegion": "fr",
-        "ITSAppUsesNonExemptEncryption": false
-      },
-      "bundleIdentifier": "com.stelau.vdsverify",
-      "associatedDomains": [
-        "applinks:vds-verify.stelau.com",
-        "webcredentials:vds-verify.stelau.com"
-      ],
-      "appleTeamId": "D3ZX4B4V4U"
-    },
-    "android": {
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.stelau.vdsverify",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "vds-verify.stelau.com",
-              "pathPrefix": "/vds"
+    "expo": {
+        "name": "VDS Verify",
+        "slug": "vds-verify",
+        "version": "2.1.2",
+        "orientation": "portrait",
+        "icon": "./assets/icons/icon.png",
+        "userInterfaceStyle": "light",
+        "newArchEnabled": true,
+        "assetBundlePatterns": ["**/*"],
+        "locales": {
+            "fr": "./src/languages/french.json",
+            "en": "./src/languages/english.json"
+        },
+        "ios": {
+            "icon": "./assets/icons/vds-verify-icon.icon",
+            "supportsTablet": true,
+            "infoPlist": {
+                "CFBundleAllowMixedLocalizations": true,
+                "CFBundleLocalizations": ["en", "fr"],
+                "CFBundleDevelopmentRegion": "fr",
+                "ITSAppUsesNonExemptEncryption": false
+            },
+            "bundleIdentifier": "com.stelau.vdsverify",
+            "associatedDomains": [
+                "applinks:vds-verify.stelau.com",
+                "webcredentials:vds-verify.stelau.com"
+            ],
+            "appleTeamId": "D3ZX4B4V4U"
+        },
+        "android": {
+            "permissions": [
+                "android.permission.CAMERA",
+                "android.permission.RECORD_AUDIO"
+            ],
+            "package": "com.stelau.vdsverify",
+            "intentFilters": [
+                {
+                    "action": "VIEW",
+                    "autoVerify": true,
+                    "data": [
+                        {
+                            "scheme": "https",
+                            "host": "vds-verify.stelau.com",
+                            "pathPrefix": "/vds"
+                        }
+                    ],
+                    "category": ["BROWSABLE", "DEFAULT"]
+                }
+            ]
+        },
+        "plugins": [
+            [
+                "expo-camera",
+                {
+                    "cameraPermission": "This app uses the camera to capture QR codes."
+                }
+            ],
+            "expo-localization",
+            [
+                "expo-splash-screen",
+                {
+                    "backgroundColor": "#0069b4",
+                    "image": "./assets/icons/icon.png",
+                    "imageWidth": 100
+                }
+            ],
+            [
+                "expo-router",
+                {
+                    "origin": "https://vds-verify.stelau.com/"
+                }
+            ]
+        ],
+        "scheme": "vdsverify",
+        "extra": {
+            "eas": {
+                "projectId": "2f5314e0-d7e8-4b1d-96bc-8c10bcb2e53d"
             }
-          ],
-          "category": ["BROWSABLE", "DEFAULT"]
-        }
-      ]
-    },
-    "plugins": [
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "This app uses the camera to capture QR codes."
-        }
-      ],
-      "expo-localization",
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#0069b4",
-          "image": "./assets/icons/icon.png",
-          "imageWidth": 100
-        }
-      ],
-      [
-        "expo-router",
-        {
-          "origin": "https://vds-verify.stelau.com/"
-        }
-      ]
-    ],
-    "scheme": "vdsverify",
-    "extra": {
-      "eas": {
-        "projectId": "2f5314e0-d7e8-4b1d-96bc-8c10bcb2e53d"
-      }
-    },
-    "owner": "stelau"
-  }
+        },
+        "owner": "stelau"
+    }
 }
