@@ -159,7 +159,25 @@ const HistoryRow: FC<HistoryRowProps> = ({
           })()
         : undefined;
     const manifest = item.data?.header?.["manifest_ID"] as string | undefined;
-    const date = (formatData(item.timestamp, lang) as string) || "";
+    const date = (() => {
+        const languageTag = getLabel("languageTag", lang);
+        const parsed = Date.parse(item.timestamp);
+        if (!Number.isNaN(parsed) && parsed > 1000) {
+            const d = new Date(parsed);
+            if (d.toString() !== "Invalid Date") {
+                const dateString = d.toLocaleDateString(languageTag);
+                const hasTime =
+                    d.getHours() !== 0 ||
+                    d.getMinutes() !== 0 ||
+                    d.getSeconds() !== 0;
+                if (hasTime) {
+                    return `${dateString} ${d.toLocaleTimeString(languageTag)}`;
+                }
+                return dateString;
+            }
+        }
+        return (formatData(item.timestamp, lang) as string) || "";
+    })();
 
     return (
         <Animated.View
