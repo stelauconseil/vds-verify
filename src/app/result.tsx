@@ -5,6 +5,7 @@ import {
     Text,
     Pressable,
     Image,
+    Modal,
     Platform,
     StyleSheet,
 } from "react-native";
@@ -130,6 +131,8 @@ function Base64PreviewImage({ base64 }: { base64: string }) {
         width: number;
         height: number;
     } | null>(null);
+    const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+    const insets = useSafeAreaInsets();
 
     const source = useMemo(
         () => ({ uri: "data:image/webp;base64," + base64 }),
@@ -162,21 +165,64 @@ function Base64PreviewImage({ base64 }: { base64: string }) {
     }, [naturalSize]);
 
     return (
-        <Image
-            style={imageStyle}
-            source={source}
-            onLoad={(event) => {
-                const { width, height } = event.nativeEvent.source || {};
-                if (
-                    typeof width === "number" &&
-                    typeof height === "number" &&
-                    width > 0 &&
-                    height > 0
-                ) {
-                    setNaturalSize({ width, height });
-                }
-            }}
-        />
+        <>
+            <Pressable
+                onPress={() => setIsPreviewVisible(true)}
+                accessibilityRole="imagebutton"
+                accessibilityLabel="Open image preview"
+            >
+                <Image
+                    style={imageStyle}
+                    source={source}
+                    onLoad={(event) => {
+                        const { width, height } =
+                            event.nativeEvent.source || {};
+                        if (
+                            typeof width === "number" &&
+                            typeof height === "number" &&
+                            width > 0 &&
+                            height > 0
+                        ) {
+                            setNaturalSize({ width, height });
+                        }
+                    }}
+                />
+            </Pressable>
+
+            <Modal
+                visible={isPreviewVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setIsPreviewVisible(false)}
+            >
+                <View style={styles.imageModalOverlay}>
+                    <Pressable
+                        style={styles.imageModalBackdrop}
+                        onPress={() => setIsPreviewVisible(false)}
+                        accessibilityRole="button"
+                        accessibilityLabel="Close image preview"
+                    />
+                    <View style={styles.imageModalContent}>
+                        <Image
+                            source={source}
+                            style={styles.imageModalImage}
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <Pressable
+                        style={[
+                            styles.imageModalCloseButton,
+                            { top: insets.top + theme.space12 },
+                        ]}
+                        onPress={() => setIsPreviewVisible(false)}
+                        accessibilityRole="button"
+                        accessibilityLabel="Close image preview"
+                    >
+                        <Ionicons name="close" size={24} color="#FFFFFF" />
+                    </Pressable>
+                </View>
+            </Modal>
+        </>
     );
 }
 
@@ -991,5 +1037,35 @@ const styles = StyleSheet.create({
         fontSize: theme.fontSize12,
         marginRight: theme.space8,
         marginTop: 2,
+    },
+    imageModalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.9)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    imageModalBackdrop: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    imageModalContent: {
+        width: "94%",
+        height: "90%",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    imageModalImage: {
+        width: "100%",
+        height: "100%",
+    },
+    imageModalCloseButton: {
+        position: "absolute",
+        top: theme.space32,
+        right: theme.space16,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(255,255,255,0.18)",
     },
 });
