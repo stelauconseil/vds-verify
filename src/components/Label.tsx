@@ -68,6 +68,7 @@ const label = {
         Pays: "Pays",
         historytoggle: "Conserver l'historique",
         history: "Historique",
+        nohistory: "Pas d'historique",
         deleteHistory: "Supprimer l'historique",
         deleteHistoryMessage:
             "Etes-vous certain de vouloir supprimer toutes les entrées de l'historique ?",
@@ -143,6 +144,7 @@ const label = {
         Pays: "Country",
         historytoggle: "Save history",
         history: "History",
+        nohistory: "No history",
         deleteHistory: "Clear history",
         deleteHistoryMessage:
             "Do you really want to delete all history entries?",

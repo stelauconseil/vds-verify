@@ -456,10 +456,18 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                     paddingTop: 8,
                     paddingHorizontal: "5%",
                     paddingBottom: Math.max(insets.bottom, 8) + 8 + 70,
+                    flexGrow: 1,
                 }}
                 data={history}
                 keyExtractor={(item) => item.timestamp}
                 renderItem={renderItem}
+                ListEmptyComponent={
+                    <View style={styles.emptyState}>
+                        <Text style={styles.emptyStateText}>
+                            {getLabel("nohistory", lang)}
+                        </Text>
+                    </View>
+                }
                 onScrollBeginDrag={() => {
                     openSwipeableRef.current?.close();
                     openSwipeableRef.current = null;
@@ -477,6 +485,17 @@ const styles = StyleSheet.create({
         color: "#0F172A",
     },
     center: { flex: 1 },
+    emptyState: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    emptyStateText: {
+        color: "#6B7280",
+        fontSize: 16,
+        fontWeight: "600",
+        textAlign: "center",
+    },
     deleteAction: {
         width: 96,
         backgroundColor: "#FF3B30",
