@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Text,
+    Image,
+    type GestureResponderEvent,
+} from "react-native";
 import { captureRef } from "react-native-view-shot";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -24,6 +30,7 @@ export default function ScanRoute() {
     const [result, setResult] = useState<VdsResult | null>(null);
     const [scanned, setScanned] = useState<boolean>(false);
     const [previewUri, setPreviewUri] = useState<string | null>(null);
+    const [zoomLevel, setZoomLevel] = useState<number>(0.1);
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<any>(null);
     const cameraContainerRef = useRef<View | null>(null);
@@ -40,6 +47,46 @@ export default function ScanRoute() {
     // Prevent double navigation / double processing
     const presentedRef = useRef(false);
     const processingRef = useRef(false);
+    const pinchStartDistanceRef = useRef<number | null>(null);
+    const pinchStartZoomRef = useRef<number>(0.1);
+
+    const clampZoom = (value: number): number => {
+        return Math.max(0, Math.min(1, value));
+    };
+
+    const getTouchDistance = (event: GestureResponderEvent): number | null => {
+        const touches = event.nativeEvent.touches;
+        if (!touches || touches.length < 2) return null;
+        const [first, second] = touches;
+        const dx = first.pageX - second.pageX;
+        const dy = first.pageY - second.pageY;
+        return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const handleTouchStart = (event: GestureResponderEvent) => {
+        const distance = getTouchDistance(event);
+        if (distance === null) return;
+        pinchStartDistanceRef.current = distance;
+        pinchStartZoomRef.current = zoomLevel;
+    };
+
+    const handleTouchMove = (event: GestureResponderEvent) => {
+        const distance = getTouchDistance(event);
+        if (distance === null || pinchStartDistanceRef.current === null) {
+            return;
+        }
+        const scale = distance / pinchStartDistanceRef.current;
+        const sensitivity = 0.7;
+        const nextZoom = clampZoom(
+            pinchStartZoomRef.current + (scale - 1) * sensitivity,
+        );
+        setZoomLevel(nextZoom);
+    };
+
+    const handleTouchEnd = () => {
+        pinchStartDistanceRef.current = null;
+        pinchStartZoomRef.current = zoomLevel;
+    };
 
     useEffect(() => {
         const getCameraPermission = async () => {
@@ -267,7 +314,7 @@ export default function ScanRoute() {
                     <>
                         <CameraView
                             ref={cameraRef}
-                            zoom={0.1}
+                            zoom={zoomLevel}
                             barcodeScannerSettings={{
                                 barcodeTypes: ["qr", "datamatrix", "aztec"],
                             }}
@@ -278,6 +325,35 @@ export default function ScanRoute() {
                             }
                             style={StyleSheet.absoluteFillObject}
                         />
+                        <View
+                            style={StyleSheet.absoluteFillObject}
+                            onStartShouldSetResponder={(event) =>
+                                event.nativeEvent.touches?.length === 2
+                            }
+                            onMoveShouldSetResponder={(event) =>
+                                event.nativeEvent.touches?.length >= 2
+                            }
+                            onStartShouldSetResponderCapture={(event) =>
+                                event.nativeEvent.touches?.length === 2
+                            }
+                            onMoveShouldSetResponderCapture={(event) =>
+                                event.nativeEvent.touches?.length >= 2
+                            }
+                            onResponderStart={handleTouchStart}
+                            onResponderMove={handleTouchMove}
+                            onResponderRelease={handleTouchEnd}
+                            onResponderTerminate={handleTouchEnd}
+                        />
+                        <View
+                            style={[
+                                styles.zoomBadge,
+                                { top: Math.max(insets.top, 8) + 8 },
+                            ]}
+                        >
+                            <Text style={styles.zoomBadgeText}>
+                                Zoom {Math.round(zoomLevel * 100)}%
+                            </Text>
+                        </View>
                         <View
                             style={[
                                 styles.helpTextWrapper,
@@ -361,5 +437,18 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 13,
         textAlign: "center",
+    },
+    zoomBadge: {
+        position: "absolute",
+        right: 12,
+        borderRadius: 10,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        backgroundColor: "rgba(0,0,0,0.55)",
+    },
+    zoomBadgeText: {
+        color: "#fff",
+        fontSize: 12,
+        fontWeight: "600",
     },
 });
