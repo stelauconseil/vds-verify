@@ -30,13 +30,21 @@ export default function TabsLayout() {
     const { lang, historyEnabled } = useSettings();
     const router = useRouter();
     const pathname = usePathname();
+    const { colorSchemePref } = useSettings();
     const scheme = useEffectiveColorScheme();
+    // Only use DynamicColorIOS when following system — otherwise fix the color to the chosen scheme
     const screenBg =
-        Platform.OS === "ios"
+        Platform.OS === "ios" && colorSchemePref === "system"
             ? DynamicColorIOS({ light: "#FFFFFF", dark: "#000000" })
             : scheme === "dark"
               ? "#000000"
               : "#FFFFFF";
+    const tabBarBg =
+        Platform.OS === "ios" && colorSchemePref === "system"
+            ? DynamicColorIOS({ light: "#F2F2F7", dark: "#1C1C1E" })
+            : scheme === "dark"
+              ? "#1C1C1E"
+              : "#F2F2F7";
     const tintColor = useThemeColor(theme.color.text);
     const inactiveTintColor = useThemeColor({
         light: "#00000090",
@@ -56,13 +64,7 @@ export default function TabsLayout() {
         <NativeTabs
             // Remount only when history flag changes so Android updates tab triggers, but keep the current tab on language changes
             key={`tabs-${historyEnabled ? "on" : "off"}`}
-            backgroundColor={
-                Platform.OS === "ios"
-                    ? DynamicColorIOS({ light: "#F2F2F7", dark: "#1C1C1E" })
-                    : scheme === "dark"
-                      ? "#1C1C1E"
-                      : "#F2F2F7"
-            }
+            backgroundColor={tabBarBg}
             badgeBackgroundColor={tintColor}
             labelStyle={{
                 color:

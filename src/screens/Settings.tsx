@@ -276,7 +276,16 @@ const SettingsView: FC<SettingsViewProps> = ({
 
                     {/* Advanced mode toggle */}
                     <View style={styles.section}>
-                        <View style={styles.row}>
+                        <View
+                            style={[
+                                styles.row,
+                                {
+                                    height: undefined,
+                                    paddingVertical: 12,
+                                    alignItems: "center",
+                                },
+                            ]}
+                        >
                             <Ionicons
                                 name="code-slash-outline"
                                 size={22}
@@ -309,49 +318,69 @@ const SettingsView: FC<SettingsViewProps> = ({
 
                     {/* Appearance / theme picker */}
                     <View style={styles.section}>
-                        <View style={styles.row}>
+                        <View
+                            style={[
+                                styles.row,
+                                {
+                                    height: undefined,
+                                    paddingVertical: 12,
+                                    alignItems: "center",
+                                },
+                            ]}
+                        >
                             <Ionicons
                                 name="moon-outline"
                                 size={22}
                                 color="#8E8E93"
                             />
-                            <Text style={styles.rowLabel}>
-                                {getLabel("theme", lang)}
-                            </Text>
-                            <View style={{ flex: 1 }} />
-                            <View style={styles.segment}>
-                                {(["system", "light", "dark"] as const).map(
-                                    (v) => (
-                                        <Pressable
-                                            key={v}
-                                            accessibilityRole="button"
-                                            accessibilityState={{
-                                                selected: colorSchemePref === v,
-                                            }}
-                                            onPress={() =>
-                                                setColorSchemePref(v)
-                                            }
-                                            style={[
-                                                styles.segmentOption,
-                                                colorSchemePref === v &&
-                                                    styles.segmentOptionActive,
-                                            ]}
-                                        >
-                                            <Text
+                            <View style={{ flex: 1, gap: 8 }}>
+                                <Text style={styles.rowLabel}>
+                                    {getLabel("theme", lang)}
+                                </Text>
+                                <View
+                                    style={[
+                                        styles.segment,
+                                        { alignSelf: "stretch" },
+                                    ]}
+                                >
+                                    {(["system", "light", "dark"] as const).map(
+                                        (v) => (
+                                            <Pressable
+                                                key={v}
+                                                accessibilityRole="button"
+                                                accessibilityState={{
+                                                    selected:
+                                                        colorSchemePref === v,
+                                                }}
+                                                onPress={() =>
+                                                    setColorSchemePref(v)
+                                                }
                                                 style={[
-                                                    styles.segmentText,
+                                                    styles.segmentOption,
+                                                    {
+                                                        flex: 1,
+                                                        alignItems: "center",
+                                                    },
                                                     colorSchemePref === v &&
-                                                        styles.segmentTextActive,
+                                                        styles.segmentOptionActive,
                                                 ]}
                                             >
-                                                {getLabel(
-                                                    `theme_${v}` as any,
-                                                    lang,
-                                                ).toUpperCase()}
-                                            </Text>
-                                        </Pressable>
-                                    ),
-                                )}
+                                                <Text
+                                                    style={[
+                                                        styles.segmentText,
+                                                        colorSchemePref === v &&
+                                                            styles.segmentTextActive,
+                                                    ]}
+                                                >
+                                                    {getLabel(
+                                                        `theme_${v}` as any,
+                                                        lang,
+                                                    ).toUpperCase()}
+                                                </Text>
+                                            </Pressable>
+                                        ),
+                                    )}
+                                </View>
                             </View>
                         </View>
                     </View>

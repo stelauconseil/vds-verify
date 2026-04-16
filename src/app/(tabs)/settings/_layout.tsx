@@ -7,11 +7,11 @@ import {
 } from "@/contexts/SettingsContext";
 
 export default function SettingsLayout() {
-    const { lang } = useSettings();
+    const { lang, colorSchemePref } = useSettings();
     const scheme = useEffectiveColorScheme();
     const bg = scheme === "dark" ? "#000000" : "#FFFFFF";
     const screenBg =
-        Platform.OS === "ios"
+        Platform.OS === "ios" && colorSchemePref === "system"
             ? DynamicColorIOS({ light: "#FFFFFF", dark: "#000000" })
             : bg;
 
