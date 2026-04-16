@@ -69,7 +69,8 @@
                 {
                     "origin": "https://vds-verify.stelau.com/"
                 }
-            ]
+            ],
+            "expo-sharing"
         ],
         "scheme": "vdsverify",
         "extra": {

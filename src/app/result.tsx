@@ -1,4 +1,11 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import {
+    ReactNode,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    useCallback,
+} from "react";
 import {
     View,
     ScrollView,
@@ -6,6 +13,8 @@ import {
     Pressable,
     Image,
     Modal,
+    Alert,
+    Animated,
     Platform,
     StyleSheet,
 } from "react-native";
@@ -17,6 +26,9 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
+import * as Print from "expo-print";
 
 // Theme constants
 const theme = {
@@ -280,6 +292,10 @@ export default function ResultScreen() {
     const { advancedMode } = useSettings();
     const [lang, setLang] = useState<string>("en");
     const [selectedTab, setSelectedTab] = useState<"data" | "details">("data");
+    const [shareMenuVisible, setShareMenuVisible] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+    const slideAnim = useRef(new Animated.Value(300)).current;
+    const scrollViewRef = useRef<ScrollView>(null);
     const insets = useSafeAreaInsets();
     // Precompute rows to avoid heavy work each render while also keeping hooks at top-level
     const dataRows = useMemo(() => {
@@ -555,6 +571,33 @@ export default function ResultScreen() {
         }
     }, [params.result, result, setContextResult, setStatus]);
 
+    const openShareMenu = useCallback(() => {
+        setShareMenuVisible(true);
+        Animated.spring(slideAnim, {
+            toValue: 0,
+            useNativeDriver: true,
+            bounciness: 0,
+        }).start();
+    }, [slideAnim]);
+
+    const closeShareMenu = useCallback(() => {
+        Animated.timing(slideAnim, {
+            toValue: 300,
+            duration: 200,
+            useNativeDriver: true,
+        }).start(() => setShareMenuVisible(false));
+    }, [slideAnim]);
+
+    const dismissAndRun = useCallback(
+        (action: () => Promise<void>) => {
+            slideAnim.stopAnimation();
+            slideAnim.setValue(300);
+            setShareMenuVisible(false);
+            setTimeout(action, 50);
+        },
+        [slideAnim],
+    );
+
     if (!result) return <Redirect href="/" />;
 
     const securityStatus: "valid" | "invalid" | "unsigned" | "nonverifiable" =
@@ -592,6 +635,121 @@ export default function ResultScreen() {
         router.back();
     };
 
+    const buildShareHtml = () => {
+        const makeRows = (entries: [string, unknown][]) =>
+            entries
+                .filter(([, v]) => v !== null && v !== undefined && v !== "")
+                .map(
+                    ([k, v]) =>
+                        `<tr><td style="padding:6px 10px;color:#6B7280;font-size:13px">${labelForKey(k, lang)}</td>` +
+                        `<td style="padding:6px 10px;font-weight:600">${formatData(v, lang) ?? ""}</td></tr>`,
+                )
+                .join("");
+
+        const dataRows = makeRows(Object.entries(result.data));
+
+        const headerRows = makeRows(
+            Object.entries(result.header).map(([k, v]) => {
+                if (k === "Type de document") {
+                    const tf = v as
+                        | string
+                        | { [code: string]: string }
+                        | undefined;
+                    let loc: string | undefined;
+                    if (tf && typeof tf === "object") {
+                        const ll = lang?.toLowerCase();
+                        loc =
+                            (tf as any)[ll] ||
+                            (tf as any)[ll?.slice(0, 2) || ""] ||
+                            Object.values(tf)[0];
+                    } else if (typeof tf === "string") {
+                        loc = tf;
+                    }
+                    return [k, loc ?? ""] as [string, unknown];
+                }
+                return [k, v] as [string, unknown];
+            }),
+        );
+
+        const signerRows = result.signer
+            ? makeRows(Object.entries(result.signer))
+            : "";
+
+        const statusColor =
+            securityStatus === "valid"
+                ? "#10B981"
+                : securityStatus === "invalid"
+                  ? "#EF4444"
+                  : "#F59E0B";
+
+        const sectionStyle = `font-size:16px;font-weight:700;margin:24px 0 8px;color:#111827;`;
+        const tableStyle = `width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;background:#F7F9FC;margin-bottom:16px;`;
+
+        return `<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:32px;color:#111827;}
+h1{font-size:22px;margin-bottom:4px;}p{margin:4px 0 20px;color:${statusColor};font-weight:600;font-size:15px;}
+table{${tableStyle}}tr:nth-child(even){background:#EEF2F7;}footer{margin-top:32px;font-size:11px;color:#9CA3AF;}</style>
+</head><body>
+<h1>${documentType}</h1>
+<p>${getLabel(securityStatus, lang)}</p>
+<h2 style="${sectionStyle}">${getLabel("data", lang)}</h2>
+<table>${dataRows}</table>
+<h2 style="${sectionStyle}">${getLabel("header", lang)}</h2>
+<table>${headerRows}</table>
+${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><table>${signerRows}</table>` : ""}
+<h2 style="${sectionStyle}">${getLabel("standard", lang)}</h2>
+<table><tr><td style="padding:6px 10px;color:#6B7280;font-size:13px">${getLabel("compliance", lang)}</td><td style="padding:6px 10px;font-weight:600">${get_standard(result.vds_standard)}</td></tr></table>
+<footer>VDS Verify &mdash; ${new Date().toLocaleDateString()}</footer>
+</body></html>`;
+    };
+
+    const handleShareJson = () => {
+        dismissAndRun(async () => {
+            setIsSharing(true);
+            try {
+                const json = JSON.stringify(result, null, 2);
+                const path = FileSystem.cacheDirectory + "vds-result.json";
+                await FileSystem.writeAsStringAsync(path, json, {
+                    encoding: FileSystem.EncodingType.UTF8,
+                });
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(path, {
+                        mimeType: "application/json",
+                    });
+                }
+            } catch {
+                Alert.alert(
+                    getLabel("error", lang),
+                    getLabel("share_error", lang),
+                );
+            } finally {
+                setIsSharing(false);
+            }
+        });
+    };
+
+    const handleSharePdf = () => {
+        const html = buildShareHtml();
+        dismissAndRun(async () => {
+            setIsSharing(true);
+            try {
+                const { uri } = await Print.printToFileAsync({ html });
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(uri, {
+                        mimeType: "application/pdf",
+                    });
+                }
+            } catch {
+                Alert.alert(
+                    getLabel("error", lang),
+                    getLabel("share_error", lang),
+                );
+            } finally {
+                setIsSharing(false);
+            }
+        });
+    };
+
     return (
         <View style={styles.container}>
             {/* Floating close button */}
@@ -619,7 +777,38 @@ export default function ResultScreen() {
                 )}
             </Pressable>
 
+            {/* Floating share button */}
+            <Pressable
+                onPress={openShareMenu}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel={getLabel("share", lang)}
+                style={[styles.shareButton, { top: insets.top + 14 }]}
+                disabled={isSharing}
+            >
+                {Platform.OS === "ios" && isLiquidGlassAvailable() ? (
+                    <BlurView
+                        intensity={70}
+                        tint="light"
+                        style={styles.closeButtonBlur}
+                    >
+                        <View style={styles.closeButtonInner}>
+                            <Ionicons
+                                name="share-outline"
+                                size={22}
+                                color="#222"
+                            />
+                        </View>
+                    </BlurView>
+                ) : (
+                    <View style={styles.closeButtonSolid}>
+                        <Ionicons name="share-outline" size={22} color="#222" />
+                    </View>
+                )}
+            </Pressable>
+
             <ScrollView
+                ref={scrollViewRef}
                 contentInsetAdjustmentBehavior="automatic"
                 showsVerticalScrollIndicator={false}
                 style={styles.scrollView}
@@ -823,6 +1012,76 @@ export default function ResultScreen() {
                     </>
                 )}
             </ScrollView>
+
+            {/* Share action sheet */}
+            <Modal
+                visible={shareMenuVisible}
+                transparent
+                animationType="none"
+                onRequestClose={closeShareMenu}
+            >
+                <View style={styles.shareModalContainer}>
+                    <Pressable
+                        style={StyleSheet.absoluteFillObject}
+                        onPress={closeShareMenu}
+                    />
+                    <Animated.View
+                        style={[
+                            styles.shareSheet,
+                            {
+                                paddingBottom: insets.bottom + theme.space8,
+                                transform: [{ translateY: slideAnim }],
+                            },
+                        ]}
+                    >
+                        <Text style={styles.shareSheetTitle}>
+                            {getLabel("share", lang)}
+                        </Text>
+                        <Pressable
+                            style={styles.shareOption}
+                            onPress={handleShareJson}
+                        >
+                            <Ionicons
+                                name="code-slash-outline"
+                                size={22}
+                                color={theme.color.primary}
+                            />
+                            <Text style={styles.shareOptionText}>
+                                {getLabel("share_as_json", lang)}
+                            </Text>
+                        </Pressable>
+                        <Pressable
+                            style={styles.shareOption}
+                            onPress={handleSharePdf}
+                        >
+                            <Ionicons
+                                name="document-outline"
+                                size={22}
+                                color={theme.color.primary}
+                            />
+                            <Text style={styles.shareOptionText}>
+                                {getLabel("share_as_pdf", lang)}
+                            </Text>
+                        </Pressable>
+                        <Pressable
+                            style={[
+                                styles.shareOption,
+                                styles.shareCancelOption,
+                            ]}
+                            onPress={() => setShareMenuVisible(false)}
+                        >
+                            <Text
+                                style={[
+                                    styles.shareOptionText,
+                                    { color: theme.color.textSecondary },
+                                ]}
+                            >
+                                {getLabel("cancel", lang)}
+                            </Text>
+                        </Pressable>
+                    </Animated.View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -1067,5 +1326,49 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "rgba(255,255,255,0.18)",
+    },
+    shareButton: {
+        position: "absolute",
+        right: theme.space16,
+        zIndex: 10,
+    },
+    shareModalContainer: {
+        flex: 1,
+        justifyContent: "flex-end",
+        backgroundColor: "rgba(0,0,0,0.4)",
+    },
+    shareSheet: {
+        backgroundColor: theme.color.background,
+        borderTopLeftRadius: theme.borderRadius32,
+        borderTopRightRadius: theme.borderRadius32,
+        paddingTop: theme.space24,
+        paddingHorizontal: theme.space16,
+        gap: theme.space8,
+    },
+    shareSheetTitle: {
+        fontSize: theme.fontSize18,
+        fontWeight: "700",
+        color: theme.color.textPrimary,
+        textAlign: "center",
+        marginBottom: theme.space8,
+    },
+    shareOption: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: theme.space12,
+        paddingVertical: theme.space16,
+        paddingHorizontal: theme.space12,
+        borderRadius: theme.borderRadius20,
+        backgroundColor: theme.color.backgroundSecondary,
+    },
+    shareCancelOption: {
+        justifyContent: "center",
+        backgroundColor: "transparent",
+        marginTop: theme.space4,
+    },
+    shareOptionText: {
+        fontSize: theme.fontSize16,
+        fontWeight: "600",
+        color: theme.color.textPrimary,
     },
 });

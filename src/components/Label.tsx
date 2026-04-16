@@ -78,6 +78,10 @@ const label = {
         ok: "Ok",
         cancel: "Annuler",
         delete: "Supprimer",
+        share: "Partager",
+        share_as_json: "Partager en JSON",
+        share_as_pdf: "Partager en PDF",
+        share_error: "Impossible de partager le résultat",
     },
     en: {
         code: "en",
@@ -153,6 +157,10 @@ const label = {
         ok: "Ok",
         cancel: "Cancel",
         delete: "Delete",
+        share: "Share",
+        share_as_json: "Share as JSON",
+        share_as_pdf: "Share as PDF",
+        share_error: "Unable to share the result",
     },
 };
 
