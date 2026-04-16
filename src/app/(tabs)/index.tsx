@@ -4,8 +4,10 @@ import {
     StyleSheet,
     Text,
     Image,
+    Pressable,
     type GestureResponderEvent,
 } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { captureRef } from "react-native-view-shot";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -31,6 +33,7 @@ export default function ScanRoute() {
     const [scanned, setScanned] = useState<boolean>(false);
     const [previewUri, setPreviewUri] = useState<string | null>(null);
     const [zoomLevel, setZoomLevel] = useState<number>(0.1);
+    const [torchEnabled, setTorchEnabled] = useState<boolean>(false);
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<any>(null);
     const cameraContainerRef = useRef<View | null>(null);
@@ -149,6 +152,7 @@ export default function ScanRoute() {
             setScanned(false);
             setPreviewUri(null);
             setResult(null);
+            setTorchEnabled(false);
             presentedRef.current = false;
         }
     }, [contextResult]);
@@ -315,6 +319,7 @@ export default function ScanRoute() {
                         <CameraView
                             ref={cameraRef}
                             zoom={zoomLevel}
+                            enableTorch={torchEnabled}
                             barcodeScannerSettings={{
                                 barcodeTypes: ["qr", "datamatrix", "aztec"],
                             }}
@@ -354,10 +359,26 @@ export default function ScanRoute() {
                                 Zoom {Math.round(zoomLevel * 100)}%
                             </Text>
                         </View>
+                        <Pressable
+                            onPress={() => setTorchEnabled((v) => !v)}
+                            style={[
+                                styles.torchButton,
+                                { top: Math.max(insets.top, 8) + 8 },
+                                torchEnabled && styles.torchButtonActive,
+                            ]}
+                            accessibilityLabel="Toggle flashlight"
+                            accessibilityRole="button"
+                        >
+                            <Ionicons
+                                name={torchEnabled ? "flash" : "flash-outline"}
+                                size={20}
+                                color="#fff"
+                            />
+                        </Pressable>
                         <View
                             style={[
                                 styles.helpTextWrapper,
-                                { bottom: Math.max(insets.bottom, 8) + 8 + 70 },
+                                { bottom: Math.max(insets.bottom, 8) + 40 },
                             ]}
                         >
                             <Text style={styles.helpText}>
@@ -450,5 +471,16 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 12,
         fontWeight: "600",
+    },
+    torchButton: {
+        position: "absolute",
+        left: 12,
+        borderRadius: 10,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        backgroundColor: "rgba(0,0,0,0.55)",
+    },
+    torchButtonActive: {
+        backgroundColor: "rgba(255,200,0,0.75)",
     },
 });
