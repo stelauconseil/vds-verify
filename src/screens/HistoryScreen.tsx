@@ -17,12 +17,15 @@ import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Swipeable } from "react-native-gesture-handler";
+import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
 
 type HistoryEntry = { timestamp: string; data: any };
 type Props = { navigation: any; lang: string; isFocused?: boolean };
 
-const ROW_BG_1 = "#F7F9FC"; // very light blue-gray
-const ROW_BG_2 = "#EEF2F7"; // slightly darker
+const ROW_BG_LIGHT_1 = "#F7F9FC";
+const ROW_BG_LIGHT_2 = "#EEF2F7";
+const ROW_BG_DARK_1 = "#1C1C1E";
+const ROW_BG_DARK_2 = "#2C2C2E";
 const FULL_SWIPE_MIN_PX = 160;
 const FULL_SWIPE_MAX_PX = 240;
 
@@ -46,6 +49,11 @@ const HistoryRow: FC<HistoryRowProps> = ({
     const swipeableRowRef = useRef<any>(null);
     const dragListenerIdRef = useRef<string | null>(null);
     const fullSwipeArmedRef = useRef(false);
+    const scheme = useEffectiveColorScheme();
+    const rowBg1 = scheme === "dark" ? ROW_BG_DARK_1 : ROW_BG_LIGHT_1;
+    const rowBg2 = scheme === "dark" ? ROW_BG_DARK_2 : ROW_BG_LIGHT_2;
+    const rowTextPrimary = scheme === "dark" ? "#F9FAFB" : "#0F172A";
+    const rowTextSecondary = scheme === "dark" ? "#9CA3AF" : "#374151";
 
     const measuredHeightRef = useRef<number | null>(null);
     const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -279,14 +287,14 @@ const HistoryRow: FC<HistoryRowProps> = ({
                             }}
                             style={{
                                 backgroundColor:
-                                    index % 2 === 0 ? ROW_BG_1 : ROW_BG_2,
+                                    index % 2 === 0 ? rowBg1 : rowBg2,
                                 padding: 12,
                             }}
                         >
                             <View style={{ flex: 1 }}>
                                 <Text
                                     style={{
-                                        color: "#0F172A",
+                                        color: rowTextPrimary,
                                         fontSize: 16,
                                         fontWeight: "700",
                                     }}
@@ -297,7 +305,7 @@ const HistoryRow: FC<HistoryRowProps> = ({
                                 </Text>
                                 <Text
                                     style={{
-                                        color: "#374151",
+                                        color: rowTextSecondary,
                                         fontSize: 12,
                                         marginTop: 2,
                                     }}
@@ -317,6 +325,9 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const insets = useSafeAreaInsets();
     const openSwipeableRef = useRef<any>(null);
+    const scheme = useEffectiveColorScheme();
+    const containerBg = scheme === "dark" ? "#000000" : "#FFFFFF";
+    const titleColor = scheme === "dark" ? "#F9FAFB" : "#0F172A";
 
     useEffect(() => {
         if (
@@ -385,7 +396,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: containerBg }]}>
             {/* Title header with safe area top inset and trash icon */}
             <View
                 style={{
@@ -397,11 +408,13 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                     justifyContent: "space-between",
                 }}
             >
-                <Text style={styles.title}>{getLabel("history", lang)}</Text>
+                <Text style={[styles.title, { color: titleColor }]}>
+                    {getLabel("history", lang)}
+                </Text>
                 {history.length > 0 && (
                     <BlurView
                         intensity={70}
-                        tint="light"
+                        tint={scheme === "dark" ? "dark" : "light"}
                         style={{ borderRadius: 18, overflow: "hidden" }}
                     >
                         <Pressable
@@ -437,13 +450,20 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                                     height: 36,
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    backgroundColor: "rgba(255,255,255,0.3)",
+                                    backgroundColor:
+                                        scheme === "dark"
+                                            ? "rgba(255,255,255,0.1)"
+                                            : "rgba(255,255,255,0.3)",
                                 }}
                             >
                                 <Ionicons
                                     name="trash"
                                     size={20}
-                                    color="#6b7280"
+                                    color={
+                                        scheme === "dark"
+                                            ? "#E5E7EB"
+                                            : "#6b7280"
+                                    }
                                 />
                             </View>
                         </Pressable>

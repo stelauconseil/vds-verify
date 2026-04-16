@@ -82,6 +82,10 @@ const label = {
         share_as_json: "Partager en JSON",
         share_as_pdf: "Partager en PDF",
         share_error: "Impossible de partager le résultat",
+        theme: "Thème",
+        theme_system: "Système",
+        theme_light: "Clair",
+        theme_dark: "Sombre",
     },
     en: {
         code: "en",
@@ -161,6 +165,10 @@ const label = {
         share_as_json: "Share as JSON",
         share_as_pdf: "Share as PDF",
         share_error: "Unable to share the result",
+        theme: "Theme",
+        theme_system: "System",
+        theme_light: "Light",
+        theme_dark: "Dark",
     },
 };
 

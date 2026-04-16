@@ -17,6 +17,7 @@ import {
     Animated,
     Platform,
     StyleSheet,
+    useColorScheme,
 } from "react-native";
 import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -29,6 +30,41 @@ import { isLiquidGlassAvailable } from "expo-glass-effect";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import * as Print from "expo-print";
+
+// Color palettes for light/dark mode
+const lightColors = {
+    background: "#FFFFFF",
+    backgroundSecondary: "#F7F9FC",
+    textPrimary: "#111827",
+    textSecondary: "#6B7280",
+    border: "#E5E7EB",
+    success: "#10B981",
+    error: "#EF4444",
+    warning: "#F59E0B",
+    primary: "#0069b4",
+    buttonBg: "rgba(255,255,255,0.85)",
+    buttonIconColor: "#222222",
+};
+const darkColors: typeof lightColors = {
+    background: "#111111",
+    backgroundSecondary: "#1C1C1E",
+    textPrimary: "#F9FAFB",
+    textSecondary: "#9CA3AF",
+    border: "#2D3748",
+    success: "#10B981",
+    error: "#EF4444",
+    warning: "#F59E0B",
+    primary: "#3B82F6",
+    buttonBg: "rgba(30,30,30,0.9)",
+    buttonIconColor: "#EEEEEE",
+};
+type Colors = typeof lightColors;
+function useColors(): Colors {
+    const { colorSchemePref } = useSettings();
+    const system = useColorScheme() ?? "light";
+    const scheme = colorSchemePref === "system" ? system : colorSchemePref;
+    return scheme === "dark" ? darkColors : lightColors;
+}
 
 // Theme constants
 const theme = {
@@ -62,9 +98,6 @@ const theme = {
     },
 };
 
-const ROW_BG_1 = theme.color.backgroundSecondary;
-const ROW_BG_2 = "#EEF2F7";
-
 function get_standard(vds_standard?: string): string {
     switch (vds_standard) {
         case "DOC_ISO22376_2023":
@@ -93,7 +126,8 @@ function AttributeRow({
     value: ReactNode;
     index: number;
 }) {
-    const bg = index % 2 === 0 ? ROW_BG_1 : ROW_BG_2;
+    const c = useColors();
+    const styles = getStyles(c);
     const isEmptyString = typeof value === "string" && value.trim() === "";
     return (
         <View style={styles.attributeRow}>
@@ -105,7 +139,7 @@ function AttributeRow({
                         <Ionicons
                             name="alert-circle-outline"
                             size={14}
-                            color={theme.color.textSecondary}
+                            color={c.textSecondary}
                             style={{ marginLeft: theme.space8 }}
                         />
                     )}
@@ -127,6 +161,8 @@ function Section({
     children: ReactNode;
     icon?: ReactNode;
 }) {
+    const c = useColors();
+    const styles = getStyles(c);
     return (
         <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
@@ -145,6 +181,8 @@ function Base64PreviewImage({ base64 }: { base64: string }) {
     } | null>(null);
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
     const insets = useSafeAreaInsets();
+    const c = useColors();
+    const styles = getStyles(c);
 
     const source = useMemo(
         () => ({ uri: "data:image/webp;base64," + base64 }),
@@ -246,6 +284,8 @@ function StatusBadge({
     status: "valid" | "invalid" | "unsigned" | "nonverifiable";
     lang: string;
 }) {
+    const c = useColors();
+    const styles = getStyles(c);
     const statusConfig = {
         valid: {
             icon: "checkmark-circle",
@@ -297,6 +337,8 @@ export default function ResultScreen() {
     const slideAnim = useRef(new Animated.Value(300)).current;
     const scrollViewRef = useRef<ScrollView>(null);
     const insets = useSafeAreaInsets();
+    const c = useColors();
+    const styles = getStyles(c);
     // Precompute rows to avoid heavy work each render while also keeping hooks at top-level
     const dataRows = useMemo(() => {
         if (!result) return [] as ReactNode[];
@@ -767,12 +809,20 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                         style={styles.closeButtonBlur}
                     >
                         <View style={styles.closeButtonInner}>
-                            <Ionicons name="close" size={22} color="#222" />
+                            <Ionicons
+                                name="close"
+                                size={22}
+                                color={c.buttonIconColor}
+                            />
                         </View>
                     </BlurView>
                 ) : (
                     <View style={styles.closeButtonSolid}>
-                        <Ionicons name="close" size={22} color="#222" />
+                        <Ionicons
+                            name="close"
+                            size={22}
+                            color={c.buttonIconColor}
+                        />
                     </View>
                 )}
             </Pressable>
@@ -796,13 +846,17 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             <Ionicons
                                 name="share-outline"
                                 size={22}
-                                color="#222"
+                                color={c.buttonIconColor}
                             />
                         </View>
                     </BlurView>
                 ) : (
                     <View style={styles.closeButtonSolid}>
-                        <Ionicons name="share-outline" size={22} color="#222" />
+                        <Ionicons
+                            name="share-outline"
+                            size={22}
+                            color={c.buttonIconColor}
+                        />
                     </View>
                 )}
             </Pressable>
@@ -839,7 +893,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                         <Ionicons
                             name="document-text"
                             size={42}
-                            color={theme.color.primary}
+                            color={c.primary}
                         />
                     </View>
                     <Text style={styles.documentTitle}>{documentType}</Text>
@@ -944,7 +998,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                 <Ionicons
                                     name="browsers-outline"
                                     size={20}
-                                    color={theme.color.textPrimary}
+                                    color={c.textPrimary}
                                     style={{ marginRight: theme.space8 }}
                                 />
                             }
@@ -996,7 +1050,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                 <Ionicons
                                     name="checkmark-done-circle-outline"
                                     size={20}
-                                    color={theme.color.textPrimary}
+                                    color={c.textPrimary}
                                     style={{ marginRight: theme.space8 }}
                                 />
                             }
@@ -1044,7 +1098,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             <Ionicons
                                 name="code-slash-outline"
                                 size={22}
-                                color={theme.color.primary}
+                                color={c.primary}
                             />
                             <Text style={styles.shareOptionText}>
                                 {getLabel("share_as_json", lang)}
@@ -1057,7 +1111,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             <Ionicons
                                 name="document-outline"
                                 size={22}
-                                color={theme.color.primary}
+                                color={c.primary}
                             />
                             <Text style={styles.shareOptionText}>
                                 {getLabel("share_as_pdf", lang)}
@@ -1073,7 +1127,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             <Text
                                 style={[
                                     styles.shareOptionText,
-                                    { color: theme.color.textSecondary },
+                                    { color: c.textSecondary },
                                 ]}
                             >
                                 {getLabel("cancel", lang)}
@@ -1086,289 +1140,295 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.color.background,
-    },
-    closeButton: {
-        position: "absolute",
-        left: theme.space16,
-        zIndex: 10,
-    },
-    closeButtonBlur: {
-        borderRadius: theme.borderRadius20,
-        overflow: "hidden",
-    },
-    closeButtonInner: {
-        width: 40,
-        height: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(255,255,255,0.3)",
-    },
-    closeButtonSolid: {
-        width: 40,
-        height: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: theme.borderRadius20,
-        backgroundColor: "rgba(255,255,255,0.85)",
-        borderWidth: 1,
-        borderColor: theme.color.border,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    scrollView: {
-        flex: 1,
-    },
-    scrollViewContent: {
-        paddingHorizontal: theme.space16,
-    },
-    testdataBanner: {
-        paddingVertical: theme.space8,
-        paddingHorizontal: theme.space12,
-        borderRadius: theme.borderRadius20,
-        backgroundColor: "#FEE2E2",
-        borderWidth: 1,
-        borderColor: "#FCA5A5",
-        marginBottom: theme.space16,
-        alignItems: "center",
-    },
-    testdataBannerText: {
-        fontSize: theme.fontSize12,
-        fontWeight: "600",
-        color: "#B91C1C",
-        textTransform: "uppercase",
-        letterSpacing: 1,
-    },
-    heroSection: {
-        alignItems: "center",
-        marginBottom: theme.space32,
-    },
-    documentIconContainer: {
-        width: 66,
-        height: 66,
-        borderRadius: 36,
-        backgroundColor: theme.color.backgroundSecondary,
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: theme.space16,
-        borderWidth: 1,
-        borderColor: theme.color.border,
-    },
-    documentTitle: {
-        fontSize: theme.fontSize20,
-        fontWeight: "600",
-        color: theme.color.textPrimary,
-        textAlign: "center",
-        marginBottom: theme.space12,
-    },
-    tabGlassWrapper: {
-        borderRadius: theme.borderRadius20,
-        overflow: "hidden",
-        marginTop: theme.space16,
-        alignSelf: "stretch",
-        marginHorizontal: theme.space16,
-    },
-    tabContainer: {
-        flexDirection: "row",
-        borderRadius: theme.borderRadius20,
-        paddingHorizontal: theme.space4,
-        paddingVertical: theme.space4,
-        gap: theme.space4,
-        backgroundColor: "rgba(255,255,255,0.3)",
-        //backgroundColor: "rgba(15, 23, 42, 0.3)", // darker glass
-    },
-    tabContainerFallback: {
-        flexDirection: "row",
-        borderRadius: theme.borderRadius20,
-        paddingHorizontal: theme.space4,
-        paddingVertical: theme.space4,
-        gap: theme.space4,
-        marginTop: theme.space16,
-        backgroundColor: theme.color.backgroundSecondary,
-    },
-    tabPill: {
-        flex: 1,
-        borderRadius: theme.borderRadius20,
-        paddingVertical: theme.space8,
-        minHeight: 36,
-        paddingHorizontal: theme.space12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    tabPillActive: {
-        backgroundColor: theme.color.primary,
-        // extra elevation to mimic glass highlight
-        shadowColor: "#000",
-        shadowOpacity: 0.12,
-        shadowRadius: 6,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: 4,
-    },
-    tabLabel: {
-        fontSize: theme.fontSize14,
-        fontWeight: "600",
-        color: theme.color.textSecondary,
-    },
-    tabLabelActive: {
-        color: "#FFFFFF",
-    },
-    statusBadge: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: theme.space8,
-        paddingHorizontal: theme.space16,
-        paddingVertical: theme.space8,
-        borderRadius: theme.borderRadius20,
-        backgroundColor: theme.color.backgroundSecondary,
-    },
-    statusText: {
-        fontSize: theme.fontSize16,
-        fontWeight: "600",
-    },
-    separator: {
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: theme.color.border,
-        marginVertical: theme.space24,
-        width: "100%",
-    },
-    sectionContainer: {
-        marginBottom: theme.space24,
-    },
-    sectionHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: theme.space16,
-    },
-    sectionTitle: {
-        fontSize: theme.fontSize18,
-        fontWeight: "600",
-        color: theme.color.textPrimary,
-    },
-    sectionContent: {
-        backgroundColor: theme.color.backgroundSecondary,
-        borderRadius: theme.borderRadius20,
-        padding: theme.space16,
-        gap: theme.space8,
-    },
-    noSignerText: {
-        fontSize: theme.fontSize14,
-        color: theme.color.textSecondary,
-        fontWeight: "500",
-        padding: theme.space16,
-        backgroundColor: theme.color.backgroundSecondary,
-        borderRadius: theme.borderRadius20,
-    },
-    attributeRow: {
-        gap: theme.space4,
-    },
-    attributeLabel: {
-        color: theme.color.textSecondary,
-        fontSize: theme.fontSize12,
-        fontWeight: "500",
-    },
-    attributeValueContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    attributeValue: {
-        color: theme.color.textPrimary,
-        fontSize: theme.fontSize16,
-        fontWeight: "600",
-    },
-    nestedObjectContainer: {
-        paddingLeft: theme.space12,
-        gap: theme.space8,
-    },
-    nestedRow: {
-        gap: theme.space4,
-    },
-    nestedLine: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-    },
-    nestedBullet: {
-        color: theme.color.textSecondary,
-        fontSize: theme.fontSize12,
-        marginRight: theme.space8,
-        marginTop: 2,
-    },
-    imageModalOverlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.9)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    imageModalBackdrop: {
-        ...StyleSheet.absoluteFillObject,
-    },
-    imageModalContent: {
-        width: "94%",
-        height: "90%",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    imageModalImage: {
-        width: "100%",
-        height: "100%",
-    },
-    imageModalCloseButton: {
-        position: "absolute",
-        top: theme.space32,
-        right: theme.space16,
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(255,255,255,0.18)",
-    },
-    shareButton: {
-        position: "absolute",
-        right: theme.space16,
-        zIndex: 10,
-    },
-    shareModalContainer: {
-        flex: 1,
-        justifyContent: "flex-end",
-        backgroundColor: "rgba(0,0,0,0.4)",
-    },
-    shareSheet: {
-        backgroundColor: theme.color.background,
-        borderTopLeftRadius: theme.borderRadius32,
-        borderTopRightRadius: theme.borderRadius32,
-        paddingTop: theme.space24,
-        paddingHorizontal: theme.space16,
-        gap: theme.space8,
-    },
-    shareSheetTitle: {
-        fontSize: theme.fontSize18,
-        fontWeight: "700",
-        color: theme.color.textPrimary,
-        textAlign: "center",
-        marginBottom: theme.space8,
-    },
-    shareOption: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: theme.space12,
-        paddingVertical: theme.space16,
-        paddingHorizontal: theme.space12,
-        borderRadius: theme.borderRadius20,
-        backgroundColor: theme.color.backgroundSecondary,
-    },
-    shareCancelOption: {
-        justifyContent: "center",
-        backgroundColor: "transparent",
-        marginTop: theme.space4,
-    },
-    shareOptionText: {
-        fontSize: theme.fontSize16,
-        fontWeight: "600",
-        color: theme.color.textPrimary,
-    },
-});
+const stylesCache = new Map<Colors, ReturnType<typeof makeStyles>>();
+function getStyles(c: Colors) {
+    if (!stylesCache.has(c)) stylesCache.set(c, makeStyles(c));
+    return stylesCache.get(c)!;
+}
+
+function makeStyles(c: Colors) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: c.background,
+        },
+        closeButton: {
+            position: "absolute",
+            left: theme.space16,
+            zIndex: 10,
+        },
+        closeButtonBlur: {
+            borderRadius: theme.borderRadius20,
+            overflow: "hidden",
+        },
+        closeButtonInner: {
+            width: 40,
+            height: 40,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.3)",
+        },
+        closeButtonSolid: {
+            width: 40,
+            height: 40,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: theme.borderRadius20,
+            backgroundColor: c.buttonBg,
+            borderWidth: 1,
+            borderColor: c.border,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+        },
+        scrollView: {
+            flex: 1,
+        },
+        scrollViewContent: {
+            paddingHorizontal: theme.space16,
+        },
+        testdataBanner: {
+            paddingVertical: theme.space8,
+            paddingHorizontal: theme.space12,
+            borderRadius: theme.borderRadius20,
+            backgroundColor: "#FEE2E2",
+            borderWidth: 1,
+            borderColor: "#FCA5A5",
+            marginBottom: theme.space16,
+            alignItems: "center",
+        },
+        testdataBannerText: {
+            fontSize: theme.fontSize12,
+            fontWeight: "600",
+            color: "#B91C1C",
+            textTransform: "uppercase",
+            letterSpacing: 1,
+        },
+        heroSection: {
+            alignItems: "center",
+            marginBottom: theme.space32,
+        },
+        documentIconContainer: {
+            width: 66,
+            height: 66,
+            borderRadius: 36,
+            backgroundColor: c.backgroundSecondary,
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: theme.space16,
+            borderWidth: 1,
+            borderColor: c.border,
+        },
+        documentTitle: {
+            fontSize: theme.fontSize20,
+            fontWeight: "600",
+            color: c.textPrimary,
+            textAlign: "center",
+            marginBottom: theme.space12,
+        },
+        tabGlassWrapper: {
+            borderRadius: theme.borderRadius20,
+            overflow: "hidden",
+            marginTop: theme.space16,
+            alignSelf: "stretch",
+            marginHorizontal: theme.space16,
+        },
+        tabContainer: {
+            flexDirection: "row",
+            borderRadius: theme.borderRadius20,
+            paddingHorizontal: theme.space4,
+            paddingVertical: theme.space4,
+            gap: theme.space4,
+            backgroundColor: "rgba(255,255,255,0.3)",
+        },
+        tabContainerFallback: {
+            flexDirection: "row",
+            borderRadius: theme.borderRadius20,
+            paddingHorizontal: theme.space4,
+            paddingVertical: theme.space4,
+            gap: theme.space4,
+            marginTop: theme.space16,
+            backgroundColor: c.backgroundSecondary,
+        },
+        tabPill: {
+            flex: 1,
+            borderRadius: theme.borderRadius20,
+            paddingVertical: theme.space8,
+            minHeight: 36,
+            paddingHorizontal: theme.space12,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        tabPillActive: {
+            backgroundColor: c.primary,
+            shadowColor: "#000",
+            shadowOpacity: 0.12,
+            shadowRadius: 6,
+            shadowOffset: { width: 0, height: 2 },
+            elevation: 4,
+        },
+        tabLabel: {
+            fontSize: theme.fontSize14,
+            fontWeight: "600",
+            color: c.textSecondary,
+        },
+        tabLabelActive: {
+            color: "#FFFFFF",
+        },
+        statusBadge: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.space8,
+            paddingHorizontal: theme.space16,
+            paddingVertical: theme.space8,
+            borderRadius: theme.borderRadius20,
+            backgroundColor: c.backgroundSecondary,
+        },
+        statusText: {
+            fontSize: theme.fontSize16,
+            fontWeight: "600",
+        },
+        separator: {
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: c.border,
+            marginVertical: theme.space24,
+            width: "100%",
+        },
+        sectionContainer: {
+            marginBottom: theme.space24,
+        },
+        sectionHeader: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: theme.space16,
+        },
+        sectionTitle: {
+            fontSize: theme.fontSize18,
+            fontWeight: "600",
+            color: c.textPrimary,
+        },
+        sectionContent: {
+            backgroundColor: c.backgroundSecondary,
+            borderRadius: theme.borderRadius20,
+            padding: theme.space16,
+            gap: theme.space8,
+        },
+        noSignerText: {
+            fontSize: theme.fontSize14,
+            color: c.textSecondary,
+            fontWeight: "500",
+            padding: theme.space16,
+            backgroundColor: c.backgroundSecondary,
+            borderRadius: theme.borderRadius20,
+        },
+        attributeRow: {
+            gap: theme.space4,
+        },
+        attributeLabel: {
+            color: c.textSecondary,
+            fontSize: theme.fontSize12,
+            fontWeight: "500",
+        },
+        attributeValueContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        attributeValue: {
+            color: c.textPrimary,
+            fontSize: theme.fontSize16,
+            fontWeight: "600",
+        },
+        nestedObjectContainer: {
+            paddingLeft: theme.space12,
+            gap: theme.space8,
+        },
+        nestedRow: {
+            gap: theme.space4,
+        },
+        nestedLine: {
+            flexDirection: "row",
+            alignItems: "flex-start",
+        },
+        nestedBullet: {
+            color: c.textSecondary,
+            fontSize: theme.fontSize12,
+            marginRight: theme.space8,
+            marginTop: 2,
+        },
+        imageModalOverlay: {
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.9)",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        imageModalBackdrop: {
+            ...StyleSheet.absoluteFillObject,
+        },
+        imageModalContent: {
+            width: "94%",
+            height: "90%",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        imageModalImage: {
+            width: "100%",
+            height: "100%",
+        },
+        imageModalCloseButton: {
+            position: "absolute",
+            top: theme.space32,
+            right: theme.space16,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.18)",
+        },
+        shareButton: {
+            position: "absolute",
+            right: theme.space16,
+            zIndex: 10,
+        },
+        shareModalContainer: {
+            flex: 1,
+            justifyContent: "flex-end",
+            backgroundColor: "rgba(0,0,0,0.4)",
+        },
+        shareSheet: {
+            backgroundColor: c.background,
+            borderTopLeftRadius: theme.borderRadius32,
+            borderTopRightRadius: theme.borderRadius32,
+            paddingTop: theme.space24,
+            paddingHorizontal: theme.space16,
+            gap: theme.space8,
+        },
+        shareSheetTitle: {
+            fontSize: theme.fontSize18,
+            fontWeight: "700",
+            color: c.textPrimary,
+            textAlign: "center",
+            marginBottom: theme.space8,
+        },
+        shareOption: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.space12,
+            paddingVertical: theme.space16,
+            paddingHorizontal: theme.space12,
+            borderRadius: theme.borderRadius20,
+            backgroundColor: c.backgroundSecondary,
+        },
+        shareCancelOption: {
+            justifyContent: "center",
+            backgroundColor: "transparent",
+            marginTop: theme.space4,
+        },
+        shareOptionText: {
+            fontSize: theme.fontSize16,
+            fontWeight: "600",
+            color: c.textPrimary,
+        },
+    });
+}
