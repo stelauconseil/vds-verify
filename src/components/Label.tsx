@@ -86,6 +86,7 @@ const label = {
         theme_system: "Système",
         theme_light: "Clair",
         theme_dark: "Sombre",
+        encrypted_image: "Image chiffrée – ne peut pas être affichée",
     },
     en: {
         code: "en",
@@ -169,6 +170,7 @@ const label = {
         theme_system: "System",
         theme_light: "Light",
         theme_dark: "Dark",
+        encrypted_image: "Encrypted image – cannot be displayed",
     },
 };
 

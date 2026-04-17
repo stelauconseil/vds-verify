@@ -174,12 +174,19 @@ function Section({
     );
 }
 
-function Base64PreviewImage({ base64 }: { base64: string }) {
+function Base64PreviewImage({
+    base64,
+    lang,
+}: {
+    base64: string;
+    lang?: string;
+}) {
     const [naturalSize, setNaturalSize] = useState<{
         width: number;
         height: number;
     } | null>(null);
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+    const [loadError, setLoadError] = useState(false);
     const insets = useSafeAreaInsets();
     const c = useColors();
     const styles = getStyles(c);
@@ -214,6 +221,32 @@ function Base64PreviewImage({ base64 }: { base64: string }) {
         };
     }, [naturalSize]);
 
+    if (loadError) {
+        return (
+            <View
+                style={[
+                    styles.attributeValueContainer,
+                    { flexDirection: "row", alignItems: "center" },
+                ]}
+            >
+                <Ionicons
+                    name="lock-closed-outline"
+                    size={14}
+                    color={c.textSecondary}
+                    style={{ marginRight: theme.space4 }}
+                />
+                <Text
+                    style={[
+                        styles.attributeValue,
+                        { color: c.textSecondary, fontStyle: "italic" },
+                    ]}
+                >
+                    {getLabel("encrypted_image", lang)}
+                </Text>
+            </View>
+        );
+    }
+
     return (
         <>
             <Pressable
@@ -236,6 +269,7 @@ function Base64PreviewImage({ base64 }: { base64: string }) {
                             setNaturalSize({ width, height });
                         }
                     }}
+                    onError={() => setLoadError(true)}
                 />
             </Pressable>
 
@@ -371,7 +405,7 @@ export default function ResultScreen() {
                     <AttributeRow
                         key={key}
                         label={labelForKey(key, lang)}
-                        value={<Base64PreviewImage base64={v} />}
+                        value={<Base64PreviewImage base64={v} lang={lang} />}
                         index={i}
                     />
                 );
