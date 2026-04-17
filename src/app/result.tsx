@@ -750,7 +750,13 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
             setIsSharing(true);
             try {
                 const json = JSON.stringify(result, null, 2);
-                const path = FileSystem.cacheDirectory + "vds-result.json";
+                const dateStr = new Date()
+                    .toISOString()
+                    .slice(0, 10)
+                    .replace(/-/g, "");
+                const path =
+                    FileSystem.cacheDirectory +
+                    `${dateStr}-VDSVerify-result.json`;
                 await FileSystem.writeAsStringAsync(path, json, {
                     encoding: FileSystem.EncodingType.UTF8,
                 });
@@ -775,9 +781,20 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
         dismissAndRun(async () => {
             setIsSharing(true);
             try {
-                const { uri } = await Print.printToFileAsync({ html });
+                const dateStr = new Date()
+                    .toISOString()
+                    .slice(0, 10)
+                    .replace(/-/g, "");
+                const { uri } = await Print.printToFileAsync({
+                    html,
+                    base64: false,
+                });
+                const pdfPath =
+                    FileSystem.cacheDirectory +
+                    `${dateStr}-VDSVerify-result.pdf`;
+                await FileSystem.copyAsync({ from: uri, to: pdfPath });
                 if (await Sharing.isAvailableAsync()) {
-                    await Sharing.shareAsync(uri, {
+                    await Sharing.shareAsync(pdfPath, {
                         mimeType: "application/pdf",
                     });
                 }
