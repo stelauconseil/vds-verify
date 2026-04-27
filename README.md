@@ -22,8 +22,8 @@ Update the API URL (environment variable) to point to the VDS verify server.
 # ✍️ To start
 
 ```sh
-yarn
-yarn start
+npx expo install --fix
+npx expo start
 ```
 
 # To build
