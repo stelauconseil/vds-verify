@@ -291,6 +291,7 @@ export default function ScanRoute() {
                         const newEntry = {
                             timestamp: new Date().toISOString(),
                             data: vds,
+                            pinned: false,
                         };
                         history.unshift(newEntry);
                         await AsyncStorage.setItem(

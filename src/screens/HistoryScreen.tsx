@@ -1,4 +1,4 @@
-import { FC, useState, useCallback, useEffect, useRef } from "react";
+import { FC, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
     FlatList,
     View,
@@ -8,8 +8,6 @@ import {
     Pressable,
     Animated,
     LayoutAnimation,
-    Platform,
-    UIManager,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatData, getLabel } from "@/components/Label";
@@ -19,7 +17,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Swipeable } from "react-native-gesture-handler";
 import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
 
-type HistoryEntry = { timestamp: string; data: any };
+type HistoryEntry = { timestamp: string; data: any; pinned?: boolean };
 type Props = { navigation: any; lang: string; isFocused?: boolean };
 
 const ROW_BG_LIGHT_1 = "#F7F9FC";
@@ -36,6 +34,7 @@ type HistoryRowProps = {
     navigation: any;
     openSwipeableRef: React.MutableRefObject<any>;
     deleteHistoryEntryImmediate: (timestamp: string) => void;
+    togglePinned: (timestamp: string) => void;
 };
 
 const HistoryRow: FC<HistoryRowProps> = ({
@@ -45,6 +44,7 @@ const HistoryRow: FC<HistoryRowProps> = ({
     navigation,
     openSwipeableRef,
     deleteHistoryEntryImmediate,
+    togglePinned,
 }) => {
     const swipeableRowRef = useRef<any>(null);
     const dragListenerIdRef = useRef<string | null>(null);
@@ -291,27 +291,68 @@ const HistoryRow: FC<HistoryRowProps> = ({
                                 padding: 12,
                             }}
                         >
-                            <View style={{ flex: 1 }}>
-                                <Text
+                            <View
+                                style={{
+                                    flex: 1,
+                                    flexDirection: "row",
+                                    gap: 8,
+                                }}
+                            >
+                                <View style={{ flex: 1 }}>
+                                    <Text
+                                        style={{
+                                            color: rowTextPrimary,
+                                            fontSize: 16,
+                                            fontWeight: "700",
+                                        }}
+                                    >
+                                        {docType
+                                            ? docType
+                                            : `${getLabel("manifest_ID", lang)}: ${manifest ?? ""}`}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            color: rowTextSecondary,
+                                            fontSize: 12,
+                                            marginTop: 2,
+                                        }}
+                                    >
+                                        {date}
+                                    </Text>
+                                </View>
+                                <Pressable
+                                    onPress={(e) => {
+                                        e.stopPropagation();
+                                        togglePinned(item.timestamp);
+                                    }}
+                                    hitSlop={10}
+                                    accessibilityRole="button"
+                                    accessibilityLabel={
+                                        item.pinned
+                                            ? getLabel("unpin_entry", lang)
+                                            : getLabel("pin_entry", lang)
+                                    }
                                     style={{
-                                        color: rowTextPrimary,
-                                        fontSize: 16,
-                                        fontWeight: "700",
+                                        width: 28,
+                                        height: 28,
+                                        alignItems: "center",
+                                        justifyContent: "center",
                                     }}
                                 >
-                                    {docType
-                                        ? docType
-                                        : `${getLabel("manifest_ID", lang)}: ${manifest ?? ""}`}
-                                </Text>
-                                <Text
-                                    style={{
-                                        color: rowTextSecondary,
-                                        fontSize: 12,
-                                        marginTop: 2,
-                                    }}
-                                >
-                                    {date}
-                                </Text>
+                                    <Ionicons
+                                        name={
+                                            item.pinned
+                                                ? "star"
+                                                : "star-outline"
+                                        }
+                                        size={20}
+                                        color={
+                                            item.pinned
+                                                ? "#F59E0B"
+                                                : rowTextSecondary
+                                        }
+                                    />
+                                </Pressable>
                             </View>
                         </Pressable>
                     </Swipeable>
@@ -323,21 +364,12 @@ const HistoryRow: FC<HistoryRowProps> = ({
 
 const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const [history, setHistory] = useState<HistoryEntry[]>([]);
+    const [pinnedOnly, setPinnedOnly] = useState(false);
     const insets = useSafeAreaInsets();
     const openSwipeableRef = useRef<any>(null);
     const scheme = useEffectiveColorScheme();
     const containerBg = scheme === "dark" ? "#000000" : "#FFFFFF";
     const titleColor = scheme === "dark" ? "#F9FAFB" : "#0F172A";
-
-    useEffect(() => {
-        if (
-            Platform.OS === "android" &&
-            typeof UIManager.setLayoutAnimationEnabledExperimental ===
-                "function"
-        ) {
-            UIManager.setLayoutAnimationEnabledExperimental(true);
-        }
-    }, []);
 
     useEffect(() => {
         if (isFocused) {
@@ -381,6 +413,27 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
         });
     }, []);
 
+    const togglePinned = useCallback((timestamp: string) => {
+        setHistory((prev) => {
+            const next = prev.map((entry) =>
+                entry.timestamp === timestamp
+                    ? { ...entry, pinned: !entry.pinned }
+                    : entry,
+            );
+            void AsyncStorage.setItem("scanHistory", JSON.stringify(next));
+            return next;
+        });
+    }, []);
+
+    const displayedHistory = useMemo(() => {
+        const sorted = [...history].sort((a, b) => {
+            const aPinned = a.pinned ? 1 : 0;
+            const bPinned = b.pinned ? 1 : 0;
+            return bPinned - aPinned;
+        });
+        return pinnedOnly ? sorted.filter((entry) => entry.pinned) : sorted;
+    }, [history, pinnedOnly]);
+
     const renderItem = useCallback(
         ({ item, index }: { item: HistoryEntry; index: number }) => (
             <HistoryRow
@@ -390,9 +443,10 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 navigation={navigation}
                 openSwipeableRef={openSwipeableRef}
                 deleteHistoryEntryImmediate={deleteHistoryEntryImmediate}
+                togglePinned={togglePinned}
             />
         ),
-        [deleteHistoryEntryImmediate, lang, navigation],
+        [deleteHistoryEntryImmediate, lang, navigation, togglePinned],
     );
 
     return (
@@ -411,63 +465,170 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 <Text style={[styles.title, { color: titleColor }]}>
                     {getLabel("history", lang)}
                 </Text>
-                {history.length > 0 && (
-                    <BlurView
-                        intensity={70}
-                        tint={scheme === "dark" ? "dark" : "light"}
-                        style={{ borderRadius: 18, overflow: "hidden" }}
+                {__DEV__ && (
+                    <Pressable
+                        onPress={async () => {
+                            const entries = Array.from(
+                                { length: 8 },
+                                (_, i) => ({
+                                    timestamp: new Date(
+                                        Date.now() - i * 3_600_000,
+                                    ).toISOString(),
+                                    pinned: i < 2,
+                                    data: {
+                                        header: {
+                                            "Type de document":
+                                                i % 2 === 0
+                                                    ? "Titre d'identité"
+                                                    : "Passeport",
+                                            manifest_ID: `TEST-${i + 1}`,
+                                        },
+                                        data: {
+                                            "Nom de famille": "MARTIN",
+                                            Genre: "Feminin",
+                                        },
+                                        vds_standard: "DOC_101",
+                                        testdata: true,
+                                    },
+                                }),
+                            );
+                            await AsyncStorage.setItem(
+                                "scanHistory",
+                                JSON.stringify(entries),
+                            );
+                            setHistory(entries);
+                        }}
+                        hitSlop={10}
                     >
-                        <Pressable
-                            onPress={() =>
-                                Alert.alert(
-                                    getLabel("deleteHistory", lang) ||
-                                        "Clear history",
-                                    getLabel("deleteHistoryMessage", lang) ||
-                                        "Do you really want to delete all history entries?",
-                                    [
-                                        {
-                                            text:
-                                                getLabel("cancel", lang) ||
-                                                "Cancel",
-                                            style: "cancel",
-                                        },
-                                        {
-                                            text: getLabel("ok", lang) || "Ok",
-                                            style: "destructive",
-                                            onPress: () => void deleteHistory(),
-                                        },
-                                    ],
-                                    { cancelable: true },
-                                )
-                            }
-                            hitSlop={10}
-                            accessibilityRole="button"
-                            accessibilityLabel={getLabel("deleteHistory", lang)}
+                        <Text
+                            style={{
+                                color: "#007AFF",
+                                fontSize: 13,
+                                fontWeight: "600",
+                            }}
                         >
-                            <View
-                                style={{
-                                    width: 36,
-                                    height: 36,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    backgroundColor:
-                                        scheme === "dark"
-                                            ? "rgba(255,255,255,0.1)"
-                                            : "rgba(255,255,255,0.3)",
-                                }}
+                            Seed
+                        </Text>
+                    </Pressable>
+                )}
+                {history.length > 0 && (
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 8,
+                        }}
+                    >
+                        <BlurView
+                            intensity={70}
+                            tint={scheme === "dark" ? "dark" : "light"}
+                            style={{ borderRadius: 18, overflow: "hidden" }}
+                        >
+                            <Pressable
+                                onPress={() => setPinnedOnly((prev) => !prev)}
+                                hitSlop={10}
+                                accessibilityRole="button"
+                                accessibilityLabel={
+                                    pinnedOnly
+                                        ? getLabel("show_all_entries", lang)
+                                        : getLabel("show_pinned_only", lang)
+                                }
                             >
-                                <Ionicons
-                                    name="trash"
-                                    size={20}
-                                    color={
-                                        scheme === "dark"
-                                            ? "#E5E7EB"
-                                            : "#6b7280"
-                                    }
-                                />
-                            </View>
-                        </Pressable>
-                    </BlurView>
+                                <View
+                                    style={{
+                                        width: 36,
+                                        height: 36,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        backgroundColor: pinnedOnly
+                                            ? "rgba(245,158,11,0.35)"
+                                            : scheme === "dark"
+                                              ? "rgba(255,255,255,0.1)"
+                                              : "rgba(255,255,255,0.3)",
+                                    }}
+                                >
+                                    <Ionicons
+                                        name={
+                                            pinnedOnly ? "star" : "star-outline"
+                                        }
+                                        size={20}
+                                        color={
+                                            pinnedOnly
+                                                ? "#F59E0B"
+                                                : scheme === "dark"
+                                                  ? "#E5E7EB"
+                                                  : "#6b7280"
+                                        }
+                                    />
+                                </View>
+                            </Pressable>
+                        </BlurView>
+                        <BlurView
+                            intensity={70}
+                            tint={scheme === "dark" ? "dark" : "light"}
+                            style={{ borderRadius: 18, overflow: "hidden" }}
+                        >
+                            <Pressable
+                                onPress={() =>
+                                    Alert.alert(
+                                        getLabel("deleteHistory", lang) ||
+                                            "Clear history",
+                                        getLabel(
+                                            "deleteHistoryMessage",
+                                            lang,
+                                        ) ||
+                                            "Do you really want to delete all history entries?",
+                                        [
+                                            {
+                                                text:
+                                                    getLabel("cancel", lang) ||
+                                                    "Cancel",
+                                                style: "cancel",
+                                            },
+                                            {
+                                                text:
+                                                    getLabel("ok", lang) ||
+                                                    "Ok",
+                                                style: "destructive",
+                                                onPress: () =>
+                                                    void deleteHistory(),
+                                            },
+                                        ],
+                                        { cancelable: true },
+                                    )
+                                }
+                                hitSlop={10}
+                                accessibilityRole="button"
+                                accessibilityLabel={getLabel(
+                                    "deleteHistory",
+                                    lang,
+                                )}
+                            >
+                                <View
+                                    style={{
+                                        width: 36,
+                                        height: 36,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        backgroundColor:
+                                            scheme === "dark"
+                                                ? "rgba(255,255,255,0.1)"
+                                                : "rgba(255,255,255,0.3)",
+                                    }}
+                                >
+                                    <Ionicons
+                                        name="trash"
+                                        size={20}
+                                        color={
+                                            scheme === "dark"
+                                                ? "#E5E7EB"
+                                                : "#6b7280"
+                                        }
+                                    />
+                                </View>
+                            </Pressable>
+                        </BlurView>
+                    </View>
                 )}
             </View>
             <FlatList
@@ -478,7 +639,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                     paddingBottom: Math.max(insets.bottom, 8) + 8 + 70,
                     flexGrow: 1,
                 }}
-                data={history}
+                data={displayedHistory}
                 keyExtractor={(item) => item.timestamp}
                 renderItem={renderItem}
                 ListEmptyComponent={

@@ -86,6 +86,10 @@ const label = {
         theme_system: "Système",
         theme_light: "Clair",
         theme_dark: "Sombre",
+        pin_entry: "Épingler l'entrée",
+        unpin_entry: "Retirer l'épingle",
+        show_pinned_only: "Afficher uniquement les entrées épinglées",
+        show_all_entries: "Afficher toutes les entrées",
         encrypted_image: "Image chiffrée – ne peut pas être affichée",
     },
     en: {
@@ -170,6 +174,10 @@ const label = {
         theme_system: "System",
         theme_light: "Light",
         theme_dark: "Dark",
+        pin_entry: "Pin entry",
+        unpin_entry: "Unpin entry",
+        show_pinned_only: "Show pinned entries only",
+        show_all_entries: "Show all entries",
         encrypted_image: "Encrypted image – cannot be displayed",
     },
 };
