@@ -10,10 +10,20 @@ export default function SettingsLayout() {
     const { lang, colorSchemePref } = useSettings();
     const scheme = useEffectiveColorScheme();
     const bg = scheme === "dark" ? "#000000" : "#FFFFFF";
+    const headerBg = scheme === "dark" ? "#1C1C1E" : "#F2F2F7";
+    const headerText = scheme === "dark" ? "#FFFFFF" : "#000000";
     const screenBg =
         Platform.OS === "ios" && colorSchemePref === "system"
             ? DynamicColorIOS({ light: "#FFFFFF", dark: "#000000" })
             : bg;
+    const screenHeaderBg =
+        Platform.OS === "ios" && colorSchemePref === "system"
+            ? DynamicColorIOS({ light: "#F2F2F7", dark: "#1C1C1E" })
+            : headerBg;
+    const screenHeaderText =
+        Platform.OS === "ios" && colorSchemePref === "system"
+            ? DynamicColorIOS({ light: "#000000", dark: "#FFFFFF" })
+            : headerText;
 
     return (
         <View style={[styles.container, { backgroundColor: screenBg as any }]}>
@@ -22,6 +32,9 @@ export default function SettingsLayout() {
                     headerTitleAlign: "center",
                     headerBackButtonDisplayMode: "minimal",
                     contentStyle: { backgroundColor: screenBg },
+                    headerStyle: { backgroundColor: screenHeaderBg as any },
+                    headerTitleStyle: { color: screenHeaderText as any },
+                    headerTintColor: headerText,
                 }}
             >
                 <Stack.Screen

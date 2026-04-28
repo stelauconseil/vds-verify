@@ -1,33 +1,34 @@
 import { FC } from "react";
-import { View, StyleSheet, Linking, Text } from "react-native";
+import { StyleSheet, Linking } from "react-native";
 import * as Application from "expo-application";
+import { ThemedText, ThemedView } from "@/components/Themed";
 
 const About: FC = () => {
-  return (
-    <View style={styles.left}>
-      <Text style={styles.title}>
-        {Application.applicationName} {Application.nativeApplicationVersion}{" "}
-        (build {Application.nativeBuildVersion})
-      </Text>
-      <Text
-        style={styles.title}
-        onPress={() => Linking.openURL("https://www.stelau.com")}
-      >
-        ©️ {new Date().getFullYear()} Stelau
-      </Text>
-    </View>
-  );
+    return (
+        <ThemedView style={styles.left}>
+            <ThemedText style={styles.title}>
+                {Application.applicationName}{" "}
+                {Application.nativeApplicationVersion} (build{" "}
+                {Application.nativeBuildVersion})
+            </ThemedText>
+            <ThemedText
+                style={styles.title}
+                onPress={() => Linking.openURL("https://www.stelau.com")}
+            >
+                ©️ {new Date().getFullYear()} Stelau
+            </ThemedText>
+        </ThemedView>
+    );
 };
 
 const styles = StyleSheet.create({
-  left: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 16,
-    textAlign: "left",
-    margin: 20,
-  },
+    left: {
+        flex: 1,
+    },
+    title: {
+        textAlign: "left",
+        margin: 20,
+    },
 });
 
 export default About;
