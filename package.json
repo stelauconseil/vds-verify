@@ -12,7 +12,7 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@expo/ui": "~55.0.12",
+        "@expo/ui": "~55.0.13",
         "@react-native-async-storage/async-storage": "2.2.0",
         "@react-native-picker/picker": "2.11.4",
         "@react-navigation/bottom-tabs": "^7.4.0",
@@ -21,12 +21,12 @@
         "@react-navigation/stack": "^7.6.3",
         "buffer": "^6.0.3",
         "crypto-js": "^4.2.0",
-        "expo": "~55.0.17",
+        "expo": "~55.0.19",
         "expo-application": "~55.0.14",
         "expo-blur": "~55.0.14",
         "expo-camera": "~55.0.16",
         "expo-constants": "~55.0.15",
-        "expo-dev-client": "~55.0.28",
+        "expo-dev-client": "~55.0.30",
         "expo-device": "~55.0.15",
         "expo-file-system": "~55.0.17",
         "expo-glass-effect": "~55.0.10",
