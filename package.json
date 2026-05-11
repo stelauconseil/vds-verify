@@ -1,6 +1,6 @@
 {
     "name": "vds-verify",
-    "version": "2.4.0",
+    "version": "2.5.0",
     "license": "MIT",
     "main": "expo-router/entry",
     "scripts": {
@@ -31,6 +31,7 @@
         "expo-file-system": "~55.0.19",
         "expo-glass-effect": "~55.0.11",
         "expo-haptics": "~55.0.14",
+        "expo-image-picker": "~55.0.20",
         "expo-linking": "~55.0.15",
         "expo-localization": "~55.0.13",
         "expo-navigation-bar": "~55.0.12",
