@@ -10,12 +10,17 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { captureRef } from "react-native-view-shot";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import {
+    CameraView,
+    useCameraPermissions,
+    scanFromURLAsync,
+} from "expo-camera";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import * as ImagePicker from "expo-image-picker";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import ScannerView from "@/screens/ScannerView";
@@ -311,6 +316,52 @@ export default function ScanRoute() {
         }
     };
 
+    const importFromGallery = async () => {
+        if (processingRef.current) return;
+
+        try {
+            const permission =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!permission.granted) {
+                showError("photo_permission_denied");
+                return;
+            }
+
+            const pickerResult = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ["images"],
+                quality: 1,
+                allowsEditing: false,
+            });
+
+            if (pickerResult.canceled || !pickerResult.assets?.length) {
+                return;
+            }
+
+            const selectedUri = pickerResult.assets[0]?.uri;
+            if (!selectedUri) {
+                showError("error_invalid_qr");
+                return;
+            }
+
+            const scannedCodes = await scanFromURLAsync(selectedUri, [
+                "qr",
+                "datamatrix",
+                "aztec",
+            ]);
+            const detectedData = scannedCodes?.[0]?.data;
+
+            if (!detectedData) {
+                showError("error_invalid_qr");
+                return;
+            }
+
+            setPreviewUri(selectedUri);
+            await processResult({ data: detectedData });
+        } catch {
+            showError("error_invalid_qr");
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }} ref={cameraContainerRef}>
@@ -372,6 +423,21 @@ export default function ScanRoute() {
                         >
                             <Ionicons
                                 name={torchEnabled ? "flash" : "flash-outline"}
+                                size={20}
+                                color="#fff"
+                            />
+                        </Pressable>
+                        <Pressable
+                            onPress={importFromGallery}
+                            style={[
+                                styles.importButton,
+                                { top: Math.max(insets.top, 8) + 8 },
+                            ]}
+                            accessibilityLabel={getLabel("import_image", lang)}
+                            accessibilityRole="button"
+                        >
+                            <Ionicons
+                                name="images-outline"
                                 size={20}
                                 color="#fff"
                             />
@@ -476,6 +542,14 @@ const styles = StyleSheet.create({
     torchButton: {
         position: "absolute",
         left: 12,
+        borderRadius: 10,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        backgroundColor: "rgba(0,0,0,0.55)",
+    },
+    importButton: {
+        position: "absolute",
+        left: 58,
         borderRadius: 10,
         paddingVertical: 6,
         paddingHorizontal: 10,

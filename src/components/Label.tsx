@@ -83,6 +83,9 @@ const label = {
         share_as_json: "Partager en JSON",
         share_as_pdf: "Partager en PDF",
         share_error: "Impossible de partager le résultat",
+        import_image: "Importer une image",
+        photo_permission_denied:
+            "L'accès à la photothèque est nécessaire pour importer une image",
         theme: "Thème",
         theme_system: "Système",
         theme_light: "Clair",
@@ -171,6 +174,9 @@ const label = {
         share_as_json: "Share as JSON",
         share_as_pdf: "Share as PDF",
         share_error: "Unable to share the result",
+        import_image: "Import image",
+        photo_permission_denied:
+            "Photo library access is required to import an image",
         theme: "Theme",
         theme_system: "System",
         theme_light: "Light",
