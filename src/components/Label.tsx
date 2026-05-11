@@ -1,6 +1,7 @@
 import React, { type ReactNode } from "react";
 import { Linking, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getLocales } from "expo-localization";
 
 const label = {
     fr: {
@@ -191,15 +192,32 @@ const getLabel = (key: string, lang?: string): string => {
     return key;
 };
 
+const SUPPORTED_LANGS = Object.keys(label);
+
+const detectDeviceLang = (): string => {
+    try {
+        const locales = getLocales();
+        for (const locale of locales) {
+            const code = locale.languageCode ?? "";
+            if (SUPPORTED_LANGS.includes(code)) {
+                return code;
+            }
+        }
+    } catch {
+        // noop
+    }
+    return "en";
+};
+
 const getLang = async (): Promise<string> => {
     try {
         const value = await AsyncStorage.getItem("lang");
         if (value !== null && label[value]) {
             return value;
-        } else throw new Error("no lang");
-    } catch (e) {
-        // If there is an error retrieving data, return default language
-        return "en";
+        }
+        return detectDeviceLang();
+    } catch {
+        return detectDeviceLang();
     }
 };
 
