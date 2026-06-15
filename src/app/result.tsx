@@ -22,6 +22,7 @@ import {
 import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Asset } from "expo-asset";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
@@ -711,7 +712,29 @@ export default function ResultScreen() {
         router.back();
     };
 
-    const buildShareHtml = () => {
+    const getPdfLogoDataUri = async (): Promise<string | null> => {
+        try {
+            const logoAsset = Asset.fromModule(
+                require("../../assets/icons/icon.png"),
+            );
+            if (!logoAsset.localUri) {
+                await logoAsset.downloadAsync();
+            }
+
+            const logoUri = logoAsset.localUri ?? logoAsset.uri;
+            if (!logoUri) return null;
+
+            const logoBase64 = await FileSystem.readAsStringAsync(logoUri, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+            return `data:image/png;base64,${logoBase64}`;
+        } catch {
+            return null;
+        }
+    };
+
+    const buildShareHtml = async () => {
+        const logoDataUri = await getPdfLogoDataUri();
         const makeRows = (entries: [string, unknown][]) =>
             entries
                 .filter(([, v]) => v !== null && v !== undefined && v !== "")
@@ -757,6 +780,7 @@ export default function ResultScreen() {
                 : securityStatus === "invalid"
                   ? "#EF4444"
                   : "#F59E0B";
+        const poweredBy = "powered by VDS Verify";
 
         const sectionStyle = `font-size:16px;font-weight:700;margin:24px 0 8px;color:#111827;`;
         const tableStyle = `width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;background:#F7F9FC;margin-bottom:16px;`;
@@ -764,7 +788,7 @@ export default function ResultScreen() {
         return `<!DOCTYPE html><html><head><meta charset="utf-8"/>
 <style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:32px;color:#111827;}
 h1{font-size:22px;margin-bottom:4px;}p{margin:4px 0 20px;color:${statusColor};font-weight:600;font-size:15px;}
-table{${tableStyle}}tr:nth-child(even){background:#EEF2F7;}footer{margin-top:32px;font-size:11px;color:#9CA3AF;}</style>
+    table{${tableStyle}}tr:nth-child(even){background:#EEF2F7;}footer{margin-top:32px;font-size:11px;color:#9CA3AF;}footer .meta{margin-bottom:12px;}footer .powered{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:12px;color:#4B5563;font-weight:600;}footer .powered img{width:18px;height:18px;border-radius:4px;object-fit:cover;}</style>
 </head><body>
 <h1>${documentType}</h1>
 <p>${getLabel(securityStatus, lang)}</p>
@@ -775,7 +799,10 @@ table{${tableStyle}}tr:nth-child(even){background:#EEF2F7;}footer{margin-top:32p
 ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><table>${signerRows}</table>` : ""}
 <h2 style="${sectionStyle}">${getLabel("standard", lang)}</h2>
 <table><tr><td style="padding:6px 10px;color:#6B7280;font-size:13px">${getLabel("compliance", lang)}</td><td style="padding:6px 10px;font-weight:600">${get_standard(result.vds_standard)}</td></tr></table>
-<footer>VDS Verify &mdash; ${new Date().toLocaleDateString()}</footer>
+    <footer>
+    <div class="meta">VDS Verify &mdash; ${new Date().toLocaleDateString()}</div>
+    <div class="powered">${logoDataUri ? `<img src="${logoDataUri}" alt="VDS Verify logo"/>` : ""}<span>${poweredBy}</span></div>
+    </footer>
 </body></html>`;
     };
 
@@ -811,10 +838,10 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
     };
 
     const handleSharePdf = () => {
-        const html = buildShareHtml();
         dismissAndRun(async () => {
             setIsSharing(true);
             try {
+                const html = await buildShareHtml();
                 const dateStr = new Date()
                     .toISOString()
                     .slice(0, 10)
@@ -1127,7 +1154,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
             >
                 <View style={styles.shareModalContainer}>
                     <Pressable
-                        style={StyleSheet.absoluteFillObject}
+                        style={StyleSheet.absoluteFill}
                         onPress={closeShareMenu}
                     />
                     <Animated.View
@@ -1414,7 +1441,11 @@ function makeStyles(c: Colors) {
             alignItems: "center",
         },
         imageModalBackdrop: {
-            ...StyleSheet.absoluteFillObject,
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
         },
         imageModalContent: {
             width: "94%",
