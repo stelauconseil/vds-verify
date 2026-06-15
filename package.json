@@ -1,6 +1,6 @@
 {
     "name": "vds-verify",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "license": "MIT",
     "main": "expo-router/entry",
     "scripts": {
@@ -12,12 +12,12 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@expo/ui": "~56.0.17",
+        "@expo/ui": "~56.0.18",
         "@react-native-async-storage/async-storage": "2.2.0",
         "@react-native-picker/picker": "2.11.4",
         "buffer": "^6.0.3",
         "crypto-js": "^4.2.0",
-        "expo": "~56.0.11",
+        "expo": "~56.0.12",
         "expo-application": "~56.0.3",
         "expo-blur": "~56.0.3",
         "expo-camera": "~56.0.8",
@@ -31,8 +31,8 @@
         "expo-localization": "~56.0.6",
         "expo-navigation-bar": "~56.0.3",
         "expo-print": "~56.0.4",
-        "expo-router": "~56.2.10",
-        "expo-sharing": "~56.0.17",
+        "expo-router": "~56.2.11",
+        "expo-sharing": "~56.0.18",
         "expo-splash-screen": "~56.0.10",
         "expo-status-bar": "~56.0.4",
         "expo-system-ui": "~56.0.5",
@@ -51,14 +51,14 @@
         "react-native-worklets": "0.8.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.29.0",
-        "@types/react": "~19.2.14",
-        "babel-plugin-module-resolver": "^5.0.2",
-        "eslint": "^10.5.0",
+        "@babel/core": "^7.29.7",
+        "@types/react": "~19.2.17",
+        "babel-plugin-module-resolver": "^5.0.3",
+        "eslint": "^9.39.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^7.0.1",
-        "prettier": "^3.6.2",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "prettier": "^3.8.4",
         "typescript": "~6.0.3"
     },
     "expo": {
