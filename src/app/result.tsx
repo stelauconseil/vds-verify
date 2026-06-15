@@ -1274,6 +1274,7 @@ function makeStyles(c: Colors) {
             borderWidth: 1,
             borderColor: "#FCA5A5",
             marginBottom: theme.space16,
+            alignSelf: "center",
             alignItems: "center",
         },
         testdataBannerText: {
