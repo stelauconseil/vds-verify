@@ -7,7 +7,7 @@ import {
     Pressable,
     type GestureResponderEvent,
 } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { captureRef } from "react-native-view-shot";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";

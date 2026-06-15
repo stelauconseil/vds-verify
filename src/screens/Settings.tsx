@@ -7,7 +7,7 @@ import {
     Platform,
     Pressable,
 } from "react-native";
-import Ionicons from "@expo/vector-icons/build/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel } from "@/components/Label";
 import {

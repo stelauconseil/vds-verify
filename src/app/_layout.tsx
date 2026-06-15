@@ -2,10 +2,11 @@ import {
     DarkTheme,
     DefaultTheme,
     ThemeProvider,
-} from "@react-navigation/native";
+} from "expo-router/react-navigation";
 import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import * as NavigationBar from "expo-navigation-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -30,6 +31,9 @@ export default function RootLayout() {
 
 function AppLayout() {
     const colorScheme = useEffectiveColorScheme();
+    const [iconsReady] = useFonts({
+        Ionicons: require("react-native-vector-icons/Fonts/Ionicons.ttf"),
+    });
 
     const tabBarBackgroundColor = useThemeColor(theme.color.background);
 
@@ -50,8 +54,22 @@ function AppLayout() {
         );
     }, [colorScheme]);
 
+    if (!iconsReady) {
+        return null;
+    }
+
     return (
-        <GestureHandlerRootView style={[styles.container, { backgroundColor: colorScheme === "dark" ? theme.color.background.dark : theme.color.background.light }]}>
+        <GestureHandlerRootView
+            style={[
+                styles.container,
+                {
+                    backgroundColor:
+                        colorScheme === "dark"
+                            ? theme.color.background.dark
+                            : theme.color.background.light,
+                },
+            ]}
+        >
             <ThemeProvider
                 value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
