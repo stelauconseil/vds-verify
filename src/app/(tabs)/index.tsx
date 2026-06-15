@@ -322,17 +322,17 @@ export default function ScanRoute() {
                             zoom={zoomLevel}
                             enableTorch={torchEnabled}
                             barcodeScannerSettings={{
-                                barcodeTypes: ["qr", "datamatrix", "aztec"],
+                                barcodeTypes: ["qr", "datamatrix"],
                             }}
                             onBarcodeScanned={
                                 result || !isFocused
                                     ? undefined
                                     : (processResult as any)
                             }
-                            style={StyleSheet.absoluteFillObject}
+                            style={StyleSheet.absoluteFill}
                         />
                         <View
-                            style={StyleSheet.absoluteFillObject}
+                            style={StyleSheet.absoluteFill}
                             onStartShouldSetResponder={(event) =>
                                 event.nativeEvent.touches?.length === 2
                             }
@@ -394,7 +394,7 @@ export default function ScanRoute() {
                     previewUri && (
                         <Image
                             source={{ uri: previewUri }}
-                            style={StyleSheet.absoluteFillObject}
+                            style={StyleSheet.absoluteFill}
                             resizeMode="cover"
                             accessible
                             accessibilityLabel="Scan preview"
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#000",
     },
     content: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         justifyContent: "center",
         alignItems: "center",
     },
