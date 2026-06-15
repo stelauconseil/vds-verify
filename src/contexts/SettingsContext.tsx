@@ -121,6 +121,6 @@ export function useSettings() {
 
 export function useEffectiveColorScheme(): "light" | "dark" {
     const { colorSchemePref } = useSettings();
-    const system = useColorScheme() ?? "light";
+    const system = useColorScheme() === "dark" ? "dark" : "light";
     return colorSchemePref === "system" ? system : colorSchemePref;
 }

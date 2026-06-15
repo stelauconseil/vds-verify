@@ -7,11 +7,10 @@ import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
-import { setBackgroundColorAsync } from "expo-system-ui";
+import * as SystemUI from "expo-system-ui";
 import * as NavigationBar from "expo-navigation-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Platform, StyleSheet } from "react-native";
-import { useThemeColor } from "@/components/Themed";
 import { theme } from "@/theme";
 import { ScanStatusProvider } from "@/contexts/ScanStatusContext";
 import {
@@ -35,23 +34,31 @@ function AppLayout() {
         Ionicons: require("react-native-vector-icons/Fonts/Ionicons.ttf"),
     });
 
-    const tabBarBackgroundColor = useThemeColor(theme.color.background);
-
     useEffect(() => {
         if (Platform.OS === "android") {
-            NavigationBar.setButtonStyleAsync(
-                colorScheme === "light" ? "dark" : "light",
-            );
+            if (typeof NavigationBar.setStyle === "function") {
+                try {
+                    NavigationBar.setStyle(
+                        colorScheme === "light" ? "dark" : "light",
+                    );
+                } catch {
+                    // Ignore environments where navigation bar APIs are unavailable.
+                }
+            }
         }
     }, [colorScheme]);
 
     // Keep the root view background color in sync with the current theme
     useEffect(() => {
-        setBackgroundColorAsync(
-            colorScheme === "dark"
-                ? theme.color.background.dark
-                : theme.color.background.light,
-        );
+        if (typeof SystemUI.setBackgroundColorAsync === "function") {
+            SystemUI.setBackgroundColorAsync(
+                colorScheme === "dark"
+                    ? theme.color.background.dark
+                    : theme.color.background.light,
+            ).catch(() => {
+                // Ignore environments where system UI APIs are unavailable.
+            });
+        }
     }, [colorScheme]);
 
     if (!iconsReady) {
