@@ -127,7 +127,7 @@ const label = {
         standard: "Standard",
         compliance: "Compliance",
         scanagain: "Scan again",
-        helpscan: "Present a CEV to scan",
+        helpscan: "Present a VDS to scan",
         error: "Error",
         error_invalid_qr: "The scanned QR code is not a VDS",
         cameraerror: "VDS Verify needs access to your camera",
