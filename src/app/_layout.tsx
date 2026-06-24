@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SystemUI from "expo-system-ui";
 import * as NavigationBar from "expo-navigation-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -30,9 +31,7 @@ export default function RootLayout() {
 
 function AppLayout() {
     const colorScheme = useEffectiveColorScheme();
-    const [iconsReady] = useFonts({
-        Ionicons: require("react-native-vector-icons/Fonts/Ionicons.ttf"),
-    });
+    const [iconsReady] = useFonts(Ionicons.font);
 
     useEffect(() => {
         if (Platform.OS === "android") {

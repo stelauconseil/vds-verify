@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatData, getLabel } from "@/components/Label";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Swipeable } from "react-native-gesture-handler";
 import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
 
