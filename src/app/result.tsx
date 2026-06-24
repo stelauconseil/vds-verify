@@ -1082,9 +1082,10 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
 
                     {/* Segmented tabs like Day 1 / Day 2 in React Conf */}
                     {Platform.OS === "ios" && isLiquidGlassAvailable() ? (
-                        <BlurView
-                            intensity={50}
-                            tint="light"
+                        <GlassView
+                            glassEffectStyle="regular"
+                            colorScheme="auto"
+                            isInteractive
                             style={styles.tabGlassWrapper}
                         >
                             <View style={styles.tabContainer}>
@@ -1125,7 +1126,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                     </Text>
                                 </Pressable>
                             </View>
-                        </BlurView>
+                        </GlassView>
                     ) : (
                         <View style={styles.tabContainerFallback}>
                             <Pressable
@@ -1408,9 +1409,8 @@ function makeStyles(c: Colors) {
         },
         tabGlassWrapper: {
             borderRadius: theme.borderRadius20,
-            overflow: "hidden",
-            marginTop: theme.space16,
             alignSelf: "stretch",
+            marginTop: theme.space16,
             marginHorizontal: theme.space16,
         },
         tabContainer: {
@@ -1419,7 +1419,6 @@ function makeStyles(c: Colors) {
             paddingHorizontal: theme.space4,
             paddingVertical: theme.space4,
             gap: theme.space4,
-            backgroundColor: "rgba(255,255,255,0.3)",
         },
         tabContainerFallback: {
             flexDirection: "row",
