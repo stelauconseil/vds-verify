@@ -92,6 +92,12 @@ const label = {
         show_pinned_only: "Afficher uniquement les entrées épinglées",
         show_all_entries: "Afficher toutes les entrées",
         encrypted_image: "Image chiffrée – ne peut pas être affichée",
+        about_build: "Build",
+        about_bundle_id: "Identifiant",
+        about_package: "Package",
+        about_developer: "Développeur",
+        about_website: "Site web",
+        about_copyright: "© {year} Stelau. Tous droits réservés.",
     },
     en: {
         code: "en",
@@ -180,6 +186,12 @@ const label = {
         show_pinned_only: "Show pinned entries only",
         show_all_entries: "Show all entries",
         encrypted_image: "Encrypted image – cannot be displayed",
+        about_build: "Build",
+        about_bundle_id: "Bundle ID",
+        about_package: "Package",
+        about_developer: "Developer",
+        about_website: "Website",
+        about_copyright: "© {year} Stelau. All rights reserved.",
     },
 };
 
