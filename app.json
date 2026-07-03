@@ -2,7 +2,7 @@
     "expo": {
         "name": "VDS Verify",
         "slug": "vds-verify",
-        "version": "2.6.1",
+        "version": "2.6.2",
         "orientation": "portrait",
         "icon": "./assets/icons/icon.png",
         "userInterfaceStyle": "light",
@@ -70,7 +70,8 @@
                     "origin": "https://vds-verify.stelau.com/"
                 }
             ],
-            "expo-sharing"
+            "expo-sharing",
+            "expo-status-bar"
         ],
         "scheme": "vdsverify",
         "extra": {
