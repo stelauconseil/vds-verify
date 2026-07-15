@@ -26,6 +26,7 @@ import { Asset } from "expo-asset";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
+import { normalizeVdsResult } from "@/types/vds";
 import { BlurView } from "expo-blur";
 import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import * as FileSystem from "expo-file-system/legacy";
@@ -116,6 +117,32 @@ function labelForKey(key: string, lang?: string) {
     const guess = getLabel(key, lang);
     if (guess && guess !== key) return guess;
     return key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ");
+}
+
+function getLocalizedDocumentType(
+    value: unknown,
+    lang?: string,
+): string | undefined {
+    if (typeof value === "string") return value;
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return undefined;
+    }
+
+    const typeMap = value as Record<string, unknown>;
+    const lowerLang = lang?.toLowerCase();
+    const candidate =
+        typeMap[lowerLang ?? ""] ||
+        typeMap[lowerLang?.slice(0, 2) || ""] ||
+        Object.values(typeMap)[0];
+
+    return typeof candidate === "string" ? candidate : undefined;
+}
+
+function formatDocumentTypeTitle(value: unknown): string | undefined {
+    if (typeof value !== "string") return undefined;
+    const trimmed = value.trim();
+    if (!trimmed) return "";
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
 function AttributeRow({
@@ -540,31 +567,11 @@ export default function ResultScreen() {
             // For "Type de document", reuse the same localized, title-cased
             // string used in the hero section instead of showing the raw object.
             if (k === "Type de document") {
-                const typeField = headerValue as
-                    | string
-                    | { [code: string]: string }
-                    | undefined;
-
-                let localizedType: string | undefined;
-                if (typeField && typeof typeField === "object") {
-                    const lowerLang = lang?.toLowerCase();
-                    localizedType =
-                        typeField[lowerLang] ||
-                        typeField[lowerLang?.slice(0, 2) || ""] ||
-                        Object.values(typeField)[0];
-                } else if (typeof typeField === "string") {
-                    localizedType = typeField;
-                }
-
-                const displayType = localizedType
-                    ? (() => {
-                          const trimmed = localizedType.trim();
-                          if (!trimmed) return "";
-                          return (
-                              trimmed.charAt(0).toUpperCase() + trimmed.slice(1)
-                          );
-                      })()
-                    : undefined;
+                const localizedType = getLocalizedDocumentType(
+                    headerValue,
+                    lang,
+                );
+                const displayType = formatDocumentTypeTitle(localizedType);
 
                 return (
                     <AttributeRow
@@ -637,10 +644,12 @@ export default function ResultScreen() {
         if (!result && params.result && typeof params.result === "string") {
             try {
                 const parsed = JSON.parse(params.result as string);
-                setContextResult(parsed);
-                if (parsed.sign_is_valid && parsed.signer) {
+                const normalized = normalizeVdsResult(parsed);
+                if (!normalized) return;
+                setContextResult(normalized);
+                if (normalized.sign_is_valid && normalized.signer) {
                     setStatus("valid");
-                } else if (parsed.signer) {
+                } else if (normalized.signer) {
                     setStatus("invalid");
                 } else {
                     setStatus("nonverifiable");
@@ -686,28 +695,12 @@ export default function ResultScreen() {
             : result.signer
               ? "invalid"
               : "nonverifiable";
-    const typeField = result.header["Type de document"] as
-        | string
-        | { [code: string]: string }
-        | undefined;
-    let localizedType: string | undefined;
-    if (typeField && typeof typeField === "object") {
-        const lowerLang = lang?.toLowerCase();
-        localizedType =
-            typeField[lowerLang] ||
-            typeField[lowerLang?.slice(0, 2) || ""] ||
-            Object.values(typeField)[0];
-    } else if (typeof typeField === "string") {
-        localizedType = typeField;
-    }
+    const localizedType = getLocalizedDocumentType(
+        result.header["Type de document"],
+        lang,
+    );
     const documentType =
-        (localizedType
-            ? (() => {
-                  const trimmed = localizedType.trim();
-                  if (!trimmed) return "";
-                  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-              })()
-            : undefined) || getLabel("result", lang);
+        formatDocumentTypeTitle(localizedType) || getLabel("result", lang);
 
     const close = () => {
         setContextResult(null);
@@ -753,20 +746,7 @@ export default function ResultScreen() {
         const headerRows = makeRows(
             Object.entries(result.header).map(([k, v]) => {
                 if (k === "Type de document") {
-                    const tf = v as
-                        | string
-                        | { [code: string]: string }
-                        | undefined;
-                    let loc: string | undefined;
-                    if (tf && typeof tf === "object") {
-                        const ll = lang?.toLowerCase();
-                        loc =
-                            (tf as any)[ll] ||
-                            (tf as any)[ll?.slice(0, 2) || ""] ||
-                            Object.values(tf)[0];
-                    } else if (typeof tf === "string") {
-                        loc = tf;
-                    }
+                    const loc = getLocalizedDocumentType(v, lang);
                     return [k, loc ?? ""] as [string, unknown];
                 }
                 return [k, v] as [string, unknown];

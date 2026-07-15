@@ -27,6 +27,32 @@ const ROW_BG_DARK_2 = "#2C2C2E";
 const FULL_SWIPE_MIN_PX = 160;
 const FULL_SWIPE_MAX_PX = 240;
 
+function getLocalizedDocumentType(
+    value: unknown,
+    lang?: string,
+): string | undefined {
+    if (typeof value === "string") return value;
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return undefined;
+    }
+
+    const typeMap = value as Record<string, unknown>;
+    const lowerLang = lang?.toLowerCase();
+    const candidate =
+        typeMap[lowerLang ?? ""] ||
+        typeMap[lowerLang?.slice(0, 2) || ""] ||
+        Object.values(typeMap)[0];
+
+    return typeof candidate === "string" ? candidate : undefined;
+}
+
+function formatDocumentTypeTitle(value: unknown): string | undefined {
+    if (typeof value !== "string") return undefined;
+    const trimmed = value.trim();
+    if (!trimmed) return "";
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
 type HistoryRowProps = {
     item: HistoryEntry;
     index: number;
@@ -143,29 +169,11 @@ const HistoryRow: FC<HistoryRowProps> = ({
         translateX,
     ]);
 
-    const typeField = item.data?.header?.["Type de document"] as
-        | string
-        | { [code: string]: string }
-        | undefined;
-
-    let localizedType: string | undefined;
-    if (typeField && typeof typeField === "object") {
-        const lowerLang = lang?.toLowerCase();
-        localizedType =
-            typeField[lowerLang] ||
-            typeField[lowerLang?.slice(0, 2) || ""] ||
-            Object.values(typeField)[0];
-    } else if (typeof typeField === "string") {
-        localizedType = typeField;
-    }
-
-    const docType = localizedType
-        ? (() => {
-              const trimmed = localizedType.trim();
-              if (!trimmed) return "";
-              return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-          })()
-        : undefined;
+    const localizedType = getLocalizedDocumentType(
+        item.data?.header?.["Type de document"],
+        lang,
+    );
+    const docType = formatDocumentTypeTitle(localizedType);
     const manifest = item.data?.header?.["manifest_ID"] as string | undefined;
     const date = (() => {
         const languageTag = getLabel("languageTag", lang);

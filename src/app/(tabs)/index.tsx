@@ -21,7 +21,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import ScannerView from "@/screens/ScannerView";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
-import type { VdsResult } from "@/types/vds";
+import { normalizeVdsResult, type VdsResult } from "@/types/vds";
 
 export default function ScanRoute() {
     const router = useRouter();
@@ -175,8 +175,11 @@ export default function ScanRoute() {
         if (params.result && typeof params.result === "string") {
             try {
                 const parsedResult = JSON.parse(params.result as string);
-                setResult(parsedResult);
-                setScanned(true);
+                const normalized = normalizeVdsResult(parsedResult);
+                if (normalized) {
+                    setResult(normalized);
+                    setScanned(true);
+                }
                 // Clear the param so the camera route no longer treats this as an active result
                 router.setParams({ result: undefined });
             } catch {
@@ -273,6 +276,11 @@ export default function ScanRoute() {
                 });
                 const { success, message, vds } = await response.json();
                 if (success === true) {
+                    const normalized = normalizeVdsResult(vds);
+                    if (!normalized) {
+                        showError("error_invalid_qr");
+                        return;
+                    }
                     // Light haptic feedback on successful scan
                     try {
                         await Haptics.impactAsync(
@@ -290,7 +298,7 @@ export default function ScanRoute() {
                         );
                         const newEntry = {
                             timestamp: new Date().toISOString(),
-                            data: vds,
+                            data: normalized,
                             pinned: false,
                         };
                         history.unshift(newEntry);
@@ -299,7 +307,7 @@ export default function ScanRoute() {
                             JSON.stringify(history),
                         );
                     }
-                    setResult(vds as VdsResult);
+                    setResult(normalized);
                 } else {
                     showError(message);
                 }
