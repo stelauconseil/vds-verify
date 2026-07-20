@@ -15,6 +15,7 @@ import {
     Modal,
     Alert,
     Animated,
+    InteractionManager,
     Platform,
     StyleSheet,
     useColorScheme,
@@ -680,9 +681,22 @@ export default function ResultScreen() {
     const dismissAndRun = useCallback(
         (action: () => Promise<void>) => {
             slideAnim.stopAnimation();
-            slideAnim.setValue(300);
-            setShareMenuVisible(false);
-            setTimeout(action, 50);
+            Animated.timing(slideAnim, {
+                toValue: 300,
+                duration: 200,
+                useNativeDriver: true,
+            }).start(() => {
+                setShareMenuVisible(false);
+
+                // Android presents expo-sharing in a separate native activity.
+                // Wait until the modal window has been removed before opening it,
+                // otherwise the first share request can be swallowed by the modal.
+                requestAnimationFrame(() => {
+                    InteractionManager.runAfterInteractions(() => {
+                        void action();
+                    });
+                });
+            });
         },
         [slideAnim],
     );
