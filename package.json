@@ -1,6 +1,6 @@
 {
     "name": "vds-verify",
-    "version": "2.6.2",
+    "version": "2.6.3",
     "license": "MIT",
     "main": "expo-router/entry",
     "scripts": {
