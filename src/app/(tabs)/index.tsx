@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
     View,
     StyleSheet,
@@ -91,6 +91,145 @@ export default function ScanRoute() {
         pinchStartZoomRef.current = zoomLevel;
     };
 
+    const parseData = useCallback((data: string): string | null => {
+        if (data?.startsWith("http")) {
+            const lastIndex = data.lastIndexOf("/vds#");
+            if (lastIndex === -1 || lastIndex === data.length - 1) return null;
+            return Buffer.from(data.substring(lastIndex + 5)).toString(
+                "base64",
+            );
+        } else if (data.startsWith("vds")) {
+            return Buffer.from(data.substring(6)).toString("base64");
+        } else {
+            return Buffer.from(data).toString("base64");
+        }
+    }, []);
+
+    const normalizeErrorMessage = useCallback(
+        (message?: string | null): string => {
+            if (!message) return "error";
+            if (
+                message === "Une erreur est survenue lors du décodage" ||
+                message === "Unknown QR code format or error during decoding" ||
+                message === "error_invalid_qr"
+            ) {
+                return "error_invalid_qr";
+            }
+            return message;
+        },
+        [],
+    );
+
+    const showError = useCallback(
+        (message?: string | null) => {
+            const normalized = normalizeErrorMessage(message);
+            const localized = getLabel(normalized, lang) || normalized;
+            setErrorMessage(localized);
+            if (errorTimerRef.current) {
+                clearTimeout(errorTimerRef.current);
+            }
+            errorTimerRef.current = setTimeout(
+                () => setErrorMessage(null),
+                3000,
+            );
+        },
+        [lang, normalizeErrorMessage],
+    );
+
+    const processResult = useCallback(
+        async ({ data }: { data: string }) => {
+            if (processingRef.current) return;
+            processingRef.current = true;
+            try {
+                const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
+                try {
+                    if (!previewUri) {
+                        try {
+                            const snapUri = await captureRef(
+                                cameraRef.current ?? cameraContainerRef,
+                                {
+                                    format: "jpg",
+                                    quality: 0.8,
+                                    result: "tmpfile",
+                                },
+                            );
+                            if (snapUri) setPreviewUri(snapUri as string);
+                        } catch {
+                            if (cameraRef.current?.takePictureAsync) {
+                                const photo =
+                                    await cameraRef.current.takePictureAsync({
+                                        quality: 0.8,
+                                        skipProcessing: true,
+                                    });
+                                if (photo?.uri) setPreviewUri(photo.uri);
+                            }
+                        }
+                    }
+                } catch {
+                    // Ignore capture errors, continue processing
+                }
+                setScanned(true);
+                const b64encodedvds = parseData(data);
+                if (b64encodedvds === null) {
+                    showError("error_invalid_qr");
+                    return;
+                }
+                try {
+                    const response = await fetch(`${apiUrl}/api/v1/decode`, {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ vds: b64encodedvds }),
+                    });
+                    const { success, message, vds } = await response.json();
+                    if (success === true) {
+                        const normalized = normalizeVdsResult(vds);
+                        if (!normalized) {
+                            showError("error_invalid_qr");
+                            return;
+                        }
+                        try {
+                            await Haptics.impactAsync(
+                                Haptics.ImpactFeedbackStyle.Light,
+                            );
+                        } catch {
+                            // Ignore haptics errors (e.g., unsupported device)
+                        }
+                        const historyEnabled =
+                            (await AsyncStorage.getItem("historyEnabled")) !==
+                            "false";
+                        if (historyEnabled) {
+                            const history = JSON.parse(
+                                (await AsyncStorage.getItem("scanHistory")) ||
+                                    "[]",
+                            );
+                            const newEntry = {
+                                timestamp: new Date().toISOString(),
+                                data: normalized,
+                                pinned: false,
+                            };
+                            history.unshift(newEntry);
+                            await AsyncStorage.setItem(
+                                "scanHistory",
+                                JSON.stringify(history),
+                            );
+                        }
+                        setResult(normalized);
+                    } else {
+                        showError(message);
+                    }
+                } catch (error: any) {
+                    showError(error?.message ?? "error");
+                }
+            } finally {
+                processingRef.current = false;
+            }
+        },
+        [parseData, previewUri, showError],
+    );
+
     useEffect(() => {
         const getCameraPermission = async () => {
             try {
@@ -103,9 +242,10 @@ export default function ScanRoute() {
             }
         };
         getCameraPermission();
+        const activeCamera = cameraRef.current;
         return () => {
-            if (cameraRef.current?.stopAsync) {
-                cameraRef.current.stopAsync();
+            if (activeCamera?.stopAsync) {
+                activeCamera.stopAsync();
             }
         };
     }, [requestPermission]);
@@ -166,7 +306,7 @@ export default function ScanRoute() {
             processResult({ data: url });
             setUrl(null);
         }
-    }, [url]);
+    }, [processResult, url]);
 
     // Remove auto-clear on pathname to avoid instant closing of the result sheet
 
@@ -187,137 +327,6 @@ export default function ScanRoute() {
             }
         }
     }, [params.result, router]);
-
-    const parseData = (data: string): string | null => {
-        if (data?.startsWith("http")) {
-            const lastIndex = data.lastIndexOf("/vds#");
-            if (lastIndex === -1 || lastIndex === data.length - 1) return null;
-            return Buffer.from(data.substring(lastIndex + 5)).toString(
-                "base64",
-            );
-        } else if (data.startsWith("vds")) {
-            return Buffer.from(data.substring(6)).toString("base64");
-        } else {
-            return Buffer.from(data).toString("base64");
-        }
-    };
-
-    const normalizeErrorMessage = (message?: string | null): string => {
-        if (!message) return "error";
-        if (
-            message === "Une erreur est survenue lors du décodage" ||
-            message === "Unknown QR code format or error during decoding" ||
-            message === "error_invalid_qr"
-        ) {
-            return "error_invalid_qr";
-        }
-        return message;
-    };
-
-    const showError = (message?: string | null) => {
-        const normalized = normalizeErrorMessage(message);
-        const localized = getLabel(normalized, lang) || normalized;
-        setErrorMessage(localized);
-        if (errorTimerRef.current) {
-            clearTimeout(errorTimerRef.current);
-        }
-        errorTimerRef.current = setTimeout(() => setErrorMessage(null), 3000);
-    };
-
-    const processResult = async ({ data }: { data: string }) => {
-        if (processingRef.current) return; // guard against rapid duplicate scans
-        processingRef.current = true;
-        try {
-            const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
-            // Try to capture a preview frame before unmounting the camera
-            try {
-                if (!previewUri) {
-                    // Prefer a view snapshot for reliability across CameraView versions
-                    try {
-                        const snapUri = await captureRef(
-                            cameraRef.current ?? cameraContainerRef,
-                            {
-                                format: "jpg",
-                                quality: 0.8,
-                                result: "tmpfile",
-                            },
-                        );
-                        if (snapUri) setPreviewUri(snapUri as string);
-                    } catch {
-                        // Fallback to camera capture if available
-                        if (cameraRef.current?.takePictureAsync) {
-                            const photo =
-                                await cameraRef.current.takePictureAsync({
-                                    quality: 0.8,
-                                    skipProcessing: true,
-                                });
-                            if (photo?.uri) setPreviewUri(photo.uri);
-                        }
-                    }
-                }
-            } catch {
-                // Ignore capture errors, continue processing
-            }
-            // Unmount camera on next render
-            setScanned(true);
-            const b64encodedvds = parseData(data);
-            if (b64encodedvds === null) {
-                showError("error_invalid_qr");
-                return;
-            }
-            try {
-                const response = await fetch(`${apiUrl}/api/v1/decode`, {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ vds: b64encodedvds }),
-                });
-                const { success, message, vds } = await response.json();
-                if (success === true) {
-                    const normalized = normalizeVdsResult(vds);
-                    if (!normalized) {
-                        showError("error_invalid_qr");
-                        return;
-                    }
-                    // Light haptic feedback on successful scan
-                    try {
-                        await Haptics.impactAsync(
-                            Haptics.ImpactFeedbackStyle.Light,
-                        );
-                    } catch {
-                        // Ignore haptics errors (e.g., unsupported device)
-                    }
-                    const historyEnabled =
-                        (await AsyncStorage.getItem("historyEnabled")) !==
-                        "false";
-                    if (historyEnabled) {
-                        const history = JSON.parse(
-                            (await AsyncStorage.getItem("scanHistory")) || "[]",
-                        );
-                        const newEntry = {
-                            timestamp: new Date().toISOString(),
-                            data: normalized,
-                            pinned: false,
-                        };
-                        history.unshift(newEntry);
-                        await AsyncStorage.setItem(
-                            "scanHistory",
-                            JSON.stringify(history),
-                        );
-                    }
-                    setResult(normalized);
-                } else {
-                    showError(message);
-                }
-            } catch (error: any) {
-                showError(error?.message ?? "error");
-            }
-        } finally {
-            processingRef.current = false;
-        }
-    };
 
     return (
         <View style={styles.container}>

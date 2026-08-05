@@ -156,7 +156,7 @@ function AttributeRow({
     index: number;
 }) {
     const c = useColors();
-    const styles = getStyles(c);
+    const styles = useMemo(() => getStyles(c), [c]);
     const isEmptyString = typeof value === "string" && value.trim() === "";
     return (
         <View style={styles.attributeRow}>
@@ -542,7 +542,7 @@ export default function ResultScreen() {
             }
             return null;
         });
-    }, [result, lang, advancedMode]);
+    }, [result, lang, advancedMode, styles]);
 
     const headerRows = useMemo(() => {
         if (!result) return [] as ReactNode[];

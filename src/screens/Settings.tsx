@@ -151,9 +151,11 @@ const SettingsView: FC<SettingsViewProps> = ({
                 if (enabled !== historyEnabled) {
                     await setHistoryEnabled(enabled);
                 }
-            } catch {}
+            } catch {
+                return;
+            }
         })();
-    }, [isFocused]);
+    }, [historyEnabled, isFocused, setHistoryEnabled]);
 
     return (
         <View style={styles.screen}>
