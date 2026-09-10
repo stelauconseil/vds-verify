@@ -18,6 +18,7 @@ import {
     SettingsProvider,
     useEffectiveColorScheme,
 } from "@/contexts/SettingsContext";
+import { ensureAppAuthorization } from "@/services/appAuthorization";
 
 export default function RootLayout() {
     return (
@@ -59,6 +60,13 @@ function AppLayout() {
             });
         }
     }, [colorScheme]);
+
+    useEffect(() => {
+        ensureAppAuthorization().catch(() => {
+            // Ignore startup failures here because the app can still render,
+            // and API calls will surface the authorization error to the user.
+        });
+    }, []);
 
     if (!iconsReady) {
         return null;

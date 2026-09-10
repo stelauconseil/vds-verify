@@ -22,6 +22,7 @@ import ScannerView from "@/screens/ScannerView";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
 import { normalizeVdsResult, type VdsResult } from "@/types/vds";
+import { authenticatedFetch } from "@/services/appAuthorization";
 
 export default function ScanRoute() {
     const router = useRouter();
@@ -175,14 +176,17 @@ export default function ScanRoute() {
                     return;
                 }
                 try {
-                    const response = await fetch(`${apiUrl}/api/v1/decode`, {
-                        method: "POST",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
+                    const response = await authenticatedFetch(
+                        `${apiUrl}/api/v1/decode`,
+                        {
+                            method: "POST",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ vds: b64encodedvds }),
                         },
-                        body: JSON.stringify({ vds: b64encodedvds }),
-                    });
+                    );
                     const { success, message, vds } = await response.json();
                     if (success === true) {
                         const normalized = normalizeVdsResult(vds);
