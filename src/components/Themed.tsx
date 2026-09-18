@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { Text, View, TextStyle, PressableProps, Pressable } from "react-native";
 import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
 import Animated from "react-native-reanimated";
@@ -20,9 +21,10 @@ export type TextProps = ThemeProps & {
     fontWeight?: "light" | "medium" | "semiBold" | "bold";
     italic?: boolean;
     animated?: boolean;
-} & Text["props"];
+} & ComponentProps<typeof Text>;
 
-export type ViewProps = ThemeProps & View["props"] & { animated?: boolean };
+export type ViewProps = ThemeProps &
+    ComponentProps<typeof View> & { animated?: boolean };
 
 export function useThemeColor<T, U>(props: { light: T; dark: U }) {
     const theme = useEffectiveColorScheme();

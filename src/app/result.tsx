@@ -1,5 +1,6 @@
 import {
     ReactNode,
+    ComponentRef,
     useEffect,
     useMemo,
     useRef,
@@ -14,11 +15,12 @@ import {
     Image,
     Modal,
     Alert,
+    AccessibilityInfo,
     Animated,
-    InteractionManager,
     Platform,
     StyleSheet,
     useColorScheme,
+    useWindowDimensions,
 } from "react-native";
 import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -29,7 +31,11 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
 import { normalizeVdsResult } from "@/types/vds";
 import { BlurView } from "expo-blur";
-import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
+import {
+    GlassView,
+    isLiquidGlassAvailable,
+    isGlassEffectAPIAvailable,
+} from "expo-glass-effect";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import * as Print from "expo-print";
@@ -306,9 +312,25 @@ function Base64PreviewImage({
                 visible={isPreviewVisible}
                 transparent
                 animationType="fade"
+                supportedOrientations={[
+                    "portrait",
+                    "portrait-upside-down",
+                    "landscape-left",
+                    "landscape-right",
+                ]}
                 onRequestClose={() => setIsPreviewVisible(false)}
             >
-                <View style={styles.imageModalOverlay}>
+                <View
+                    style={[
+                        styles.imageModalOverlay,
+                        {
+                            paddingTop: insets.top,
+                            paddingBottom: insets.bottom,
+                            paddingLeft: insets.left,
+                            paddingRight: insets.right,
+                        },
+                    ]}
+                >
                     <Pressable
                         style={styles.imageModalBackdrop}
                         onPress={() => setIsPreviewVisible(false)}
@@ -325,7 +347,10 @@ function Base64PreviewImage({
                     <Pressable
                         style={[
                             styles.imageModalCloseButton,
-                            { top: insets.top + theme.space12 },
+                            {
+                                top: insets.top + theme.space12,
+                                right: insets.right + theme.space16,
+                            },
                         ]}
                         onPress={() => setIsPreviewVisible(false)}
                         accessibilityRole="button"
@@ -395,11 +420,45 @@ export default function ResultScreen() {
     const { advancedMode } = useSettings();
     const [lang, setLang] = useState<string>("en");
     const [selectedTab, setSelectedTab] = useState<"data" | "details">("data");
+    const [reduceTransparency, setReduceTransparency] = useState(true);
+    useEffect(() => {
+        let active = true;
+        AccessibilityInfo.isReduceTransparencyEnabled()
+            .then((enabled) => {
+                if (active) setReduceTransparency(enabled);
+            })
+            .catch(() => {
+                // Keep the opaque fallback if the accessibility setting is unavailable.
+            });
+        const subscription = AccessibilityInfo.addEventListener(
+            "reduceTransparencyChanged",
+            setReduceTransparency,
+        );
+        return () => {
+            active = false;
+            subscription.remove();
+        };
+    }, []);
+    const canUseGlass =
+        Platform.OS === "ios" &&
+        isLiquidGlassAvailable() &&
+        isGlassEffectAPIAvailable() &&
+        !reduceTransparency;
+
     const [shareMenuVisible, setShareMenuVisible] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
-    const slideAnim = useRef(new Animated.Value(300)).current;
-    const scrollViewRef = useRef<ScrollView>(null);
+    const { height: windowHeight, fontScale } = useWindowDimensions();
+    const [layoutWidth, setLayoutWidth] = useState(0);
+    const slideAnim = useRef(new Animated.Value(1)).current;
+    const scrollViewRef = useRef<ComponentRef<typeof ScrollView>>(null);
     const insets = useSafeAreaInsets();
+    // Measure this route, which may be narrower than the window inside an iOS sheet.
+    const availableWidth = Math.max(
+        0,
+        layoutWidth - insets.left - insets.right - 32,
+    );
+    const showColumns = availableWidth >= 840 * Math.max(1, fontScale);
+
     const c = useColors();
     const { colorSchemePref } = useSettings();
     const system = useColorScheme() ?? "light";
@@ -662,6 +721,7 @@ export default function ResultScreen() {
     }, [params.result, result, setContextResult, setStatus]);
 
     const openShareMenu = useCallback(() => {
+        slideAnim.setValue(1);
         setShareMenuVisible(true);
         Animated.spring(slideAnim, {
             toValue: 0,
@@ -672,7 +732,7 @@ export default function ResultScreen() {
 
     const closeShareMenu = useCallback(() => {
         Animated.timing(slideAnim, {
-            toValue: 300,
+            toValue: 1,
             duration: 200,
             useNativeDriver: true,
         }).start(() => setShareMenuVisible(false));
@@ -682,7 +742,7 @@ export default function ResultScreen() {
         (action: () => Promise<void>) => {
             slideAnim.stopAnimation();
             Animated.timing(slideAnim, {
-                toValue: 300,
+                toValue: 1,
                 duration: 200,
                 useNativeDriver: true,
             }).start(() => {
@@ -692,7 +752,7 @@ export default function ResultScreen() {
                 // Wait until the modal window has been removed before opening it,
                 // otherwise the first share request can be swallowed by the modal.
                 requestAnimationFrame(() => {
-                    InteractionManager.runAfterInteractions(() => {
+                    requestAnimationFrame(() => {
                         void action();
                     });
                 });
@@ -868,13 +928,23 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
     };
 
     return (
-        <View style={styles.container}>
+        <View
+            style={styles.container}
+            onLayout={({ nativeEvent }) =>
+                setLayoutWidth(nativeEvent.layout.width)
+            }
+        >
             {/* Floating close button */}
-            <View style={[styles.closeButton, { top: insets.top + 14 }]}>
-                {Platform.OS === "ios" && isLiquidGlassAvailable() ? (
+            <View
+                style={[
+                    styles.closeButton,
+                    { top: insets.top + 14, left: insets.left + theme.space16 },
+                ]}
+            >
+                {canUseGlass ? (
                     <GlassView
                         glassEffectStyle="regular"
-                        colorScheme="auto"
+                        colorScheme={scheme}
                         isInteractive
                         style={{
                             borderRadius: theme.borderRadius20,
@@ -894,7 +964,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             />
                         </Pressable>
                     </GlassView>
-                ) : Platform.OS === "ios" ? (
+                ) : Platform.OS === "ios" && !reduceTransparency ? (
                     <BlurView
                         intensity={70}
                         tint={scheme === "dark" ? "dark" : "light"}
@@ -952,11 +1022,19 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
             </View>
 
             {/* Floating share button */}
-            <View style={[styles.shareButton, { top: insets.top + 14 }]}>
-                {Platform.OS === "ios" && isLiquidGlassAvailable() ? (
+            <View
+                style={[
+                    styles.shareButton,
+                    {
+                        top: insets.top + 14,
+                        right: insets.right + theme.space16,
+                    },
+                ]}
+            >
+                {canUseGlass ? (
                     <GlassView
                         glassEffectStyle="regular"
-                        colorScheme="auto"
+                        colorScheme={scheme}
                         isInteractive
                         style={{
                             borderRadius: theme.borderRadius20,
@@ -977,7 +1055,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             />
                         </Pressable>
                     </GlassView>
-                ) : Platform.OS === "ios" ? (
+                ) : Platform.OS === "ios" && !reduceTransparency ? (
                     <BlurView
                         intensity={70}
                         tint={scheme === "dark" ? "dark" : "light"}
@@ -1038,209 +1116,227 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
 
             <ScrollView
                 ref={scrollViewRef}
-                contentInsetAdjustmentBehavior="automatic"
+                contentInsetAdjustmentBehavior="never"
                 showsVerticalScrollIndicator={false}
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollViewContent,
                     {
-                        paddingTop: Platform.select({
-                            android: insets.top + theme.space24, // was just theme.space24
-                            default: theme.space24,
-                        }),
+                        paddingTop: insets.top + 68,
+                        paddingLeft: insets.left + theme.space16,
+                        paddingRight: insets.right + theme.space16,
                         paddingBottom: Platform.select({
                             android: 100 + insets.bottom,
-                            default: theme.space24,
+                            default: insets.bottom + theme.space24,
                         }),
                     },
                 ]}
             >
-                {result.testdata && (
-                    <View style={styles.testdataBanner}>
-                        <Text style={styles.testdataBannerText}>
-                            {getLabel("testdata", lang)}
-                        </Text>
-                    </View>
-                )}
-                {/* Hero section - centered document info and status */}
-                <View style={styles.heroSection}>
-                    <View style={styles.documentIconContainer}>
-                        <Ionicons
-                            name="document-text"
-                            size={42}
-                            color={c.primary}
-                        />
-                    </View>
-                    <Text style={styles.documentTitle}>{documentType}</Text>
-                    <StatusBadge status={securityStatus} lang={lang} />
+                <View
+                    style={[
+                        styles.readableContent,
+                        { maxWidth: showColumns ? 1200 : 720 },
+                    ]}
+                >
+                    {result.testdata && (
+                        <View style={styles.testdataBanner}>
+                            <Text style={styles.testdataBannerText}>
+                                {getLabel("testdata", lang)}
+                            </Text>
+                        </View>
+                    )}
+                    {/* Hero section - centered document info and status */}
+                    <View style={styles.heroSection}>
+                        <View style={styles.documentIconContainer}>
+                            <Ionicons
+                                name="document-text"
+                                size={42}
+                                color={c.primary}
+                            />
+                        </View>
+                        <Text style={styles.documentTitle}>{documentType}</Text>
+                        <StatusBadge status={securityStatus} lang={lang} />
 
-                    {/* Segmented tabs like Day 1 / Day 2 in React Conf */}
-                    {Platform.OS === "ios" && isLiquidGlassAvailable() ? (
-                        <GlassView
-                            glassEffectStyle="regular"
-                            colorScheme="auto"
-                            isInteractive
-                            style={styles.tabGlassWrapper}
-                        >
+                        {!showColumns && (
                             <View style={styles.tabContainer}>
-                                <Pressable
-                                    onPress={() => setSelectedTab("data")}
-                                    style={[
-                                        styles.tabPill,
-                                        selectedTab === "data" &&
-                                            styles.tabPillActive,
-                                    ]}
-                                >
+                                {(["data", "details"] as const).map((tab) => {
+                                    const selected = selectedTab === tab;
+                                    const button = (
+                                        <Pressable
+                                            testID={`result-tab-${tab}`}
+                                            accessibilityRole="tab"
+                                            accessibilityState={{ selected }}
+                                            onPress={() => setSelectedTab(tab)}
+                                            style={styles.tabPill}
+                                        >
+                                            <Text
+                                                style={[
+                                                    styles.tabLabel,
+                                                    selected &&
+                                                        styles.tabLabelActive,
+                                                ]}
+                                            >
+                                                {getLabel(
+                                                    tab === "data"
+                                                        ? "data"
+                                                        : "security",
+                                                    lang,
+                                                )}
+                                            </Text>
+                                        </Pressable>
+                                    );
+                                    return canUseGlass ? (
+                                        <GlassView
+                                            key={tab}
+                                            glassEffectStyle="regular"
+                                            colorScheme={scheme}
+                                            tintColor={
+                                                selected ? c.primary : undefined
+                                            }
+                                            isInteractive
+                                            style={styles.tabGlassPill}
+                                        >
+                                            {button}
+                                        </GlassView>
+                                    ) : (
+                                        <View
+                                            key={tab}
+                                            style={[
+                                                styles.tabGlassPill,
+                                                styles.tabPillFallback,
+                                                selected &&
+                                                    styles.tabPillActive,
+                                            ]}
+                                        >
+                                            {button}
+                                        </View>
+                                    );
+                                })}
+                            </View>
+                        )}
+                    </View>
+
+                    <View style={showColumns ? styles.columns : undefined}>
+                        {(showColumns || selectedTab === "data") && (
+                            <View
+                                testID="result-data-panel"
+                                style={showColumns ? styles.column : undefined}
+                            >
+                                {showColumns && (
                                     <Text
-                                        style={[
-                                            styles.tabLabel,
-                                            selectedTab === "data" &&
-                                                styles.tabLabelActive,
-                                        ]}
+                                        accessibilityRole="header"
+                                        style={styles.columnTitle}
                                     >
                                         {getLabel("data", lang)}
                                     </Text>
-                                </Pressable>
-                                <Pressable
-                                    onPress={() => setSelectedTab("details")}
-                                    style={[
-                                        styles.tabPill,
-                                        selectedTab === "details" &&
-                                            styles.tabPillActive,
-                                    ]}
-                                >
+                                )}
+                                <View style={styles.sectionContent}>
+                                    {dataRows}
+                                </View>
+                            </View>
+                        )}
+                        {(showColumns || selectedTab === "details") && (
+                            <View
+                                testID="result-details-panel"
+                                style={showColumns ? styles.column : undefined}
+                            >
+                                {showColumns && (
                                     <Text
-                                        style={[
-                                            styles.tabLabel,
-                                            selectedTab === "details" &&
-                                                styles.tabLabelActive,
-                                        ]}
+                                        accessibilityRole="header"
+                                        style={styles.columnTitle}
                                     >
                                         {getLabel("security", lang)}
                                     </Text>
-                                </Pressable>
+                                )}
+                                {/* Header information section */}
+                                <Section
+                                    title={getLabel("header", lang)}
+                                    icon={
+                                        <Ionicons
+                                            name="browsers-outline"
+                                            size={20}
+                                            color={c.textPrimary}
+                                            style={{
+                                                marginRight: theme.space8,
+                                            }}
+                                        />
+                                    }
+                                >
+                                    <View style={styles.sectionContent}>
+                                        {headerRows}
+                                    </View>
+                                </Section>
+
+                                {/* Signature section */}
+                                <Section
+                                    title={getLabel("signer", lang)}
+                                    icon={
+                                        <Ionicons
+                                            name={
+                                                securityStatus === "valid"
+                                                    ? "shield-checkmark"
+                                                    : securityStatus ===
+                                                        "invalid"
+                                                      ? "shield"
+                                                      : "shield-half"
+                                            }
+                                            size={20}
+                                            color={
+                                                securityStatus === "valid"
+                                                    ? theme.color.success
+                                                    : securityStatus ===
+                                                        "invalid"
+                                                      ? theme.color.error
+                                                      : theme.color.warning
+                                            }
+                                            style={{
+                                                marginRight: theme.space8,
+                                            }}
+                                        />
+                                    }
+                                >
+                                    {result.signer ? (
+                                        <View style={styles.sectionContent}>
+                                            {signerRows}
+                                        </View>
+                                    ) : (
+                                        <Text style={styles.noSignerText}>
+                                            {getLabel(
+                                                "sign_not_verified",
+                                                lang,
+                                            )}
+                                        </Text>
+                                    )}
+                                </Section>
+
+                                {/* Compliance section */}
+                                <Section
+                                    title={getLabel("standard", lang)}
+                                    icon={
+                                        <Ionicons
+                                            name="checkmark-done-circle-outline"
+                                            size={20}
+                                            color={c.textPrimary}
+                                            style={{
+                                                marginRight: theme.space8,
+                                            }}
+                                        />
+                                    }
+                                >
+                                    <View style={styles.sectionContent}>
+                                        <AttributeRow
+                                            label={getLabel("compliance", lang)}
+                                            value={get_standard(
+                                                result.vds_standard,
+                                            )}
+                                            index={0}
+                                        />
+                                    </View>
+                                </Section>
                             </View>
-                        </GlassView>
-                    ) : (
-                        <View style={styles.tabContainerFallback}>
-                            <Pressable
-                                onPress={() => setSelectedTab("data")}
-                                style={[
-                                    styles.tabPill,
-                                    selectedTab === "data" &&
-                                        styles.tabPillActive,
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.tabLabel,
-                                        selectedTab === "data" &&
-                                            styles.tabLabelActive,
-                                    ]}
-                                >
-                                    {getLabel("data", lang)}
-                                </Text>
-                            </Pressable>
-                            <Pressable
-                                onPress={() => setSelectedTab("details")}
-                                style={[
-                                    styles.tabPill,
-                                    selectedTab === "details" &&
-                                        styles.tabPillActive,
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.tabLabel,
-                                        selectedTab === "details" &&
-                                            styles.tabLabelActive,
-                                    ]}
-                                >
-                                    {getLabel("security", lang)}
-                                </Text>
-                            </Pressable>
-                        </View>
-                    )}
+                        )}
+                    </View>
                 </View>
-
-                {selectedTab === "data" ? (
-                    <View style={styles.sectionContent}>{dataRows}</View>
-                ) : (
-                    <>
-                        {/* Header information section */}
-                        <Section
-                            title={getLabel("header", lang)}
-                            icon={
-                                <Ionicons
-                                    name="browsers-outline"
-                                    size={20}
-                                    color={c.textPrimary}
-                                    style={{ marginRight: theme.space8 }}
-                                />
-                            }
-                        >
-                            <View style={styles.sectionContent}>
-                                {headerRows}
-                            </View>
-                        </Section>
-
-                        {/* Signature section */}
-                        <Section
-                            title={getLabel("signer", lang)}
-                            icon={
-                                <Ionicons
-                                    name={
-                                        securityStatus === "valid"
-                                            ? "shield-checkmark"
-                                            : securityStatus === "invalid"
-                                              ? "shield"
-                                              : "shield-half"
-                                    }
-                                    size={20}
-                                    color={
-                                        securityStatus === "valid"
-                                            ? theme.color.success
-                                            : securityStatus === "invalid"
-                                              ? theme.color.error
-                                              : theme.color.warning
-                                    }
-                                    style={{ marginRight: theme.space8 }}
-                                />
-                            }
-                        >
-                            {result.signer ? (
-                                <View style={styles.sectionContent}>
-                                    {signerRows}
-                                </View>
-                            ) : (
-                                <Text style={styles.noSignerText}>
-                                    {getLabel("sign_not_verified", lang)}
-                                </Text>
-                            )}
-                        </Section>
-
-                        {/* Compliance section */}
-                        <Section
-                            title={getLabel("standard", lang)}
-                            icon={
-                                <Ionicons
-                                    name="checkmark-done-circle-outline"
-                                    size={20}
-                                    color={c.textPrimary}
-                                    style={{ marginRight: theme.space8 }}
-                                />
-                            }
-                        >
-                            <View style={styles.sectionContent}>
-                                <AttributeRow
-                                    label={getLabel("compliance", lang)}
-                                    value={get_standard(result.vds_standard)}
-                                    index={0}
-                                />
-                            </View>
-                        </Section>
-                    </>
-                )}
             </ScrollView>
 
             {/* Share action sheet */}
@@ -1249,8 +1345,19 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                 transparent
                 animationType="none"
                 onRequestClose={closeShareMenu}
+                supportedOrientations={[
+                    "portrait",
+                    "portrait-upside-down",
+                    "landscape-left",
+                    "landscape-right",
+                ]}
             >
-                <View style={styles.shareModalContainer}>
+                <View
+                    style={[
+                        styles.shareModalContainer,
+                        { paddingTop: insets.top + theme.space8 },
+                    ]}
+                >
                     <Pressable
                         style={StyleSheet.absoluteFill}
                         onPress={closeShareMenu}
@@ -1260,55 +1367,69 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             styles.shareSheet,
                             {
                                 paddingBottom: insets.bottom + theme.space8,
-                                transform: [{ translateY: slideAnim }],
+                                paddingLeft: insets.left + theme.space16,
+                                paddingRight: insets.right + theme.space16,
+                                transform: [
+                                    {
+                                        translateY: slideAnim.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, windowHeight],
+                                        }),
+                                    },
+                                ],
                             },
                         ]}
                     >
-                        <Text style={styles.shareSheetTitle}>
-                            {getLabel("share", lang)}
-                        </Text>
-                        <Pressable
-                            style={styles.shareOption}
-                            onPress={handleShareJson}
+                        <ScrollView
+                            bounces={false}
+                            contentContainerStyle={{ gap: theme.space8 }}
                         >
-                            <Ionicons
-                                name="code-slash-outline"
-                                size={22}
-                                color={c.primary}
-                            />
-                            <Text style={styles.shareOptionText}>
-                                {getLabel("share_as_json", lang)}
+                            <Text style={styles.shareSheetTitle}>
+                                {getLabel("share", lang)}
                             </Text>
-                        </Pressable>
-                        <Pressable
-                            style={styles.shareOption}
-                            onPress={handleSharePdf}
-                        >
-                            <Ionicons
-                                name="document-outline"
-                                size={22}
-                                color={c.primary}
-                            />
-                            <Text style={styles.shareOptionText}>
-                                {getLabel("share_as_pdf", lang)}
-                            </Text>
-                        </Pressable>
-                        <Pressable
-                            style={[
-                                styles.shareOption,
-                                styles.shareCancelOption,
-                            ]}
-                            onPress={() => setShareMenuVisible(false)}
-                        >
-                            <Text
-                                style={[
-                                    styles.shareOptionText,
-                                    { color: c.textSecondary },
-                                ]}
+                            <Pressable
+                                style={styles.shareOption}
+                                onPress={handleShareJson}
                             >
-                                {getLabel("cancel", lang)}
-                            </Text>
-                        </Pressable>
+                                <Ionicons
+                                    name="code-slash-outline"
+                                    size={22}
+                                    color={c.primary}
+                                />
+                                <Text style={styles.shareOptionText}>
+                                    {getLabel("share_as_json", lang)}
+                                </Text>
+                            </Pressable>
+                            <Pressable
+                                style={styles.shareOption}
+                                onPress={handleSharePdf}
+                            >
+                                <Ionicons
+                                    name="document-outline"
+                                    size={22}
+                                    color={c.primary}
+                                />
+                                <Text style={styles.shareOptionText}>
+                                    {getLabel("share_as_pdf", lang)}
+                                </Text>
+                            </Pressable>
+                            <Pressable
+                                style={[
+                                    styles.shareOption,
+                                    styles.shareCancelOption,
+                                ]}
+                                onPress={() => setShareMenuVisible(false)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.shareOptionText,
+                                        { color: c.textSecondary },
+                                    ]}
+                                >
+                                    {getLabel("cancel", lang)}
+                                </Text>
+                            </Pressable>
+                        </ScrollView>
                     </Animated.View>
                 </View>
             </Modal>
@@ -1347,13 +1468,32 @@ function makeStyles(c: Colors) {
             alignItems: "center",
             justifyContent: "center",
             borderRadius: theme.borderRadius20,
-            backgroundColor: c.buttonBg,
+            backgroundColor: c.backgroundSecondary,
             borderWidth: 1,
             borderColor: c.border,
             shadowColor: "#000",
             shadowOpacity: 0.1,
             shadowRadius: 4,
             elevation: 3,
+        },
+        readableContent: {
+            width: "100%",
+            alignSelf: "center",
+        },
+        columns: {
+            flexDirection: "row",
+            alignItems: "flex-start",
+            gap: theme.space24,
+        },
+        column: {
+            flex: 1,
+            minWidth: 0,
+        },
+        columnTitle: {
+            fontSize: theme.fontSize20,
+            fontWeight: "600",
+            color: c.textPrimary,
+            marginBottom: theme.space16,
         },
         scrollView: {
             flex: 1,
@@ -1401,33 +1541,26 @@ function makeStyles(c: Colors) {
             textAlign: "center",
             marginBottom: theme.space12,
         },
-        tabGlassWrapper: {
+        tabGlassPill: {
+            flex: 1,
             borderRadius: theme.borderRadius20,
-            alignSelf: "stretch",
-            marginTop: theme.space16,
-            marginHorizontal: theme.space16,
+            borderCurve: "continuous",
         },
         tabContainer: {
             flexDirection: "row",
-            borderRadius: theme.borderRadius20,
-            paddingHorizontal: theme.space4,
-            paddingVertical: theme.space4,
-            gap: theme.space4,
-        },
-        tabContainerFallback: {
-            flexDirection: "row",
-            borderRadius: theme.borderRadius20,
-            paddingHorizontal: theme.space4,
-            paddingVertical: theme.space4,
-            gap: theme.space4,
+            alignSelf: "stretch",
             marginTop: theme.space16,
+            marginHorizontal: theme.space16,
+            gap: theme.space8,
+        },
+        tabPillFallback: {
             backgroundColor: c.backgroundSecondary,
         },
         tabPill: {
             flex: 1,
             borderRadius: theme.borderRadius20,
             paddingVertical: theme.space8,
-            minHeight: 36,
+            minHeight: 44,
             paddingHorizontal: theme.space12,
             alignItems: "center",
             justifyContent: "center",
@@ -1443,7 +1576,7 @@ function makeStyles(c: Colors) {
         tabLabel: {
             fontSize: theme.fontSize14,
             fontWeight: "600",
-            color: c.textSecondary,
+            color: c.textPrimary,
         },
         tabLabelActive: {
             color: "#FFFFFF",
@@ -1507,6 +1640,7 @@ function makeStyles(c: Colors) {
             alignItems: "center",
         },
         attributeValue: {
+            flexShrink: 1,
             color: c.textPrimary,
             fontSize: theme.fontSize16,
             fontWeight: "600",
@@ -1573,6 +1707,8 @@ function makeStyles(c: Colors) {
             backgroundColor: "rgba(0,0,0,0.4)",
         },
         shareSheet: {
+            maxHeight: "100%",
+            flexShrink: 1,
             backgroundColor: c.background,
             borderTopLeftRadius: theme.borderRadius32,
             borderTopRightRadius: theme.borderRadius32,
@@ -1602,6 +1738,7 @@ function makeStyles(c: Colors) {
             marginTop: theme.space4,
         },
         shareOptionText: {
+            flexShrink: 1,
             fontSize: theme.fontSize16,
             fontWeight: "600",
             color: c.textPrimary,

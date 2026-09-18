@@ -7,6 +7,7 @@ type Props = { lang: string };
 const PrivacyPolicy: FC<Props> = ({ lang }) => {
   return (
     <WebView
+      contentInsetAdjustmentBehavior="automatic"
       source={{
         uri: `https://vds-verify.stelau.com/privacy-policy-${getLabel("code", lang)}.html`,
       }}

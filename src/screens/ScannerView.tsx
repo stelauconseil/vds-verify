@@ -30,7 +30,12 @@ const BORDER_WIDTH = 10;
 const BORDER_RADIUS = 35;
 
 const styles = StyleSheet.create({
-    scannerView: { width: 220, height: 220 },
+    scannerView: {
+        width: 220,
+        maxWidth: "100%",
+        height: 220,
+        maxHeight: "100%",
+    },
     borderTopLeft: {
         ...BORDER,
         top: 0,

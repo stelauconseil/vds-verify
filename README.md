@@ -37,3 +37,33 @@ eas submit
 # ⚠️ License
 
 `VDS Verify` is free and open-source software licensed under the [Apache 2.0 License](https://github.com/stelauconseil/vds-verify/blob/main/LICENSE).
+
+## iOS 27 and iPhone Duo
+
+The app uses Expo SDK 58 beta / React Native 0.88 RC. SDK 58 generates the
+scene-based iOS lifecycle required by Xcode 27. Keep `ios/` generated through
+Expo prebuild; do not add a second scene manifest or raise the minimum OS to 27.
+
+For a fresh installation during this beta, npm's prerelease peer resolution
+requires `npm_config_legacy_peer_deps=true npm install`. Package additions must
+still use `@expo/agent-cli install` for SDK-compatible version selection.
+
+```sh
+npx @expo/agent-cli typecheck
+npx @expo/agent-cli doctor
+npx @expo/agent-cli smoke --ios
+```
+
+Use Xcode 27 for iOS 27. Full Duo screen usage requires building with the iOS
+27.1 SDK and validating with the corresponding Duo simulator in Device Hub.
+Check the available EAS build images before a cloud build; no unverified Xcode
+27.1 image is pinned in `eas.json`.
+
+Before release, test closed/open/partially folded poses, rotation, and window
+resizing. Keep a scan result open during resizing; check the scanner guide,
+flashlight, result close/share controls, image preview, Settings at large text
+sizes, history swipe/delete, and JSON/PDF sharing. Test actual barcode capture
+on a physical device. Type checking alone does not validate native behavior.
+
+References: [Expo SDK 58 beta](https://expo.dev/changelog/sdk-58-beta),
+[Apple's Duo preparation guide](https://developer.apple.com/videos/play/tech-talks/111461/).

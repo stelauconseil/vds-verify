@@ -2,14 +2,14 @@
     "expo": {
         "name": "VDS Verify",
         "slug": "vds-verify",
-        "version": "2.6.3",
-        "orientation": "portrait",
+        "version": "2.7.0",
+        "orientation": "default",
         "icon": "./assets/icons/icon.png",
-        "userInterfaceStyle": "light",
+        "userInterfaceStyle": "automatic",
         "assetBundlePatterns": ["**/*"],
         "locales": {
-            "fr": "./src/languages/french.json",
-            "en": "./src/languages/english.json"
+            "fr": "./src/lang/french.json",
+            "en": "./src/lang/english.json"
         },
         "ios": {
             "icon": "./assets/icons/vds-verify-icon.icon",
@@ -71,7 +71,9 @@
                 }
             ],
             "expo-sharing",
-            "expo-status-bar"
+            "expo-status-bar",
+            "expo-font",
+            "expo-asset"
         ],
         "scheme": "vdsverify",
         "extra": {

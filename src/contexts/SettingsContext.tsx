@@ -5,7 +5,7 @@ import {
     useEffect,
     useState,
 } from "react";
-import { useColorScheme } from "react-native";
+import { Appearance, useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     getLang as getLangFromLabels,
@@ -58,6 +58,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             }
         })();
     }, []);
+
+    // Keep native controls and system sheets in sync with the app preference.
+    useEffect(() => {
+        Appearance.setColorScheme(
+            colorSchemePref === "system" ? "auto" : colorSchemePref,
+        );
+    }, [colorSchemePref]);
 
     const setLang = async (l: string) => {
         setLangState(l);

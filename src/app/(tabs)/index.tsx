@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
+    AppState,
     View,
     StyleSheet,
     Text,
@@ -8,7 +9,6 @@ import {
     type GestureResponderEvent,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { captureRef } from "react-native-view-shot";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,14 +29,18 @@ export default function ScanRoute() {
     const params = useLocalSearchParams();
     const { lang } = useSettings();
     const isFocused = pathname === "/" || pathname === "/index";
+    const [appState, setAppState] = useState(AppState.currentState);
+    const appStateRef = useRef(AppState.currentState);
+    const cameraReadyRef = useRef(false);
+    const decodedRef = useRef(false);
     const [result, setResult] = useState<VdsResult | null>(null);
     const [scanned, setScanned] = useState<boolean>(false);
     const [previewUri, setPreviewUri] = useState<string | null>(null);
     const [zoomLevel, setZoomLevel] = useState<number>(0.1);
     const [torchEnabled, setTorchEnabled] = useState<boolean>(false);
-    const [permission, requestPermission] = useCameraPermissions();
-    const cameraRef = useRef<any>(null);
-    const cameraContainerRef = useRef<View | null>(null);
+    const [permission, requestPermission, getCameraPermission] =
+        useCameraPermissions();
+    const cameraRef = useRef<CameraView | null>(null);
     const insets = useSafeAreaInsets();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -52,6 +56,39 @@ export default function ScanRoute() {
     const processingRef = useRef(false);
     const pinchStartDistanceRef = useRef<number | null>(null);
     const pinchStartZoomRef = useRef<number>(0.1);
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener(
+            "change",
+            (nextState) => {
+                appStateRef.current = nextState;
+                setAppState(nextState);
+                if (nextState !== "active") {
+                    cameraReadyRef.current = false;
+                    setTorchEnabled(false);
+                    pinchStartDistanceRef.current = null;
+                } else {
+                    void getCameraPermission().catch(() =>
+                        setErrorMessage("cameraerror"),
+                    );
+                }
+            },
+        );
+        return () => {
+            subscription.remove();
+            if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+        };
+    }, [getCameraPermission]);
+
+    const cameraActive =
+        isFocused && appState === "active" && !!permission?.granted && !result;
+    useEffect(() => {
+        if (!cameraActive) {
+            cameraReadyRef.current = false;
+            setTorchEnabled(false);
+            pinchStartDistanceRef.current = null;
+        }
+    }, [cameraActive]);
 
     const clampZoom = (value: number): number => {
         return Math.max(0, Math.min(1, value));
@@ -138,32 +175,23 @@ export default function ScanRoute() {
 
     const processResult = useCallback(
         async ({ data }: { data: string }) => {
-            if (processingRef.current) return;
+            if (processingRef.current || decodedRef.current) return;
             processingRef.current = true;
             try {
                 const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
                 try {
-                    if (!previewUri) {
-                        try {
-                            const snapUri = await captureRef(
-                                cameraRef.current ?? cameraContainerRef,
-                                {
-                                    format: "jpg",
-                                    quality: 0.8,
-                                    result: "tmpfile",
-                                },
-                            );
-                            if (snapUri) setPreviewUri(snapUri as string);
-                        } catch {
-                            if (cameraRef.current?.takePictureAsync) {
-                                const photo =
-                                    await cameraRef.current.takePictureAsync({
-                                        quality: 0.8,
-                                        skipProcessing: true,
-                                    });
-                                if (photo?.uri) setPreviewUri(photo.uri);
-                            }
-                        }
+                    if (
+                        !previewUri &&
+                        cameraReadyRef.current &&
+                        appStateRef.current === "active"
+                    ) {
+                        const photo = await cameraRef.current?.takePictureAsync(
+                            {
+                                quality: 0.8,
+                                skipProcessing: true,
+                            },
+                        );
+                        if (photo?.uri) setPreviewUri(photo.uri);
                     }
                 } catch {
                     // Ignore capture errors, continue processing
@@ -216,6 +244,7 @@ export default function ScanRoute() {
                                 JSON.stringify(history),
                             );
                         }
+                        decodedRef.current = true;
                         setResult(normalized);
                     } else {
                         showError(message);
@@ -235,19 +264,13 @@ export default function ScanRoute() {
             try {
                 const { status } = await requestPermission();
                 if (status !== "granted") {
-                    setErrorMessage("error_camera_permission");
+                    setErrorMessage("cameraerror");
                 }
             } catch {
-                setErrorMessage("error_camera_permission");
+                setErrorMessage("cameraerror");
             }
         };
         getCameraPermission();
-        const activeCamera = cameraRef.current;
-        return () => {
-            if (activeCamera?.stopAsync) {
-                activeCamera.stopAsync();
-            }
-        };
     }, [requestPermission]);
 
     useEffect(() => {
@@ -266,7 +289,7 @@ export default function ScanRoute() {
 
     // Update scan status based on local result and present sheet once
     useEffect(() => {
-        if (result && scanned) {
+        if (result && scanned && appState === "active" && isFocused) {
             setContextResult(result);
             if (result.sign_is_valid && result.signer) {
                 setStatus("valid");
@@ -275,7 +298,7 @@ export default function ScanRoute() {
             } else {
                 setStatus("unsigned");
             }
-            if (!presentedRef.current && pathname !== "/result") {
+            if (!presentedRef.current) {
                 presentedRef.current = true;
                 router.push("/result");
             }
@@ -284,11 +307,21 @@ export default function ScanRoute() {
             setContextResult(null);
             presentedRef.current = false;
         }
-    }, [result, scanned, setStatus, setContextResult, router, pathname]);
+    }, [
+        result,
+        scanned,
+        setStatus,
+        setContextResult,
+        router,
+        pathname,
+        appState,
+        isFocused,
+    ]);
 
     // When context result is cleared (e.g., user closes the result sheet), remount camera
     useEffect(() => {
         if (!contextResult) {
+            decodedRef.current = false;
             setScanned(false);
             setPreviewUri(null);
             setResult(null);
@@ -330,9 +363,9 @@ export default function ScanRoute() {
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1 }} ref={cameraContainerRef}>
+            <View style={{ flex: 1 }}>
                 {/* Mount camera only while no decoded result exists */}
-                {!result && isFocused ? (
+                {cameraActive ? (
                     <>
                         <CameraView
                             ref={cameraRef}
@@ -341,11 +374,22 @@ export default function ScanRoute() {
                             barcodeScannerSettings={{
                                 barcodeTypes: ["qr", "datamatrix"],
                             }}
-                            onBarcodeScanned={
-                                result || !isFocused
-                                    ? undefined
-                                    : (processResult as any)
-                            }
+                            onCameraReady={() => {
+                                cameraReadyRef.current = true;
+                            }}
+                            onMountError={() => {
+                                cameraReadyRef.current = false;
+                                showError("cameraerror");
+                            }}
+                            onBarcodeScanned={(event) => {
+                                if (
+                                    appStateRef.current === "active" &&
+                                    cameraReadyRef.current &&
+                                    isFocused
+                                ) {
+                                    void processResult(event);
+                                }
+                            }}
                             style={StyleSheet.absoluteFill}
                         />
                         <View
@@ -370,7 +414,10 @@ export default function ScanRoute() {
                         <View
                             style={[
                                 styles.zoomBadge,
-                                { top: Math.max(insets.top, 8) + 8 },
+                                {
+                                    top: Math.max(insets.top, 8) + 8,
+                                    right: insets.right + 12,
+                                },
                             ]}
                         >
                             <Text style={styles.zoomBadgeText}>
@@ -381,7 +428,10 @@ export default function ScanRoute() {
                             onPress={() => setTorchEnabled((v) => !v)}
                             style={[
                                 styles.torchButton,
-                                { top: Math.max(insets.top, 8) + 8 },
+                                {
+                                    top: Math.max(insets.top, 8) + 8,
+                                    left: insets.left + 12,
+                                },
                                 torchEnabled && styles.torchButtonActive,
                             ]}
                             accessibilityLabel="Toggle flashlight"
@@ -396,14 +446,29 @@ export default function ScanRoute() {
                         <View
                             style={[
                                 styles.helpTextWrapper,
-                                { bottom: Math.max(insets.bottom, 8) + 40 },
+                                {
+                                    bottom: Math.max(insets.bottom, 8) + 40,
+                                    left: insets.left,
+                                    right: insets.right,
+                                },
                             ]}
                         >
                             <Text style={styles.helpText}>
                                 {getLabel("helpscan", lang)}
                             </Text>
                         </View>
-                        <View style={styles.content}>
+                        <View
+                            pointerEvents="none"
+                            style={[
+                                styles.content,
+                                {
+                                    top: insets.top + 56,
+                                    bottom: insets.bottom + 112,
+                                    left: insets.left + 16,
+                                    right: insets.right + 16,
+                                },
+                            ]}
+                        >
                             <ScannerView scanned={!!result} />
                         </View>
                     </>
@@ -419,9 +484,54 @@ export default function ScanRoute() {
                     )
                 )}
             </View>
+            {isFocused && permission && !permission.granted && (
+                <View
+                    style={[
+                        styles.permissionPanel,
+                        {
+                            paddingTop: insets.top + 24,
+                            paddingBottom: insets.bottom + 24,
+                            paddingLeft: insets.left + 24,
+                            paddingRight: insets.right + 24,
+                        },
+                    ]}
+                >
+                    <Text style={styles.helpText}>
+                        {getLabel("cameraerror", lang)}
+                    </Text>
+                    <Pressable
+                        accessibilityRole="button"
+                        testID="camera-permission"
+                        style={styles.permissionButton}
+                        onPress={() => {
+                            if (permission.canAskAgain)
+                                void requestPermission();
+                            else void Linking.openSettings();
+                        }}
+                    >
+                        <Text style={styles.helpText}>
+                            {getLabel(
+                                permission.canAskAgain
+                                    ? "camerapermission"
+                                    : "settings",
+                                lang,
+                            )}
+                        </Text>
+                    </Pressable>
+                </View>
+            )}
             {/* Transient error message toast above camera */}
             {!!errorMessage && (
-                <View style={[styles.errorToast, { top: insets.top + 12 }]}>
+                <View
+                    style={[
+                        styles.errorToast,
+                        {
+                            top: insets.top + 12,
+                            left: insets.left + 16,
+                            right: insets.right + 16,
+                        },
+                    ]}
+                >
                     <Text style={styles.errorToastTitle}>
                         {getLabel("error", lang)}
                     </Text>
@@ -435,6 +545,18 @@ export default function ScanRoute() {
 }
 
 const styles = StyleSheet.create({
+    permissionPanel: {
+        ...StyleSheet.absoluteFill,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 16,
+    },
+    permissionButton: {
+        minHeight: 48,
+        padding: 12,
+        borderRadius: 12,
+        backgroundColor: "#0069b4",
+    },
     container: {
         flex: 1,
         backgroundColor: "#000",

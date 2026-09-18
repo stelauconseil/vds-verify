@@ -1,3 +1,4 @@
+import { ScreenHeading, SCREEN_MARGIN } from "@/components/screen-heading";
 import { FC, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
     FlatList,
@@ -14,7 +15,10 @@ import { formatData, getLabel } from "@/components/Label";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Swipeable } from "react-native-gesture-handler";
+import Swipeable, {
+    type SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
+import type { SharedValue } from "react-native-reanimated";
 import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
 
 type HistoryEntry = { timestamp: string; data: any; pinned?: boolean };
@@ -72,9 +76,9 @@ const HistoryRow: FC<HistoryRowProps> = ({
     deleteHistoryEntryImmediate,
     togglePinned,
 }) => {
-    const swipeableRowRef = useRef<any>(null);
-    const dragListenerIdRef = useRef<string | null>(null);
-    const fullSwipeArmedRef = useRef(false);
+    const swipeableRowRef = useRef<SwipeableMethods | null>(null);
+    const dragTranslationRef = useRef<SharedValue<number> | null>(null);
+    const rowWidthRef = useRef(0);
     const scheme = useEffectiveColorScheme();
     const rowBg1 = scheme === "dark" ? ROW_BG_DARK_1 : ROW_BG_LIGHT_1;
     const rowBg2 = scheme === "dark" ? ROW_BG_DARK_2 : ROW_BG_LIGHT_2;
@@ -88,40 +92,10 @@ const HistoryRow: FC<HistoryRowProps> = ({
     const [hasMeasured, setHasMeasured] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const cleanupDragListener = useCallback(() => {
-        const row = swipeableRowRef.current;
-        const id = dragListenerIdRef.current;
-        try {
-            if (id && row?.state?.dragX?.removeListener) {
-                row.state.dragX.removeListener(id);
-            }
-        } catch {
-            // no-op
-        }
-        dragListenerIdRef.current = null;
-        fullSwipeArmedRef.current = false;
-    }, []);
-
-    useEffect(() => cleanupDragListener, [cleanupDragListener]);
-
-    const getFullSwipeActivationDistance = useCallback(() => {
-        const row = swipeableRowRef.current;
-        const rowWidth = row?.state?.rowWidth as number | undefined;
-        if (typeof rowWidth === "number" && rowWidth > 0) {
-            const scaled = rowWidth * 0.6;
-            return Math.min(
-                FULL_SWIPE_MAX_PX,
-                Math.max(FULL_SWIPE_MIN_PX, scaled),
-            );
-        }
-        return FULL_SWIPE_MIN_PX;
-    }, []);
-
     const onDelete = useCallback(() => {
         if (isDeleting) return;
 
         setIsDeleting(true);
-        cleanupDragListener();
 
         const row = swipeableRowRef.current;
         row?.close?.();
@@ -160,7 +134,6 @@ const HistoryRow: FC<HistoryRowProps> = ({
         });
     }, [
         animatedHeight,
-        cleanupDragListener,
         deleteHistoryEntryImmediate,
         isDeleting,
         item.timestamp,
@@ -208,7 +181,8 @@ const HistoryRow: FC<HistoryRowProps> = ({
             <View
                 onLayout={(e) => {
                     const h = e.nativeEvent.layout.height;
-                    if (!hasMeasured && h > 0) {
+                    rowWidthRef.current = e.nativeEvent.layout.width;
+                    if (!isDeleting && h > 0) {
                         measuredHeightRef.current = h;
                         animatedHeight.setValue(h);
                         setHasMeasured(true);
@@ -218,11 +192,26 @@ const HistoryRow: FC<HistoryRowProps> = ({
                 <Animated.View style={{ opacity, transform: [{ translateX }] }}>
                     <Swipeable
                         ref={swipeableRowRef}
-                        friction={2}
+                        friction={1}
                         rightThreshold={40}
                         overshootRight
-                        overshootFriction={8}
-                        onSwipeableWillOpen={() => {
+                        overshootFriction={1}
+                        onSwipeableWillOpen={(direction) => {
+                            const threshold = Math.min(
+                                FULL_SWIPE_MAX_PX,
+                                Math.max(
+                                    FULL_SWIPE_MIN_PX,
+                                    rowWidthRef.current * 0.6,
+                                ),
+                            );
+                            if (
+                                direction === "left" &&
+                                (dragTranslationRef.current?.get() ?? 0) <=
+                                    -threshold
+                            ) {
+                                onDelete();
+                                return;
+                            }
                             const row = swipeableRowRef.current;
                             if (
                                 openSwipeableRef.current &&
@@ -233,7 +222,6 @@ const HistoryRow: FC<HistoryRowProps> = ({
                             openSwipeableRef.current = row;
                         }}
                         onSwipeableWillClose={() => {
-                            cleanupDragListener();
                             if (
                                 openSwipeableRef.current ===
                                 swipeableRowRef.current
@@ -241,44 +229,29 @@ const HistoryRow: FC<HistoryRowProps> = ({
                                 openSwipeableRef.current = null;
                             }
                         }}
-                        onSwipeableOpenStartDrag={(direction) => {
-                            if (direction !== "right") return;
-
-                            cleanupDragListener();
-                            const row = swipeableRowRef.current;
-                            const dragX = row?.state?.dragX;
-                            if (dragX?.addListener) {
-                                dragListenerIdRef.current = dragX.addListener(
-                                    ({ value }: { value: number }) => {
-                                        if (
-                                            value <=
-                                            -getFullSwipeActivationDistance()
-                                        ) {
-                                            fullSwipeArmedRef.current = true;
-                                        }
-                                    },
-                                );
-                            }
+                        renderRightActions={(_progress, translation) => {
+                            dragTranslationRef.current = translation;
+                            return (
+                                <Pressable
+                                    onPress={onDelete}
+                                    style={styles.deleteAction}
+                                    accessibilityRole="button"
+                                    accessibilityLabel={getLabel(
+                                        "delete",
+                                        lang,
+                                    )}
+                                >
+                                    <Ionicons
+                                        name="trash"
+                                        size={20}
+                                        color="#fff"
+                                    />
+                                    <Text style={styles.deleteActionText}>
+                                        {getLabel("delete", lang)}
+                                    </Text>
+                                </Pressable>
+                            );
                         }}
-                        onSwipeableOpen={(direction) => {
-                            if (direction !== "right") return;
-                            const shouldAutoDelete = fullSwipeArmedRef.current;
-                            cleanupDragListener();
-                            if (shouldAutoDelete) onDelete();
-                        }}
-                        renderRightActions={() => (
-                            <Pressable
-                                onPress={onDelete}
-                                style={styles.deleteAction}
-                                accessibilityRole="button"
-                                accessibilityLabel={getLabel("delete", lang)}
-                            >
-                                <Ionicons name="trash" size={20} color="#fff" />
-                                <Text style={styles.deleteActionText}>
-                                    {getLabel("delete", lang)}
-                                </Text>
-                            </Pressable>
-                        )}
                     >
                         <Pressable
                             onPress={() => {
@@ -458,21 +431,21 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     );
 
     return (
-        <View style={[styles.container, { backgroundColor: containerBg }]}>
-            {/* Title header with safe area top inset and trash icon */}
-            <View
-                style={{
-                    paddingTop: insets.top + 8,
-                    paddingHorizontal: "5%",
-                    paddingBottom: 8,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                }}
+        <View
+            style={[
+                styles.container,
+                {
+                    backgroundColor: containerBg,
+                    paddingLeft: insets.left,
+                    paddingRight: insets.right,
+                },
+            ]}
+        >
+            <ScreenHeading
+                title={getLabel("history", lang)}
+                color={titleColor}
+                topInset={insets.top}
             >
-                <Text style={[styles.title, { color: titleColor }]}>
-                    {getLabel("history", lang)}
-                </Text>
                 {__DEV__ && (
                     <Pressable
                         onPress={async () => {
@@ -638,12 +611,12 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                         </BlurView>
                     </View>
                 )}
-            </View>
+            </ScreenHeading>
             <FlatList
                 style={styles.center}
                 contentContainerStyle={{
-                    paddingTop: 8,
-                    paddingHorizontal: "5%",
+                    paddingTop: 16,
+                    paddingHorizontal: SCREEN_MARGIN,
                     paddingBottom: Math.max(insets.bottom, 8) + 8 + 70,
                     flexGrow: 1,
                 }}
@@ -668,11 +641,6 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#fff" },
-    title: {
-        fontSize: 22,
-        fontWeight: "700",
-        color: "#0F172A",
-    },
     center: { flex: 1 },
     emptyState: {
         flex: 1,

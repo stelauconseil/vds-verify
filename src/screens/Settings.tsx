@@ -1,6 +1,8 @@
+import { ScreenHeading, SCREEN_MARGIN } from "@/components/screen-heading";
 import { FC, useEffect } from "react";
 import {
     StyleSheet,
+    ScrollView,
     View,
     Text,
     Switch,
@@ -49,24 +51,17 @@ const darkColors: typeof lightColors = {
 function makeStyles(c: typeof lightColors) {
     return StyleSheet.create({
         screen: { flex: 1, backgroundColor: c.screen },
-        title: {
-            fontSize: 22,
-            fontWeight: "700",
-            color: c.title,
-            marginHorizontal: "5%",
-            marginBottom: 8,
-        },
         sectionTitle: {
             fontSize: 16,
             color: c.sectionTitle,
             marginTop: 24,
             marginBottom: 8,
-            marginLeft: "5%",
+            marginLeft: SCREEN_MARGIN,
         },
         section: {
             backgroundColor: c.section,
             borderRadius: 20,
-            marginHorizontal: "5%",
+            marginHorizontal: SCREEN_MARGIN,
             marginTop: 16,
             overflow: "hidden",
         },
@@ -74,7 +69,8 @@ function makeStyles(c: typeof lightColors) {
             flexDirection: "row",
             alignItems: "center",
             paddingHorizontal: 16,
-            height: 56,
+            minHeight: 56,
+            paddingVertical: 12,
             gap: 12,
             backgroundColor: c.row,
         },
@@ -101,12 +97,15 @@ function makeStyles(c: typeof lightColors) {
         pickerItem: { color: "gray", fontSize: 16 },
         segment: {
             flexDirection: "row",
+            flexWrap: "wrap",
             backgroundColor: c.segmentBg,
             borderRadius: 8,
             padding: 2,
             gap: 4,
         },
         segmentOption: {
+            minHeight: 44,
+            justifyContent: "center",
             paddingVertical: 4,
             paddingHorizontal: 10,
             borderRadius: 6,
@@ -160,11 +159,23 @@ const SettingsView: FC<SettingsViewProps> = ({
     return (
         <View style={styles.screen}>
             {isFocused && (
-                <View style={[styles.screen, { paddingTop: insets.top + 8 }]}>
-                    {/* Title */}
-                    <Text style={styles.title}>
-                        {getLabel("settings", lang)}
-                    </Text>
+                <ScrollView
+                    style={styles.screen}
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 24,
+                        paddingLeft: insets.left,
+                        paddingRight: insets.right,
+                    }}
+                >
+                    <ScreenHeading
+                        title={getLabel("settings", lang)}
+                        color={
+                            scheme === "dark"
+                                ? darkColors.title
+                                : lightColors.title
+                        }
+                        topInset={insets.top}
+                    />
                     {/* Info section */}
                     <View style={styles.section}>
                         <Pressable
@@ -349,6 +360,7 @@ const SettingsView: FC<SettingsViewProps> = ({
                                         (v) => (
                                             <Pressable
                                                 key={v}
+                                                testID={`theme-${v}`}
                                                 accessibilityRole="button"
                                                 accessibilityState={{
                                                     selected:
@@ -448,7 +460,7 @@ const SettingsView: FC<SettingsViewProps> = ({
                             </View>
                         </View>
                     </View>
-                </View>
+                </ScrollView>
             )}
         </View>
     );

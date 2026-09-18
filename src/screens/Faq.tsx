@@ -7,6 +7,7 @@ type Props = { lang: string };
 const Faq: FC<Props> = ({ lang }) => {
   return (
     <WebView
+      contentInsetAdjustmentBehavior="automatic"
       source={{
         uri: `https://vds-verify.stelau.com/faq-${getLabel("code", lang)}.html`,
       }}

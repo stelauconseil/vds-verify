@@ -73,6 +73,7 @@ const About: FC = () => {
 
     return (
         <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
             style={{ flex: 1, backgroundColor: colors.screen }}
             contentContainerStyle={styles.content}
         >
