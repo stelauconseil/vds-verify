@@ -4,6 +4,7 @@
     "license": "MIT",
     "main": "expo-router/entry",
     "scripts": {
+        "postinstall": "node scripts/fix-expo-modules-jsi.cjs",
         "start": "expo start",
         "android": "expo run:android",
         "ios": "expo run:ios",

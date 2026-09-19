@@ -1,4 +1,6 @@
 {
-    "NSCameraUsageDescription": "$(PRODUCT_NAME) utilises votre caméra pour scanner des QR codes.",
-    "NSMicrophoneUsageDescription": "Autoriser $(PRODUCT_NAME) à utiliser votre microphone pour enregistrer des messages vocaux."
+    "ios": {
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) utilises votre caméra pour scanner des QR codes.",
+        "NSMicrophoneUsageDescription": "Autoriser $(PRODUCT_NAME) à utiliser votre microphone pour enregistrer des messages vocaux."
+    }
 }

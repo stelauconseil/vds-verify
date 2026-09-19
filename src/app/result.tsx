@@ -1,3 +1,4 @@
+import { getLocalizedDocumentType } from "@/types/document-type";
 import {
     ReactNode,
     ComponentRef,
@@ -124,25 +125,6 @@ function labelForKey(key: string, lang?: string) {
     const guess = getLabel(key, lang);
     if (guess && guess !== key) return guess;
     return key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ");
-}
-
-function getLocalizedDocumentType(
-    value: unknown,
-    lang?: string,
-): string | undefined {
-    if (typeof value === "string") return value;
-    if (!value || typeof value !== "object" || Array.isArray(value)) {
-        return undefined;
-    }
-
-    const typeMap = value as Record<string, unknown>;
-    const lowerLang = lang?.toLowerCase();
-    const candidate =
-        typeMap[lowerLang ?? ""] ||
-        typeMap[lowerLang?.slice(0, 2) || ""] ||
-        Object.values(typeMap)[0];
-
-    return typeof candidate === "string" ? candidate : undefined;
 }
 
 function formatDocumentTypeTitle(value: unknown): string | undefined {

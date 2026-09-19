@@ -1,3 +1,4 @@
+import { getLocalizedDocumentType } from "@/types/document-type";
 import { ScreenHeading, SCREEN_MARGIN } from "@/components/screen-heading";
 import { FC, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
@@ -30,25 +31,6 @@ const ROW_BG_DARK_1 = "#1C1C1E";
 const ROW_BG_DARK_2 = "#2C2C2E";
 const FULL_SWIPE_MIN_PX = 160;
 const FULL_SWIPE_MAX_PX = 240;
-
-function getLocalizedDocumentType(
-    value: unknown,
-    lang?: string,
-): string | undefined {
-    if (typeof value === "string") return value;
-    if (!value || typeof value !== "object" || Array.isArray(value)) {
-        return undefined;
-    }
-
-    const typeMap = value as Record<string, unknown>;
-    const lowerLang = lang?.toLowerCase();
-    const candidate =
-        typeMap[lowerLang ?? ""] ||
-        typeMap[lowerLang?.slice(0, 2) || ""] ||
-        Object.values(typeMap)[0];
-
-    return typeof candidate === "string" ? candidate : undefined;
-}
 
 function formatDocumentTypeTitle(value: unknown): string | undefined {
     if (typeof value !== "string") return undefined;

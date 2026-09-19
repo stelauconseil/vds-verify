@@ -8,7 +8,7 @@ export type DataValue =
 
 export interface VdsResult {
     data: { [k: string]: DataValue };
-    header: Record<string, Primitive | null | undefined>;
+    header: Record<string, DataValue>;
     signer?: Record<string, Primitive | null | undefined>;
     vds_standard?: string;
     testdata?: boolean;
@@ -37,7 +37,7 @@ export function normalizeVdsResult(value: unknown): VdsResult | null {
     if (!isPlainObject(value)) return null;
 
     const data = toDataRecord(value.data);
-    const header = toPrimitiveRecord(value.header);
+    const header = toDataRecord(value.header);
     const signer = isPlainObject(value.signer)
         ? toPrimitiveRecord(value.signer)
         : undefined;
