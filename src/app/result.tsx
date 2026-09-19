@@ -23,7 +23,7 @@ import {
     useColorScheme,
     useWindowDimensions,
 } from "react-native";
-import { Redirect, useRouter, useLocalSearchParams } from "expo-router";
+import { Stack, Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Asset } from "expo-asset";
@@ -916,79 +916,45 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                 setLayoutWidth(nativeEvent.layout.width)
             }
         >
-            {/* Floating close button */}
-            <View
-                style={[
-                    styles.closeButton,
-                    { top: insets.top + 14, left: insets.left + theme.space16 },
-                ]}
-            >
-                {canUseGlass ? (
-                    <GlassView
-                        glassEffectStyle="regular"
-                        colorScheme={scheme}
-                        isInteractive
-                        style={{
-                            borderRadius: theme.borderRadius20,
-                            padding: 8,
+            {Platform.OS === "ios" && (
+                <>
+                    <Stack.Screen
+                        options={{
+                            headerShown: true,
+                            headerTransparent: true,
+                            headerTitle: "",
+                            headerBackVisible: false,
+                            headerTintColor: c.buttonIconColor,
                         }}
-                    >
-                        <Pressable
-                            onPress={close}
-                            hitSlop={10}
-                            accessibilityRole="button"
-                            accessibilityLabel={getLabel("close", lang)}
+                    />
+                    <Stack.Toolbar placement="left">
+                        <Stack.Toolbar.Button icon="xmark" onPress={close}>
+                            {getLabel("close", lang)}
+                        </Stack.Toolbar.Button>
+                    </Stack.Toolbar>
+                    <Stack.Toolbar placement="right">
+                        <Stack.Toolbar.Button
+                            icon="square.and.arrow.up"
+                            onPress={openShareMenu}
+                            disabled={isSharing}
                         >
-                            <Ionicons
-                                name="close"
-                                size={22}
-                                color={c.buttonIconColor}
-                            />
-                        </Pressable>
-                    </GlassView>
-                ) : Platform.OS === "ios" && !reduceTransparency ? (
-                    <BlurView
-                        intensity={70}
-                        tint={scheme === "dark" ? "dark" : "light"}
-                        style={{
-                            borderRadius: theme.borderRadius20,
-                            overflow: "hidden",
-                        }}
-                    >
-                        <Pressable
-                            onPress={close}
-                            hitSlop={10}
-                            accessibilityRole="button"
-                            accessibilityLabel={getLabel("close", lang)}
-                        >
-                            <View
-                                style={[
-                                    styles.closeButtonInner,
-                                    {
-                                        backgroundColor:
-                                            scheme === "dark"
-                                                ? "rgba(255,255,255,0.1)"
-                                                : "rgba(255,255,255,0.3)",
-                                        borderColor:
-                                            scheme === "dark"
-                                                ? "rgba(255,255,255,0.15)"
-                                                : "rgba(0,0,0,0.08)",
-                                        borderWidth: 1,
-                                    },
-                                ]}
-                            >
-                                <Ionicons
-                                    name="close"
-                                    size={22}
-                                    color={c.buttonIconColor}
-                                />
-                            </View>
-                        </Pressable>
-                    </BlurView>
-                ) : (
+                            {getLabel("share", lang)}
+                        </Stack.Toolbar.Button>
+                    </Stack.Toolbar>
+                </>
+            )}
+            {Platform.OS !== "ios" && (
+                <>
                     <Pressable
+                        style={[
+                            styles.closeButton,
+                            {
+                                top: insets.top + 14,
+                                left: insets.left + theme.space16,
+                            },
+                        ]}
                         onPress={close}
-                        hitSlop={10}
+                        hitSlop={8}
                         accessibilityRole="button"
                         accessibilityLabel={getLabel("close", lang)}
                     >
@@ -1000,90 +966,19 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             />
                         </View>
                     </Pressable>
-                )}
-            </View>
-
-            {/* Floating share button */}
-            <View
-                style={[
-                    styles.shareButton,
-                    {
-                        top: insets.top + 14,
-                        right: insets.right + theme.space16,
-                    },
-                ]}
-            >
-                {canUseGlass ? (
-                    <GlassView
-                        glassEffectStyle="regular"
-                        colorScheme={scheme}
-                        isInteractive
-                        style={{
-                            borderRadius: theme.borderRadius20,
-                            padding: 8,
-                        }}
-                    >
-                        <Pressable
-                            onPress={openShareMenu}
-                            hitSlop={10}
-                            accessibilityRole="button"
-                            accessibilityLabel={getLabel("share", lang)}
-                            disabled={isSharing}
-                        >
-                            <Ionicons
-                                name="share-outline"
-                                size={22}
-                                color={c.buttonIconColor}
-                            />
-                        </Pressable>
-                    </GlassView>
-                ) : Platform.OS === "ios" && !reduceTransparency ? (
-                    <BlurView
-                        intensity={70}
-                        tint={scheme === "dark" ? "dark" : "light"}
-                        style={{
-                            borderRadius: theme.borderRadius20,
-                            overflow: "hidden",
-                        }}
-                    >
-                        <Pressable
-                            onPress={openShareMenu}
-                            hitSlop={10}
-                            accessibilityRole="button"
-                            accessibilityLabel={getLabel("share", lang)}
-                            disabled={isSharing}
-                        >
-                            <View
-                                style={[
-                                    styles.closeButtonInner,
-                                    {
-                                        backgroundColor:
-                                            scheme === "dark"
-                                                ? "rgba(255,255,255,0.1)"
-                                                : "rgba(255,255,255,0.3)",
-                                        borderColor:
-                                            scheme === "dark"
-                                                ? "rgba(255,255,255,0.15)"
-                                                : "rgba(0,0,0,0.08)",
-                                        borderWidth: 1,
-                                    },
-                                ]}
-                            >
-                                <Ionicons
-                                    name="share-outline"
-                                    size={22}
-                                    color={c.buttonIconColor}
-                                />
-                            </View>
-                        </Pressable>
-                    </BlurView>
-                ) : (
                     <Pressable
+                        style={[
+                            styles.shareButton,
+                            {
+                                top: insets.top + 14,
+                                right: insets.right + theme.space16,
+                            },
+                        ]}
                         onPress={openShareMenu}
-                        hitSlop={10}
+                        disabled={isSharing}
+                        hitSlop={8}
                         accessibilityRole="button"
                         accessibilityLabel={getLabel("share", lang)}
-                        disabled={isSharing}
                     >
                         <View style={styles.closeButtonSolid}>
                             <Ionicons
@@ -1093,23 +988,28 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                             />
                         </View>
                     </Pressable>
-                )}
-            </View>
+                </>
+            )}
 
             <ScrollView
                 ref={scrollViewRef}
-                contentInsetAdjustmentBehavior="never"
+                contentInsetAdjustmentBehavior={
+                    Platform.OS === "ios" ? "automatic" : "never"
+                }
                 showsVerticalScrollIndicator={false}
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollViewContent,
                     {
-                        paddingTop: insets.top + 68,
+                        paddingTop:
+                            Platform.OS === "ios"
+                                ? theme.space16
+                                : insets.top + 68,
                         paddingLeft: insets.left + theme.space16,
                         paddingRight: insets.right + theme.space16,
                         paddingBottom: Platform.select({
                             android: 100 + insets.bottom,
-                            default: insets.bottom + theme.space24,
+                            default: theme.space24,
                         }),
                     },
                 ]}
