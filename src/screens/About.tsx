@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { StyleSheet, View, Text, ScrollView, Linking, Platform } from "react-native";
 import * as Application from "expo-application";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getLabel } from "@/components/Label";
@@ -61,6 +62,7 @@ function InfoSection({ rows, colors }: { rows: Row[]; colors: typeof lightColors
 }
 
 const About: FC = () => {
+    const insets = useSafeAreaInsets();
     const scheme = useEffectiveColorScheme();
     const colors = scheme === "dark" ? darkColors : lightColors;
     const { lang } = useSettings();
@@ -75,7 +77,14 @@ const About: FC = () => {
         <ScrollView
             contentInsetAdjustmentBehavior="automatic"
             style={{ flex: 1, backgroundColor: colors.screen }}
-            contentContainerStyle={styles.content}
+            contentContainerStyle={[
+                styles.content,
+                {
+                    // Vertical bars can occupy either side on Duo, including Split View.
+                    paddingLeft: insets.left,
+                    paddingRight: insets.right,
+                },
+            ]}
         >
             {/* App name header */}
             <View style={styles.header}>

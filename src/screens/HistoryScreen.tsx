@@ -1,3 +1,4 @@
+import { testResults } from "@/testdata";
 import { getLocalizedDocumentType } from "@/types/document-type";
 import { ScreenHeading, SCREEN_MARGIN } from "@/components/screen-heading";
 import { FC, useState, useCallback, useEffect, useMemo, useRef } from "react";
@@ -431,30 +432,11 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 {__DEV__ && (
                     <Pressable
                         onPress={async () => {
-                            const entries = Array.from(
-                                { length: 8 },
-                                (_, i) => ({
-                                    timestamp: new Date(
-                                        Date.now() - i * 3_600_000,
-                                    ).toISOString(),
-                                    pinned: i < 2,
-                                    data: {
-                                        header: {
-                                            "Type de document":
-                                                i % 2 === 0
-                                                    ? "Titre d'identité"
-                                                    : "Passeport",
-                                            manifest_ID: `TEST-${i + 1}`,
-                                        },
-                                        data: {
-                                            "Nom de famille": "MARTIN",
-                                            Genre: "Feminin",
-                                        },
-                                        vds_standard: "DOC_101",
-                                        testdata: true,
-                                    },
-                                }),
-                            );
+                            const entries = testResults.map((data, i) => ({
+                                timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
+                                pinned: false,
+                                data,
+                            }));
                             await AsyncStorage.setItem(
                                 "scanHistory",
                                 JSON.stringify(entries),
