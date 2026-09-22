@@ -15,6 +15,7 @@ import {
 export type ColorSchemePref = "system" | "light" | "dark";
 
 type SettingsContextType = {
+    isReady: boolean;
     lang: string;
     setLang: (l: string) => Promise<void>;
     historyEnabled: boolean;
@@ -30,6 +31,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(
 );
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
+    const [isReady, setIsReady] = useState(false);
     const [lang, setLangState] = useState<string>("en");
     const [historyEnabled, setHistoryEnabledState] = useState<boolean>(true);
     const [advancedMode, setAdvancedModeState] = useState<boolean>(false);
@@ -55,6 +57,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
                 }
             } catch {
                 setHistoryEnabledState(true);
+            } finally {
+                setIsReady(true);
             }
         })();
     }, []);
@@ -104,6 +108,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     return (
         <SettingsContext.Provider
             value={{
+                isReady,
                 lang,
                 setLang,
                 historyEnabled,

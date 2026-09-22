@@ -1,0 +1,8 @@
+appId: com.stelau.vdsverify.screenshots
+name: History
+---
+- extendedWaitUntil:
+    visible: ".*Maëlis.*|.*Justificatif.*|.*Identity.*"
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: 01-history

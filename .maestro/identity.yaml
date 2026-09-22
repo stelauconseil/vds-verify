@@ -1,0 +1,23 @@
+appId: com.stelau.vdsverify.screenshots
+name: Identity
+---
+- tapOn: ".*Justificatif d.identité.*|.*Identity Proof.*"
+- extendedWaitUntil:
+    visible:
+      id: result-data-panel
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: 02-identity
+- runFlow:
+    when:
+      visible:
+        id: result-tab-details
+    commands:
+      - tapOn:
+          id: result-tab-details
+- extendedWaitUntil:
+    visible:
+      id: result-details-panel
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: 03-details

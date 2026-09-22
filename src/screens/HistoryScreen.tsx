@@ -1,3 +1,4 @@
+import { screenshotsEnabled } from "@/screenshots";
 import { testResults } from "@/testdata";
 import { getLocalizedDocumentType } from "@/types/document-type";
 import { ScreenHeading, SCREEN_MARGIN } from "@/components/screen-heading";
@@ -415,6 +416,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
 
     return (
         <View
+            testID="history-screen"
             style={[
                 styles.container,
                 {
@@ -429,7 +431,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 color={titleColor}
                 topInset={insets.top}
             >
-                {__DEV__ && (
+                {__DEV__ && !screenshotsEnabled && (
                     <Pressable
                         onPress={async () => {
                             const entries = testResults.map((data, i) => ({

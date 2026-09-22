@@ -1,0 +1,13 @@
+appId: com.stelau.vdsverify.screenshots
+name: Driving record
+---
+- tapOn: ".*Relevé d.Information Permis de conduire.*"
+- extendedWaitUntil:
+    visible: ".*Relevé d.Information Permis de conduire.*"
+    timeout: 15000
+- extendedWaitUntil:
+    visible:
+      id: result-data-panel
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: 04-driving-record

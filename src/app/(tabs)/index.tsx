@@ -4,7 +4,6 @@ import {
     View,
     StyleSheet,
     Text,
-    Image,
     Pressable,
     type GestureResponderEvent,
 } from "react-native";
@@ -35,7 +34,6 @@ export default function ScanRoute() {
     const decodedRef = useRef(false);
     const [result, setResult] = useState<VdsResult | null>(null);
     const [scanned, setScanned] = useState<boolean>(false);
-    const [previewUri, setPreviewUri] = useState<string | null>(null);
     const [zoomLevel, setZoomLevel] = useState<number>(0.1);
     const [torchEnabled, setTorchEnabled] = useState<boolean>(false);
     const [permission, requestPermission, getCameraPermission] =
@@ -81,7 +79,7 @@ export default function ScanRoute() {
     }, [getCameraPermission]);
 
     const cameraActive =
-        isFocused && appState === "active" && !!permission?.granted && !result;
+        isFocused && appState === "active" && !!permission?.granted;
     useEffect(() => {
         if (!cameraActive) {
             cameraReadyRef.current = false;
@@ -179,23 +177,6 @@ export default function ScanRoute() {
             processingRef.current = true;
             try {
                 const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
-                try {
-                    if (
-                        !previewUri &&
-                        cameraReadyRef.current &&
-                        appStateRef.current === "active"
-                    ) {
-                        const photo = await cameraRef.current?.takePictureAsync(
-                            {
-                                quality: 0.8,
-                                skipProcessing: true,
-                            },
-                        );
-                        if (photo?.uri) setPreviewUri(photo.uri);
-                    }
-                } catch {
-                    // Ignore capture errors, continue processing
-                }
                 setScanned(true);
                 const b64encodedvds = parseData(data);
                 if (b64encodedvds === null) {
@@ -256,7 +237,7 @@ export default function ScanRoute() {
                 processingRef.current = false;
             }
         },
-        [parseData, previewUri, showError],
+        [parseData, showError],
     );
 
     useEffect(() => {
@@ -323,7 +304,6 @@ export default function ScanRoute() {
         if (!contextResult) {
             decodedRef.current = false;
             setScanned(false);
-            setPreviewUri(null);
             setResult(null);
             setTorchEnabled(false);
             presentedRef.current = false;
@@ -364,7 +344,7 @@ export default function ScanRoute() {
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
-                {/* Mount camera only while no decoded result exists */}
+                {/* Keep the live preview through decoding; navigation releases the camera. */}
                 {cameraActive ? (
                     <>
                         <CameraView
@@ -472,17 +452,7 @@ export default function ScanRoute() {
                             <ScannerView scanned={!!result} />
                         </View>
                     </>
-                ) : (
-                    previewUri && (
-                        <Image
-                            source={{ uri: previewUri }}
-                            style={StyleSheet.absoluteFill}
-                            resizeMode="cover"
-                            accessible
-                            accessibilityLabel="Scan preview"
-                        />
-                    )
-                )}
+                ) : null}
             </View>
             {isFocused && permission && !permission.granted && (
                 <View
