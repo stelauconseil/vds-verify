@@ -50,9 +50,20 @@
         },
         "plugins": [
             [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "enableMinifyInReleaseBuilds": true,
+                        "enableShrinkResourcesInReleaseBuilds": true,
+                        "extraProguardRules": "-keep class com.google.mlkit.** { *; }\n-keep class com.google.android.gms.internal.mlkit_** { *; }\n-dontwarn com.google.mlkit.**"
+                    }
+                }
+            ],
+            [
                 "expo-camera",
                 {
-                    "cameraPermission": "This app uses the camera to capture QR codes."
+                    "cameraPermission": "This app uses the camera to capture QR codes.",
+                    "barcodeScannerEnabled": true
                 }
             ],
             "expo-localization",

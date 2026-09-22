@@ -28,6 +28,7 @@
         "expo-application": "~58.0.1",
         "expo-asset": "~58.0.3",
         "expo-blur": "~58.0.0",
+        "expo-build-properties": "~58.0.4",
         "expo-camera": "~58.0.1",
         "expo-constants": "~58.0.3",
         "expo-dev-client": "~58.0.3",

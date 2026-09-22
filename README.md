@@ -152,8 +152,11 @@ without changing the global Xcode selection (adjust the path if necessary):
 DEVELOPER_DIR="$HOME/Downloads/Xcode.app/Contents/Developer" npm run ios
 ```
 
-The `postinstall` workaround for ExpoModulesJSI 58.0.2 preserves this Xcode
+The `postinstall` workaround for ExpoModulesJSI 58.0.2 / 58.0.3 preserves this Xcode
 selection in its nested build and handles the Swift C++ interface cleanup.
+If compilation reports `cannot find type '__ObjC::expo' in scope`, ensure the postinstall script ran after dependency installation. It supports ExpoModulesJSI 58.0.2 and 58.0.3; a different version requires checking the upstream script again.
+Run `npm run postinstall` to reapply it locally, then rebuild. The framework build hash includes its build script, so applying this patch invalidates that cache.
+Commit the workaround before starting a new EAS build so its install step applies it there as well.
 
 Before release, test closed/open/partially folded poses, rotation, and window
 resizing. Keep a scan result open during resizing; check the scanner guide,
@@ -163,6 +166,99 @@ on a physical device. Type checking alone does not validate native behavior.
 
 References: [Expo SDK 58 beta](https://expo.dev/changelog/sdk-58-beta),
 [Apple's Duo preparation guide](https://developer.apple.com/videos/play/tech-talks/111461/).
+
+## Local iOS production build for iPhone Duo → TestFlight
+
+Use this procedure to compile a **signed device IPA on your Mac** with the iOS 27.1 SDK. `npm run ios` produces a development app; `screenshots:build:ios` produces a simulator app. Neither artifact is the TestFlight build.
+
+### 1. Prepare the Mac and signing
+
+Install Xcode 27.1, CocoaPods and Fastlane, and complete Xcode's first-launch setup. You need an Expo account, an active Apple Developer membership, and access to the existing VDS Verify app in App Store Connect (`com.stelau.vdsverify`).
+
+Run these commands in the project root, in the same terminal for the following
+steps. Adjust the Xcode path to your installation:
+
+```sh
+export DEVELOPER_DIR="$HOME/Downloads/Xcode.app/Contents/Developer"
+export VDS_SCREENSHOTS=0
+export npm_config_legacy_peer_deps=true
+export EXPO_PUBLIC_VDS_API_URL=https://api.vds-verify.stelau.com
+
+xcodebuild -version
+xcrun --sdk iphoneos --show-sdk-version
+pod --version
+fastlane --version
+npx eas-cli login
+```
+
+Confirm that Xcode reports **27.1** and the device SDK reports **27.1** before continuing. Selecting a Duo simulator does not select the compiler SDK. Local EAS builds use your installed tools; an `image` setting in `eas.json` does not select a local Xcode version.
+
+If signing has not been configured, run `npx eas-cli credentials --platform ios` and select the production profile. Reuse the existing Apple team and bundle ID;
+EAS can manage the distribution certificate and App Store provisioning profile.
+
+### 2. Build the production IPA locally
+
+```sh
+npm install
+npx @expo/agent-cli typecheck
+npx @expo/agent-cli lint
+mkdir -p build/releases
+npx eas-cli build --platform ios --profile production --local \
+  --output ./build/releases/vds-verify-ios.ipa
+```
+
+Only continue if the build succeeds. This uses the existing `production` profile, production API URL and remote build-number management (`autoIncrement: true`).
+An Expo connection is still required for project/signing operations even though compilation runs locally. Supply any required secret environment variables in the local shell; local builds do not download EAS Secret variables.
+
+Keep `ios/` and `android/` excluded from the EAS source archive, as they currently are through `.gitignore`. EAS will generate the native project from the normal Expo configuration, rather than reuse a local Maestro capture project. Preserve these exclusions if introducing an `.easignore` file.
+
+### 3. Verify the actual artifact
+
+Inspect the IPA before uploading it. This command reads its embedded metadata without extracting or changing the app:
+
+```sh
+python3 - <<'PYIPA'
+import plistlib
+import zipfile
+
+with zipfile.ZipFile("build/releases/vds-verify-ios.ipa") as ipa:
+    entries = [name for name in ipa.namelist()
+               if name.startswith("Payload/") and name.endswith(".app/Info.plist")
+               and name.count("/") == 2]
+    assert len(entries) == 1, "Expected one main application"
+    info = plistlib.loads(ipa.read(entries[0]))
+    for key in ("CFBundleIdentifier", "CFBundleShortVersionString", "CFBundleVersion",
+                "DTXcode", "DTSDKName", "CFBundleSupportedPlatforms"):
+        print(f"{key}: {info.get(key)}")
+    assert info["CFBundleIdentifier"] == "com.stelau.vdsverify"
+    assert info["DTSDKName"].startswith("iphoneos27.1"), "Expected iOS 27.1 device SDK"
+    assert "iPhoneOS" in info["CFBundleSupportedPlatforms"]
+PYIPA
+```
+
+Record the version and build number. The SDK check establishes which SDK was used; also perform the Duo layout/rotation/two-app checks described above.
+
+### 4. Upload this IPA to TestFlight
+
+```sh
+VDS_SCREENSHOTS=0 npx eas-cli submit --platform ios --profile production \
+  --path ./build/releases/vds-verify-ios.ipa
+```
+
+Select the existing VDS Verify App Store Connect record when prompted and follow
+the signing/authentication prompts. The submission profile is currently empty,
+so initial submission may request Apple credentials and the target app.
+`--path` selects this local artifact explicitly; do not select an unrelated
+latest cloud build. Upload is handled by EAS Submit, not by the local compiler.
+
+After upload, open **App Store Connect → VDS Verify → TestFlight**. Wait for
+Apple processing, resolve any compliance questions, then assign this version/build
+to the intended tester group. External testing may require Beta App Review.
+Successful upload alone does not mean testers can install it, and this procedure
+does not publish the app publicly on the App Store.
+
+References: [Expo local builds](https://docs.expo.dev/build-reference/local-builds/),
+[EAS Submit for iOS](https://docs.expo.dev/submit/ios/).
 
 ## Automated store screenshots (local Maestro)
 
@@ -241,3 +337,25 @@ If Seed is missing, ensure you opened the development app, not the Release captu
 app. The dev scripts explicitly launch the `vdsverify` scheme: older capture
 builds also register `exp+vds-verify`, which can open the wrong app. New capture
 builds use a separate slug to avoid registering the shared development scheme.
+
+### Android Release: camera preview works but QR detection does not
+
+If device logs report `NoSuchMethodException` for an ML Kit registrar followed by
+`Failed to initialize BarcodeAnalyzer`, R8 has removed constructors used by ML
+Kit's reflective component discovery. Debug builds do not exercise this shrinking
+path.
+
+`expo-build-properties`, configured in `app.json`, supplies `extraProguardRules` that preserve ML Kit classes and members, including registrar constructors, plus Google's internal ML Kit classes. R8 and resource shrinking remain enabled.
+These rules are broader than the original constructor-only workaround and may retain more code. The custom `with-mlkit-proguard.js` plugin is no longer needed.
+Keep the `expo-build-properties` dependency and its configuration in the source uploaded to EAS; editing only the ignored `android/` directory would not fix a clean cloud build.
+
+This is a native change: rebuild and distribute a new Android production build.
+An OTA JavaScript update cannot repair the constructors in an existing binary.
+
+```sh
+VDS_SCREENSHOTS=0 npx eas-cli build --platform android --profile production
+```
+
+After installing the corrected build, test a real QR code and check that the
+registrar/BarcodeAnalyzer errors no longer appear. Reference:
+[Android R8 full-mode constructor rules](https://developer.android.com/topic/performance/app-optimization/full-mode).

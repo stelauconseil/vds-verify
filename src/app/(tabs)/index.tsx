@@ -30,7 +30,6 @@ export default function ScanRoute() {
     const isFocused = pathname === "/" || pathname === "/index";
     const [appState, setAppState] = useState(AppState.currentState);
     const appStateRef = useRef(AppState.currentState);
-    const cameraReadyRef = useRef(false);
     const decodedRef = useRef(false);
     const [result, setResult] = useState<VdsResult | null>(null);
     const [scanned, setScanned] = useState<boolean>(false);
@@ -38,7 +37,6 @@ export default function ScanRoute() {
     const [torchEnabled, setTorchEnabled] = useState<boolean>(false);
     const [permission, requestPermission, getCameraPermission] =
         useCameraPermissions();
-    const cameraRef = useRef<CameraView | null>(null);
     const insets = useSafeAreaInsets();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -62,7 +60,6 @@ export default function ScanRoute() {
                 appStateRef.current = nextState;
                 setAppState(nextState);
                 if (nextState !== "active") {
-                    cameraReadyRef.current = false;
                     setTorchEnabled(false);
                     pinchStartDistanceRef.current = null;
                 } else {
@@ -82,7 +79,6 @@ export default function ScanRoute() {
         isFocused && appState === "active" && !!permission?.granted;
     useEffect(() => {
         if (!cameraActive) {
-            cameraReadyRef.current = false;
             setTorchEnabled(false);
             pinchStartDistanceRef.current = null;
         }
@@ -348,23 +344,19 @@ export default function ScanRoute() {
                 {cameraActive ? (
                     <>
                         <CameraView
-                            ref={cameraRef}
                             zoom={zoomLevel}
                             enableTorch={torchEnabled}
                             barcodeScannerSettings={{
                                 barcodeTypes: ["qr", "datamatrix"],
                             }}
-                            onCameraReady={() => {
-                                cameraReadyRef.current = true;
-                            }}
                             onMountError={() => {
-                                cameraReadyRef.current = false;
                                 showError("cameraerror");
                             }}
                             onBarcodeScanned={(event) => {
+                                // A decoded barcode already proves the camera is ready.
+                                // Do not depend on ordering with onCameraReady/AppState events.
                                 if (
                                     appStateRef.current === "active" &&
-                                    cameraReadyRef.current &&
                                     isFocused
                                 ) {
                                     void processResult(event);
