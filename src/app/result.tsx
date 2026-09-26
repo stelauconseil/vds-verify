@@ -1,7 +1,6 @@
 import { getLocalizedDocumentType } from "@/types/document-type";
 import {
     ReactNode,
-    ComponentRef,
     useEffect,
     useMemo,
     useRef,
@@ -17,14 +16,22 @@ import {
     Modal,
     Alert,
     AccessibilityInfo,
-    Animated,
     Platform,
     StyleSheet,
     useColorScheme,
-    useWindowDimensions,
 } from "react-native";
 import { Stack, Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+    Host,
+    BottomSheet,
+    Column,
+    Row,
+    Spacer,
+    Button,
+    Text as NativeText,
+} from "@expo/ui";
+import { useHeaderHeight } from "expo-router/react-navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Asset } from "expo-asset";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
@@ -168,7 +175,6 @@ function AttributeRow({
     );
 }
 
-// Section component similar to React Conf speaker page
 function Section({
     title,
     children,
@@ -184,7 +190,9 @@ function Section({
         <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
                 {icon}
-                <Text style={styles.sectionTitle}>{title}</Text>
+                <Text accessibilityRole="header" style={styles.sectionTitle}>
+                    {title}
+                </Text>
             </View>
             {children}
         </View>
@@ -429,17 +437,9 @@ export default function ResultScreen() {
 
     const [shareMenuVisible, setShareMenuVisible] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
-    const { height: windowHeight, fontScale } = useWindowDimensions();
-    const [layoutWidth, setLayoutWidth] = useState(0);
-    const slideAnim = useRef(new Animated.Value(1)).current;
-    const scrollViewRef = useRef<ComponentRef<typeof ScrollView>>(null);
+    const headerHeight = useHeaderHeight();
+    const pendingShareAction = useRef<(() => Promise<void>) | null>(null);
     const insets = useSafeAreaInsets();
-    // Measure this route, which may be narrower than the window inside an iOS sheet.
-    const availableWidth = Math.max(
-        0,
-        layoutWidth - insets.left - insets.right - 32,
-    );
-    const showColumns = availableWidth >= 840 * Math.max(1, fontScale);
 
     const c = useColors();
     const { colorSchemePref } = useSettings();
@@ -702,46 +702,21 @@ export default function ResultScreen() {
         }
     }, [params.result, result, setContextResult, setStatus]);
 
-    const openShareMenu = useCallback(() => {
-        slideAnim.setValue(1);
-        setShareMenuVisible(true);
-        Animated.spring(slideAnim, {
-            toValue: 0,
-            useNativeDriver: true,
-            bounciness: 0,
-        }).start();
-    }, [slideAnim]);
-
-    const closeShareMenu = useCallback(() => {
-        Animated.timing(slideAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-        }).start(() => setShareMenuVisible(false));
-    }, [slideAnim]);
-
-    const dismissAndRun = useCallback(
-        (action: () => Promise<void>) => {
-            slideAnim.stopAnimation();
-            Animated.timing(slideAnim, {
-                toValue: 1,
-                duration: 200,
-                useNativeDriver: true,
-            }).start(() => {
-                setShareMenuVisible(false);
-
-                // Android presents expo-sharing in a separate native activity.
-                // Wait until the modal window has been removed before opening it,
-                // otherwise the first share request can be swallowed by the modal.
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        void action();
-                    });
-                });
+    const openShareMenu = useCallback(() => setShareMenuVisible(true), []);
+    const closeShareMenu = useCallback(() => setShareMenuVisible(false), []);
+    const runPendingShare = useCallback(() => {
+        const action = pendingShareAction.current;
+        pendingShareAction.current = null;
+        if (action)
+            requestAnimationFrame(() => {
+                void action();
             });
-        },
-        [slideAnim],
-    );
+    }, []);
+    const dismissAndRun = useCallback((action: () => Promise<void>) => {
+        if (pendingShareAction.current) return;
+        pendingShareAction.current = action;
+        setShareMenuVisible(false);
+    }, []);
 
     if (!result) return <Redirect href="/" />;
 
@@ -845,18 +820,38 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
 </body></html>`;
     };
 
+    const getSharePath = (extension: "json" | "pdf") => {
+        const now = new Date();
+        const date = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0"),
+        ].join("");
+        const safeType =
+            Array.from(
+                documentType
+                    .normalize("NFC")
+                    // Strip control characters from API-provided file names.
+                    // eslint-disable-next-line no-control-regex
+                    .replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, "-")
+                    .replace(/\s+/g, " ")
+                    .trim(),
+            )
+                .slice(0, 60)
+                .join("")
+                .replace(/[. ]+$/, "") || "document";
+        return (
+            FileSystem.cacheDirectory +
+            encodeURIComponent(`${date}-${safeType}.${extension}`)
+        );
+    };
+
     const handleShareJson = () => {
         dismissAndRun(async () => {
             setIsSharing(true);
             try {
                 const json = JSON.stringify(result, null, 2);
-                const dateStr = new Date()
-                    .toISOString()
-                    .slice(0, 10)
-                    .replace(/-/g, "");
-                const path =
-                    FileSystem.cacheDirectory +
-                    `${dateStr}-VDSVerify-result.json`;
+                const path = getSharePath("json");
                 await FileSystem.writeAsStringAsync(path, json, {
                     encoding: FileSystem.EncodingType.UTF8,
                 });
@@ -881,17 +876,11 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
             setIsSharing(true);
             try {
                 const html = await buildShareHtml();
-                const dateStr = new Date()
-                    .toISOString()
-                    .slice(0, 10)
-                    .replace(/-/g, "");
                 const { uri } = await Print.printToFileAsync({
                     html,
                     base64: false,
                 });
-                const pdfPath =
-                    FileSystem.cacheDirectory +
-                    `${dateStr}-VDSVerify-result.pdf`;
+                const pdfPath = getSharePath("pdf");
                 await FileSystem.copyAsync({ from: uri, to: pdfPath });
                 if (await Sharing.isAvailableAsync()) {
                     await Sharing.shareAsync(pdfPath, {
@@ -909,13 +898,10 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
         });
     };
 
+    const TabBarSurface = canUseGlass ? GlassView : View;
+
     return (
-        <View
-            style={styles.container}
-            onLayout={({ nativeEvent }) =>
-                setLayoutWidth(nativeEvent.layout.width)
-            }
-        >
+        <View style={styles.container}>
             {Platform.OS === "ios" && (
                 <>
                     <Stack.Screen
@@ -992,19 +978,19 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
             )}
 
             <ScrollView
-                ref={scrollViewRef}
+                stickyHeaderIndices={[1]}
                 contentInsetAdjustmentBehavior={
                     Platform.OS === "ios" ? "automatic" : "never"
                 }
                 showsVerticalScrollIndicator={false}
-                style={styles.scrollView}
+                style={[
+                    styles.scrollView,
+                    Platform.OS !== "ios" && { marginTop: insets.top + 14 },
+                ]}
                 contentContainerStyle={[
                     styles.scrollViewContent,
                     {
-                        paddingTop:
-                            Platform.OS === "ios"
-                                ? theme.space16
-                                : insets.top + 68,
+                        paddingTop: 0,
                         paddingLeft: insets.left + theme.space16,
                         paddingRight: insets.right + theme.space16,
                         paddingBottom: Platform.select({
@@ -1017,9 +1003,25 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                 <View
                     style={[
                         styles.readableContent,
-                        { maxWidth: showColumns ? 1200 : 720 },
+                        {
+                            maxWidth: 760,
+                            // Preserve the title position below the transparent native header.
+                            marginTop:
+                                Platform.OS === "ios"
+                                    ? -Math.max(0, headerHeight - insets.top)
+                                    : 0,
+                        },
                     ]}
                 >
+                    <View
+                        style={{
+                            height:
+                                Platform.OS === "ios"
+                                    ? Math.max(40, headerHeight - insets.top)
+                                    : 40,
+                            marginBottom: theme.space8,
+                        }}
+                    />
                     {result.testdata && (
                         <View style={styles.testdataBanner}>
                             <Text style={styles.testdataBannerText}>
@@ -1029,107 +1031,97 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                     )}
                     {/* Hero section - centered document info and status */}
                     <View style={styles.heroSection}>
-                        <View style={styles.documentIconContainer}>
-                            <Ionicons
-                                name="document-text"
-                                size={42}
-                                color={c.primary}
-                            />
-                        </View>
                         <Text style={styles.documentTitle}>{documentType}</Text>
                         <StatusBadge status={securityStatus} lang={lang} />
-
-                        {!showColumns && (
-                            <View style={styles.tabContainer}>
-                                {(["data", "details"] as const).map((tab) => {
-                                    const selected = selectedTab === tab;
-                                    const button = (
-                                        <Pressable
-                                            testID={`result-tab-${tab}`}
-                                            accessibilityRole="tab"
-                                            accessibilityState={{ selected }}
-                                            onPress={() => setSelectedTab(tab)}
-                                            style={styles.tabPill}
-                                        >
-                                            <Text
-                                                style={[
-                                                    styles.tabLabel,
-                                                    selected &&
-                                                        styles.tabLabelActive,
-                                                ]}
-                                            >
-                                                {getLabel(
-                                                    tab === "data"
-                                                        ? "data"
-                                                        : "security",
-                                                    lang,
-                                                )}
-                                            </Text>
-                                        </Pressable>
-                                    );
-                                    return canUseGlass ? (
-                                        <GlassView
-                                            key={tab}
-                                            glassEffectStyle="regular"
-                                            colorScheme={scheme}
-                                            tintColor={
-                                                selected ? c.primary : undefined
+                    </View>
+                </View>
+                <View style={styles.stickyTabs}>
+                    <View style={[styles.readableContent, { maxWidth: 760 }]}>
+                        <TabBarSurface
+                            {...(canUseGlass
+                                ? {
+                                      glassEffectStyle: "regular" as const,
+                                      colorScheme: scheme,
+                                      isInteractive: true,
+                                  }
+                                : {})}
+                            style={[
+                                styles.tabContainer,
+                                !canUseGlass && styles.tabPillFallback,
+                            ]}
+                        >
+                            {(["data", "details"] as const).map((tab) => {
+                                const selected = selectedTab === tab;
+                                return (
+                                    <Pressable
+                                        key={tab}
+                                        testID={`result-tab-${tab}`}
+                                        accessibilityRole="tab"
+                                        accessibilityState={{ selected }}
+                                        onPress={() => setSelectedTab(tab)}
+                                        style={[
+                                            styles.tabPill,
+                                            selected && styles.tabPillActive,
+                                        ]}
+                                    >
+                                        <Ionicons
+                                            name={
+                                                tab === "data"
+                                                    ? "document-text-outline"
+                                                    : "information-circle-outline"
                                             }
-                                            isInteractive
-                                            style={styles.tabGlassPill}
-                                        >
-                                            {button}
-                                        </GlassView>
-                                    ) : (
-                                        <View
-                                            key={tab}
+                                            size={24}
+                                            color={
+                                                selected
+                                                    ? c.primary
+                                                    : c.textSecondary
+                                            }
+                                        />
+                                        <Text
                                             style={[
-                                                styles.tabGlassPill,
-                                                styles.tabPillFallback,
+                                                styles.tabLabel,
                                                 selected &&
-                                                    styles.tabPillActive,
+                                                    styles.tabLabelActive,
                                             ]}
                                         >
-                                            {button}
-                                        </View>
-                                    );
-                                })}
-                            </View>
-                        )}
+                                            {getLabel(
+                                                tab === "data"
+                                                    ? "data"
+                                                    : "security",
+                                                lang,
+                                            )}
+                                        </Text>
+                                    </Pressable>
+                                );
+                            })}
+                        </TabBarSurface>
                     </View>
-
-                    <View style={showColumns ? styles.columns : undefined}>
-                        {(showColumns || selectedTab === "data") && (
-                            <View
-                                testID="result-data-panel"
-                                style={showColumns ? styles.column : undefined}
-                            >
-                                {showColumns && (
-                                    <Text
-                                        accessibilityRole="header"
-                                        style={styles.columnTitle}
-                                    >
-                                        {getLabel("data", lang)}
-                                    </Text>
-                                )}
-                                <View style={styles.sectionContent}>
-                                    {dataRows}
-                                </View>
+                </View>
+                <View style={[styles.readableContent, { maxWidth: 760 }]}>
+                    <View>
+                        {selectedTab === "data" && (
+                            <View testID="result-data-panel">
+                                <Section
+                                    title={getLabel("data", lang)}
+                                    icon={
+                                        <Ionicons
+                                            name="document-text-outline"
+                                            size={20}
+                                            color={c.textPrimary}
+                                            style={{
+                                                marginRight: theme.space8,
+                                            }}
+                                        />
+                                    }
+                                >
+                                    <View style={styles.sectionContent}>
+                                        {dataRows}
+                                    </View>
+                                </Section>
                             </View>
                         )}
-                        {(showColumns || selectedTab === "details") && (
-                            <View
-                                testID="result-details-panel"
-                                style={showColumns ? styles.column : undefined}
-                            >
-                                {showColumns && (
-                                    <Text
-                                        accessibilityRole="header"
-                                        style={styles.columnTitle}
-                                    >
-                                        {getLabel("security", lang)}
-                                    </Text>
-                                )}
+                        {selectedTab === "details" && (
+                            <View testID="result-details-panel">
                                 {/* Header information section */}
                                 <Section
                                     title={getLabel("header", lang)}
@@ -1221,100 +1213,64 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                 </View>
             </ScrollView>
 
-            {/* Share action sheet */}
-            <Modal
-                visible={shareMenuVisible}
-                transparent
-                animationType="none"
-                onRequestClose={closeShareMenu}
-                supportedOrientations={[
-                    "portrait",
-                    "portrait-upside-down",
-                    "landscape-left",
-                    "landscape-right",
-                ]}
-            >
-                <View
-                    style={[
-                        styles.shareModalContainer,
-                        { paddingTop: insets.top + theme.space8 },
-                    ]}
+            <Host colorScheme={scheme} style={{ position: "absolute" }}>
+                <BottomSheet
+                    testID="share-sheet"
+                    isPresented={shareMenuVisible}
+                    onDismiss={closeShareMenu}
+                    containerColor={c.background}
                 >
-                    <Pressable
-                        style={StyleSheet.absoluteFill}
-                        onPress={closeShareMenu}
-                    />
-                    <Animated.View
-                        style={[
-                            styles.shareSheet,
-                            {
-                                paddingBottom: insets.bottom + theme.space8,
-                                paddingLeft: insets.left + theme.space16,
-                                paddingRight: insets.right + theme.space16,
-                                transform: [
-                                    {
-                                        translateY: slideAnim.interpolate({
-                                            inputRange: [0, 1],
-                                            outputRange: [0, windowHeight],
-                                        }),
-                                    },
-                                ],
-                            },
-                        ]}
+                    <Column
+                        spacing={16}
+                        style={{ paddingBottom: 24 }}
+                        onDisappear={runPendingShare}
                     >
-                        <ScrollView
-                            bounces={false}
-                            contentContainerStyle={{ gap: theme.space8 }}
+                        <NativeText
+                            textStyle={{
+                                fontSize: 22,
+                                fontWeight: "600",
+                                color: c.textPrimary,
+                            }}
                         >
-                            <Text style={styles.shareSheetTitle}>
-                                {getLabel("share", lang)}
-                            </Text>
-                            <Pressable
-                                style={styles.shareOption}
-                                onPress={handleShareJson}
-                            >
-                                <Ionicons
-                                    name="code-slash-outline"
-                                    size={22}
-                                    color={c.primary}
-                                />
-                                <Text style={styles.shareOptionText}>
-                                    {getLabel("share_as_json", lang)}
-                                </Text>
-                            </Pressable>
-                            <Pressable
-                                style={styles.shareOption}
-                                onPress={handleSharePdf}
-                            >
-                                <Ionicons
-                                    name="document-outline"
-                                    size={22}
-                                    color={c.primary}
-                                />
-                                <Text style={styles.shareOptionText}>
-                                    {getLabel("share_as_pdf", lang)}
-                                </Text>
-                            </Pressable>
-                            <Pressable
-                                style={[
-                                    styles.shareOption,
-                                    styles.shareCancelOption,
-                                ]}
-                                onPress={() => setShareMenuVisible(false)}
-                            >
-                                <Text
-                                    style={[
-                                        styles.shareOptionText,
-                                        { color: c.textSecondary },
-                                    ]}
-                                >
-                                    {getLabel("cancel", lang)}
-                                </Text>
-                            </Pressable>
-                        </ScrollView>
-                    </Animated.View>
-                </View>
-            </Modal>
+                            {getLabel("share", lang)}
+                        </NativeText>
+                        <Button
+                            testID="share-pdf"
+                            variant="outlined"
+                            disabled={isSharing}
+                            onPress={handleSharePdf}
+                            label={getLabel("share_as_pdf", lang)}
+                        />
+                        <NativeText textStyle={{ color: c.textSecondary }}>
+                            {getLabel("share_pdf_description", lang)}
+                        </NativeText>
+                        <Button
+                            testID="share-json"
+                            variant="outlined"
+                            disabled={isSharing}
+                            onPress={handleShareJson}
+                            label={getLabel("share_as_json", lang)}
+                        />
+                        <NativeText textStyle={{ color: c.textSecondary }}>
+                            {getLabel("share_json_description", lang)}
+                        </NativeText>
+                        <Row alignment="center" style={{ paddingTop: 8 }}>
+                            <Spacer flexible />
+                            <Button
+                                testID="share-cancel"
+                                variant="outlined"
+                                style={{
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 8,
+                                }}
+                                onPress={closeShareMenu}
+                                label={getLabel("cancel", lang)}
+                            />
+                            <Spacer flexible />
+                        </Row>
+                    </Column>
+                </BottomSheet>
+            </Host>
         </View>
     );
 }
@@ -1362,20 +1318,9 @@ function makeStyles(c: Colors) {
             width: "100%",
             alignSelf: "center",
         },
-        columns: {
-            flexDirection: "row",
-            alignItems: "flex-start",
-            gap: theme.space24,
-        },
-        column: {
-            flex: 1,
-            minWidth: 0,
-        },
-        columnTitle: {
-            fontSize: theme.fontSize20,
-            fontWeight: "600",
-            color: c.textPrimary,
-            marginBottom: theme.space16,
+        stickyTabs: {
+            backgroundColor: c.background,
+            paddingBottom: theme.space16,
         },
         scrollView: {
             flex: 1,
@@ -1403,18 +1348,7 @@ function makeStyles(c: Colors) {
         },
         heroSection: {
             alignItems: "center",
-            marginBottom: theme.space32,
-        },
-        documentIconContainer: {
-            width: 66,
-            height: 66,
-            borderRadius: 36,
-            backgroundColor: c.backgroundSecondary,
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: theme.space16,
-            borderWidth: 1,
-            borderColor: c.border,
+            marginBottom: theme.space8,
         },
         documentTitle: {
             fontSize: theme.fontSize20,
@@ -1423,45 +1357,44 @@ function makeStyles(c: Colors) {
             textAlign: "center",
             marginBottom: theme.space12,
         },
-        tabGlassPill: {
-            flex: 1,
-            borderRadius: theme.borderRadius20,
-            borderCurve: "continuous",
-        },
         tabContainer: {
             flexDirection: "row",
-            alignSelf: "stretch",
-            marginTop: theme.space16,
-            marginHorizontal: theme.space16,
-            gap: theme.space8,
+            alignSelf: "center",
+            width: "100%",
+            maxWidth: 360,
+            marginTop: theme.space8,
+            padding: 5,
+            borderRadius: 40,
+            borderCurve: "continuous",
+            gap: theme.space4,
         },
         tabPillFallback: {
             backgroundColor: c.backgroundSecondary,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: c.border,
         },
         tabPill: {
             flex: 1,
-            borderRadius: theme.borderRadius20,
+            borderRadius: 35,
+            borderCurve: "continuous",
             paddingVertical: theme.space8,
-            minHeight: 44,
+            minHeight: 60,
             paddingHorizontal: theme.space12,
+            gap: theme.space4,
             alignItems: "center",
             justifyContent: "center",
         },
         tabPillActive: {
-            backgroundColor: c.primary,
-            shadowColor: "#000",
-            shadowOpacity: 0.12,
-            shadowRadius: 6,
-            shadowOffset: { width: 0, height: 2 },
-            elevation: 4,
+            backgroundColor: c.border,
         },
         tabLabel: {
-            fontSize: theme.fontSize14,
+            fontSize: theme.fontSize12,
             fontWeight: "600",
-            color: c.textPrimary,
+            color: c.textSecondary,
+            textAlign: "center",
         },
         tabLabelActive: {
-            color: "#FFFFFF",
+            color: c.primary,
         },
         statusBadge: {
             flexDirection: "row",
@@ -1491,6 +1424,7 @@ function makeStyles(c: Colors) {
             marginBottom: theme.space16,
         },
         sectionTitle: {
+            flex: 1,
             fontSize: theme.fontSize18,
             fontWeight: "600",
             color: c.textPrimary,
@@ -1582,48 +1516,6 @@ function makeStyles(c: Colors) {
             position: "absolute",
             right: theme.space16,
             zIndex: 10,
-        },
-        shareModalContainer: {
-            flex: 1,
-            justifyContent: "flex-end",
-            backgroundColor: "rgba(0,0,0,0.4)",
-        },
-        shareSheet: {
-            maxHeight: "100%",
-            flexShrink: 1,
-            backgroundColor: c.background,
-            borderTopLeftRadius: theme.borderRadius32,
-            borderTopRightRadius: theme.borderRadius32,
-            paddingTop: theme.space24,
-            paddingHorizontal: theme.space16,
-            gap: theme.space8,
-        },
-        shareSheetTitle: {
-            fontSize: theme.fontSize18,
-            fontWeight: "700",
-            color: c.textPrimary,
-            textAlign: "center",
-            marginBottom: theme.space8,
-        },
-        shareOption: {
-            flexDirection: "row",
-            alignItems: "center",
-            gap: theme.space12,
-            paddingVertical: theme.space16,
-            paddingHorizontal: theme.space12,
-            borderRadius: theme.borderRadius20,
-            backgroundColor: c.backgroundSecondary,
-        },
-        shareCancelOption: {
-            justifyContent: "center",
-            backgroundColor: "transparent",
-            marginTop: theme.space4,
-        },
-        shareOptionText: {
-            flexShrink: 1,
-            fontSize: theme.fontSize16,
-            fontWeight: "600",
-            color: c.textPrimary,
         },
     });
 }

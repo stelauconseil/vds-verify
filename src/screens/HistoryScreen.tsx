@@ -1,3 +1,5 @@
+import { filterHistory, type HistoryFilter } from "@/types/history-filter";
+import { Host, TextInput, Picker, type TextInputRef } from "@expo/ui";
 import { screenshotsEnabled } from "@/screenshots";
 import { testResults } from "@/testdata";
 import { getLocalizedDocumentType } from "@/types/document-type";
@@ -329,7 +331,9 @@ const HistoryRow: FC<HistoryRowProps> = ({
 
 const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const [history, setHistory] = useState<HistoryEntry[]>([]);
-    const [pinnedOnly, setPinnedOnly] = useState(false);
+    const [filter, setFilter] = useState<HistoryFilter>("all");
+    const [query, setQuery] = useState("");
+    const searchRef = useRef<TextInputRef>(null);
     const insets = useSafeAreaInsets();
     const openSwipeableRef = useRef<any>(null);
     const scheme = useEffectiveColorScheme();
@@ -390,14 +394,25 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
         });
     }, []);
 
-    const displayedHistory = useMemo(() => {
-        const sorted = [...history].sort((a, b) => {
-            const aPinned = a.pinned ? 1 : 0;
-            const bPinned = b.pinned ? 1 : 0;
-            return bPinned - aPinned;
-        });
-        return pinnedOnly ? sorted.filter((entry) => entry.pinned) : sorted;
-    }, [history, pinnedOnly]);
+    const displayedHistory = useMemo(
+        () =>
+            filterHistory(
+                history,
+                query,
+                filter,
+                getLabel("languageTag", lang),
+            ),
+        [history, query, filter, lang],
+    );
+    useEffect(() => {
+        openSwipeableRef.current?.close();
+        openSwipeableRef.current = null;
+    }, [query, filter]);
+    const resetFilters = () => {
+        searchRef.current?.clear();
+        setQuery("");
+        setFilter("all");
+    };
 
     const renderItem = useCallback(
         ({ item, index }: { item: HistoryEntry; index: number }) => (
@@ -435,7 +450,9 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                     <Pressable
                         onPress={async () => {
                             const entries = testResults.map((data, i) => ({
-                                timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
+                                timestamp: new Date(
+                                    Date.now() - i * 3_600_000,
+                                ).toISOString(),
                                 pinned: false,
                                 data,
                             }));
@@ -466,50 +483,6 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                             gap: 8,
                         }}
                     >
-                        <BlurView
-                            intensity={70}
-                            tint={scheme === "dark" ? "dark" : "light"}
-                            style={{ borderRadius: 18, overflow: "hidden" }}
-                        >
-                            <Pressable
-                                onPress={() => setPinnedOnly((prev) => !prev)}
-                                hitSlop={10}
-                                accessibilityRole="button"
-                                accessibilityLabel={
-                                    pinnedOnly
-                                        ? getLabel("show_all_entries", lang)
-                                        : getLabel("show_pinned_only", lang)
-                                }
-                            >
-                                <View
-                                    style={{
-                                        width: 36,
-                                        height: 36,
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        backgroundColor: pinnedOnly
-                                            ? "rgba(245,158,11,0.35)"
-                                            : scheme === "dark"
-                                              ? "rgba(255,255,255,0.1)"
-                                              : "rgba(255,255,255,0.3)",
-                                    }}
-                                >
-                                    <Ionicons
-                                        name={
-                                            pinnedOnly ? "star" : "star-outline"
-                                        }
-                                        size={20}
-                                        color={
-                                            pinnedOnly
-                                                ? "#F59E0B"
-                                                : scheme === "dark"
-                                                  ? "#E5E7EB"
-                                                  : "#6b7280"
-                                        }
-                                    />
-                                </View>
-                            </Pressable>
-                        </BlurView>
                         <BlurView
                             intensity={70}
                             tint={scheme === "dark" ? "dark" : "light"}
@@ -578,7 +551,80 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                     </View>
                 )}
             </ScreenHeading>
+            <View style={{ paddingHorizontal: SCREEN_MARGIN, gap: 8 }}>
+                <Host matchContents={{ vertical: true }} colorScheme={scheme}>
+                    <TextInput
+                        ref={searchRef}
+                        testID="history-search"
+                        placeholder={getLabel("history_search", lang)}
+                        onChangeText={setQuery}
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        returnKeyType="search"
+                        onSubmitEditing={() => searchRef.current?.blur()}
+                    />
+                </Host>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: 12,
+                    }}
+                >
+                    <Text style={{ color: titleColor }}>
+                        {displayedHistory.length} / {history.length}
+                    </Text>
+                    <Host matchContents colorScheme={scheme}>
+                        <Picker<HistoryFilter>
+                            testID="history-filter"
+                            selectedValue={filter}
+                            onValueChange={setFilter}
+                        >
+                            {(["all", "pinned", "review"] as const).map(
+                                (value) => (
+                                    <Picker.Item
+                                        key={value}
+                                        value={value}
+                                        label={getLabel(
+                                            `history_filter_${value}`,
+                                            lang,
+                                        )}
+                                    />
+                                ),
+                            )}
+                        </Picker>
+                    </Host>
+                    {(query.length > 0 || filter !== "all") && (
+                        <Pressable
+                            testID="history-reset"
+                            accessibilityRole="button"
+                            onPress={resetFilters}
+                            style={{ minHeight: 44, justifyContent: "center" }}
+                        >
+                            <Text
+                                style={{
+                                    color:
+                                        scheme === "dark"
+                                            ? "#60A5FA"
+                                            : "#0069b4",
+                                }}
+                            >
+                                {getLabel("history_reset", lang)}
+                            </Text>
+                        </Pressable>
+                    )}
+                </View>
+                {filter === "review" && (
+                    <Text style={{ color: titleColor }}>
+                        {getLabel("history_review_help", lang)}
+                    </Text>
+                )}
+            </View>
             <FlatList
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="on-drag"
                 style={styles.center}
                 contentContainerStyle={{
                     paddingTop: 16,
@@ -592,7 +638,12 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
                         <Text style={styles.emptyStateText}>
-                            {getLabel("nohistory", lang)}
+                            {getLabel(
+                                history.length
+                                    ? "history_no_matches"
+                                    : "nohistory",
+                                lang,
+                            )}
                         </Text>
                     </View>
                 }
