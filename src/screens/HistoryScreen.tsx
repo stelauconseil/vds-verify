@@ -300,8 +300,8 @@ const HistoryRow: FC<HistoryRowProps> = ({
                                             : getLabel("pin_entry", lang)
                                     }
                                     style={{
-                                        width: 28,
-                                        height: 28,
+                                        width: 48,
+                                        height: 48,
                                         alignItems: "center",
                                         justifyContent: "center",
                                     }}
@@ -526,8 +526,8 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                             >
                                 <View
                                     style={{
-                                        width: 36,
-                                        height: 36,
+                                        width: 48,
+                                        height: 48,
                                         alignItems: "center",
                                         justifyContent: "center",
                                         backgroundColor:
@@ -573,7 +573,13 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                         gap: 12,
                     }}
                 >
-                    <Text style={{ color: titleColor }}>
+                    <Text
+                        accessibilityLiveRegion="polite"
+                        accessibilityLabel={getLabel("history_count", lang)
+                            .replace("{shown}", String(displayedHistory.length))
+                            .replace("{total}", String(history.length))}
+                        style={{ color: titleColor }}
+                    >
                         {displayedHistory.length} / {history.length}
                     </Text>
                     <Host matchContents colorScheme={scheme}>
@@ -637,7 +643,17 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 renderItem={renderItem}
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
-                        <Text style={styles.emptyStateText}>
+                        <Text
+                            style={[
+                                styles.emptyStateText,
+                                {
+                                    color:
+                                        scheme === "dark"
+                                            ? "#9CA3AF"
+                                            : "#4B5563",
+                                },
+                            ]}
+                        >
                             {getLabel(
                                 history.length
                                     ? "history_no_matches"

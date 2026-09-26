@@ -18,6 +18,11 @@ const label = {
         information: "Informations",
         scan: "Scanner",
         settings: "Paramètres",
+        open_image_preview: "Ouvrir l’aperçu de l’image",
+        close_image_preview: "Fermer l’aperçu de l’image",
+        torch_on: "Allumer la lampe",
+        torch_off: "Éteindre la lampe",
+        history_count: "{shown} résultats sur {total}",
         history_search: "Rechercher un document, un nom, une date…",
         history_filter_all: "Tous",
         history_filter_pinned: "Épinglés",
@@ -127,6 +132,11 @@ const label = {
         information: "Information",
         scan: "Scan",
         settings: "Settings",
+        open_image_preview: "Open image preview",
+        close_image_preview: "Close image preview",
+        torch_on: "Turn flashlight on",
+        torch_off: "Turn flashlight off",
+        history_count: "{shown} results out of {total}",
         history_search: "Search documents, names, dates…",
         history_filter_all: "All",
         history_filter_pinned: "Pinned",
@@ -277,6 +287,8 @@ const formatString = (data: string): ReactNode | string => {
         if (data.includes("http")) {
             return (
                 <Text
+                    selectable
+                    accessibilityRole="link"
                     style={{
                         color: "#0069b4",
                         fontWeight: "bold",

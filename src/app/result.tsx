@@ -55,9 +55,9 @@ const lightColors = {
     textPrimary: "#111827",
     textSecondary: "#6B7280",
     border: "#E5E7EB",
-    success: "#10B981",
-    error: "#EF4444",
-    warning: "#F59E0B",
+    success: "#047857",
+    error: "#B91C1C",
+    warning: "#92400E",
     primary: "#0069b4",
     buttonBg: "rgba(255,255,255,0.85)",
     buttonIconColor: "#222222",
@@ -158,7 +158,9 @@ function AttributeRow({
             <Text style={styles.attributeLabel}>{label}</Text>
             {typeof value === "string" || typeof value === "number" ? (
                 <View style={styles.attributeValueContainer}>
-                    <Text style={styles.attributeValue}>{value}</Text>
+                    <Text selectable style={styles.attributeValue}>
+                        {value}
+                    </Text>
                     {isEmptyString && (
                         <Ionicons
                             name="alert-circle-outline"
@@ -277,7 +279,7 @@ function Base64PreviewImage({
             <Pressable
                 onPress={() => setIsPreviewVisible(true)}
                 accessibilityRole="imagebutton"
-                accessibilityLabel="Open image preview"
+                accessibilityLabel={getLabel("open_image_preview", lang)}
             >
                 <Image
                     style={imageStyle}
@@ -311,6 +313,8 @@ function Base64PreviewImage({
                 onRequestClose={() => setIsPreviewVisible(false)}
             >
                 <View
+                    accessibilityViewIsModal
+                    onAccessibilityEscape={() => setIsPreviewVisible(false)}
                     style={[
                         styles.imageModalOverlay,
                         {
@@ -323,9 +327,14 @@ function Base64PreviewImage({
                 >
                     <Pressable
                         style={styles.imageModalBackdrop}
+                        accessible={false}
+                        importantForAccessibility="no"
                         onPress={() => setIsPreviewVisible(false)}
                         accessibilityRole="button"
-                        accessibilityLabel="Close image preview"
+                        accessibilityLabel={getLabel(
+                            "close_image_preview",
+                            lang,
+                        )}
                     />
                     <View style={styles.imageModalContent}>
                         <Image
@@ -344,7 +353,10 @@ function Base64PreviewImage({
                         ]}
                         onPress={() => setIsPreviewVisible(false)}
                         accessibilityRole="button"
-                        accessibilityLabel="Close image preview"
+                        accessibilityLabel={getLabel(
+                            "close_image_preview",
+                            lang,
+                        )}
                     >
                         <Ionicons name="close" size={24} color="#FFFFFF" />
                     </Pressable>
@@ -367,22 +379,22 @@ function StatusBadge({
     const statusConfig = {
         valid: {
             icon: "checkmark-circle",
-            color: theme.color.success,
+            color: c.success,
             text: getLabel("valid", lang),
         },
         invalid: {
             icon: "close-circle",
-            color: theme.color.error,
+            color: c.error,
             text: getLabel("invalid", lang),
         },
         unsigned: {
             icon: "alert-circle",
-            color: theme.color.warning,
+            color: c.warning,
             text: getLabel("unsigned", lang),
         },
         nonverifiable: {
             icon: "help-circle",
-            color: theme.color.warning,
+            color: c.warning,
             text: getLabel("nonverifiable", lang),
         },
     };
@@ -390,7 +402,11 @@ function StatusBadge({
     const config = statusConfig[status];
 
     return (
-        <View style={styles.statusBadge}>
+        <View
+            accessible
+            accessibilityLabel={config.text}
+            style={styles.statusBadge}
+        >
             <Ionicons
                 name={config.icon as any}
                 size={20}
@@ -562,6 +578,7 @@ export default function ResultScreen() {
                                                 typeof displayValue ===
                                                     "number" ? (
                                                     <Text
+                                                        selectable
                                                         style={
                                                             styles.attributeValue
                                                         }
@@ -1031,7 +1048,13 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                     )}
                     {/* Hero section - centered document info and status */}
                     <View style={styles.heroSection}>
-                        <Text style={styles.documentTitle}>{documentType}</Text>
+                        <Text
+                            selectable
+                            accessibilityRole="header"
+                            style={styles.documentTitle}
+                        >
+                            {documentType}
+                        </Text>
                         <StatusBadge status={securityStatus} lang={lang} />
                     </View>
                 </View>
@@ -1057,6 +1080,12 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                         key={tab}
                                         testID={`result-tab-${tab}`}
                                         accessibilityRole="tab"
+                                        accessibilityLabel={getLabel(
+                                            tab === "data"
+                                                ? "data"
+                                                : "security",
+                                            lang,
+                                        )}
                                         accessibilityState={{ selected }}
                                         onPress={() => setSelectedTab(tab)}
                                         style={[
@@ -1406,6 +1435,7 @@ function makeStyles(c: Colors) {
             backgroundColor: c.backgroundSecondary,
         },
         statusText: {
+            flexShrink: 1,
             fontSize: theme.fontSize16,
             fontWeight: "600",
         },
@@ -1448,7 +1478,7 @@ function makeStyles(c: Colors) {
         },
         attributeLabel: {
             color: c.textSecondary,
-            fontSize: theme.fontSize12,
+            fontSize: theme.fontSize14,
             fontWeight: "500",
         },
         attributeValueContainer: {
@@ -1505,9 +1535,9 @@ function makeStyles(c: Colors) {
             position: "absolute",
             top: theme.space32,
             right: theme.space16,
-            width: 40,
-            height: 40,
-            borderRadius: 20,
+            width: 48,
+            height: 48,
+            borderRadius: 24,
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(255,255,255,0.18)",

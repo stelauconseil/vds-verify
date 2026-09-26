@@ -406,7 +406,11 @@ export default function ScanRoute() {
                                 },
                                 torchEnabled && styles.torchButtonActive,
                             ]}
-                            accessibilityLabel="Toggle flashlight"
+                            accessibilityLabel={getLabel(
+                                torchEnabled ? "torch_off" : "torch_on",
+                                lang,
+                            )}
+                            accessibilityState={{ selected: torchEnabled }}
                             accessibilityRole="button"
                         >
                             <Ionicons
@@ -575,6 +579,10 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     torchButton: {
+        minWidth: 48,
+        minHeight: 48,
+        alignItems: "center",
+        justifyContent: "center",
         position: "absolute",
         left: 12,
         borderRadius: 10,
