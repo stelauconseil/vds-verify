@@ -5,7 +5,7 @@ import {
     ColorValue,
     ImageSourcePropType,
 } from "react-native";
-import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/native-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { theme } from "@/theme";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
