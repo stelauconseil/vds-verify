@@ -9,7 +9,6 @@ import {
 } from "react";
 import {
     View,
-    ScrollView,
     Text,
     Pressable,
     Image,
@@ -21,16 +20,22 @@ import {
     useColorScheme,
 } from "react-native";
 import { Stack, Redirect, useRouter, useLocalSearchParams } from "expo-router";
+import Animated, {
+    useSharedValue,
+    useAnimatedScrollHandler,
+    useAnimatedStyle,
+    useReducedMotion,
+} from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
     Host,
     BottomSheet,
     Column,
-    Row,
-    Spacer,
     Button,
     Text as NativeText,
 } from "@expo/ui";
+import { frame, ignoreSafeArea } from "@expo/ui/swift-ui/modifiers";
+import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import { useHeaderHeight } from "expo-router/react-navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Asset } from "expo-asset";
@@ -735,6 +740,41 @@ export default function ResultScreen() {
         setShareMenuVisible(false);
     }, []);
 
+    const scrollY = useSharedValue(0);
+    const reduceMotion = useReducedMotion();
+    const [heroHeight, setHeroHeight] = useState(0);
+    const [tabsHeight, setTabsHeight] = useState(0);
+    const compactScale = reduceMotion ? 1 : 0.8;
+    const collapseDistance = heroHeight * (1 - compactScale);
+    // Keep the same compact size, but reach it over a longer scroll gesture.
+    const collapseScrollRange = Math.max(160, collapseDistance * 2);
+    const onResultScroll = useAnimatedScrollHandler((event) => {
+        scrollY.value = Math.max(0, event.contentOffset.y);
+    });
+    const headerMotion = useAnimatedStyle(() => ({
+        transform: [
+            {
+                translateY:
+                    -collapseDistance *
+                    Math.min(1, scrollY.value / collapseScrollRange),
+            },
+        ],
+    }));
+    const heroMotion = useAnimatedStyle(() => ({
+        transform: [
+            {
+                scale:
+                    1 -
+                    (1 - compactScale) *
+                        Math.min(1, scrollY.value / collapseScrollRange),
+            },
+        ],
+    }));
+    const topClearance =
+        Platform.OS === "ios"
+            ? Math.max(insets.top, headerHeight)
+            : insets.top + 68;
+
     if (!result) return <Redirect href="/" />;
 
     const securityStatus: "valid" | "invalid" | "unsigned" | "nonverifiable" =
@@ -994,253 +1034,284 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                 </>
             )}
 
-            <ScrollView
-                stickyHeaderIndices={[1]}
-                contentInsetAdjustmentBehavior={
-                    Platform.OS === "ios" ? "automatic" : "never"
-                }
-                showsVerticalScrollIndicator={false}
-                style={[
-                    styles.scrollView,
-                    Platform.OS !== "ios" && { marginTop: insets.top + 14 },
-                ]}
-                contentContainerStyle={[
-                    styles.scrollViewContent,
-                    {
-                        paddingTop: 0,
+            <View
+                style={{ flex: 1, marginTop: topClearance, overflow: "hidden" }}
+            >
+                <Animated.ScrollView
+                    testID="result-scroll"
+                    onScroll={onResultScroll}
+                    scrollEventThrottle={16}
+                    contentInsetAdjustmentBehavior="never"
+                    showsVerticalScrollIndicator={false}
+                    style={styles.scrollView}
+                    contentContainerStyle={{
+                        paddingTop: heroHeight + tabsHeight,
                         paddingLeft: insets.left + theme.space16,
                         paddingRight: insets.right + theme.space16,
-                        paddingBottom: Platform.select({
-                            android: 100 + insets.bottom,
-                            default: theme.space24,
-                        }),
-                    },
-                ]}
-            >
-                <View
+                        paddingBottom: Math.max(insets.bottom, theme.space24),
+                    }}
+                >
+                    <View style={[styles.readableContent, { maxWidth: 760 }]}>
+                        <View>
+                            {selectedTab === "data" && (
+                                <View testID="result-data-panel">
+                                    <Section
+                                        title={getLabel("data", lang)}
+                                        icon={
+                                            <Ionicons
+                                                name="document-text-outline"
+                                                size={20}
+                                                color={c.textPrimary}
+                                                style={{
+                                                    marginRight: theme.space8,
+                                                }}
+                                            />
+                                        }
+                                    >
+                                        <View style={styles.sectionContent}>
+                                            {dataRows}
+                                        </View>
+                                    </Section>
+                                </View>
+                            )}
+                            {selectedTab === "details" && (
+                                <View testID="result-details-panel">
+                                    {/* Header information section */}
+                                    <Section
+                                        title={getLabel("header", lang)}
+                                        icon={
+                                            <Ionicons
+                                                name="browsers-outline"
+                                                size={20}
+                                                color={c.textPrimary}
+                                                style={{
+                                                    marginRight: theme.space8,
+                                                }}
+                                            />
+                                        }
+                                    >
+                                        <View style={styles.sectionContent}>
+                                            {headerRows}
+                                        </View>
+                                    </Section>
+
+                                    {/* Signature section */}
+                                    <Section
+                                        title={getLabel("signer", lang)}
+                                        icon={
+                                            <Ionicons
+                                                name={
+                                                    securityStatus === "valid"
+                                                        ? "shield-checkmark"
+                                                        : securityStatus ===
+                                                            "invalid"
+                                                          ? "shield"
+                                                          : "shield-half"
+                                                }
+                                                size={20}
+                                                color={
+                                                    securityStatus === "valid"
+                                                        ? theme.color.success
+                                                        : securityStatus ===
+                                                            "invalid"
+                                                          ? theme.color.error
+                                                          : theme.color.warning
+                                                }
+                                                style={{
+                                                    marginRight: theme.space8,
+                                                }}
+                                            />
+                                        }
+                                    >
+                                        {result.signer ? (
+                                            <View style={styles.sectionContent}>
+                                                {signerRows}
+                                            </View>
+                                        ) : (
+                                            <Text style={styles.noSignerText}>
+                                                {getLabel(
+                                                    "sign_not_verified",
+                                                    lang,
+                                                )}
+                                            </Text>
+                                        )}
+                                    </Section>
+
+                                    {/* Compliance section */}
+                                    <Section
+                                        title={getLabel("standard", lang)}
+                                        icon={
+                                            <Ionicons
+                                                name="checkmark-done-circle-outline"
+                                                size={20}
+                                                color={c.textPrimary}
+                                                style={{
+                                                    marginRight: theme.space8,
+                                                }}
+                                            />
+                                        }
+                                    >
+                                        <View style={styles.sectionContent}>
+                                            <AttributeRow
+                                                label={getLabel(
+                                                    "compliance",
+                                                    lang,
+                                                )}
+                                                value={get_standard(
+                                                    result.vds_standard,
+                                                )}
+                                                index={0}
+                                            />
+                                        </View>
+                                    </Section>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+                </Animated.ScrollView>
+                <Animated.View
+                    pointerEvents="box-none"
                     style={[
-                        styles.readableContent,
                         {
-                            maxWidth: 760,
-                            // Preserve the title position below the transparent native header.
-                            marginTop:
-                                Platform.OS === "ios"
-                                    ? -Math.max(0, headerHeight - insets.top)
-                                    : 0,
+                            position: "absolute",
+                            top: 0,
+                            left: insets.left,
+                            right: insets.right,
+                            backgroundColor: c.background,
+                            paddingHorizontal: theme.space16,
                         },
+                        headerMotion,
                     ]}
                 >
                     <View
-                        style={{
-                            height:
-                                Platform.OS === "ios"
-                                    ? Math.max(40, headerHeight - insets.top)
-                                    : 40,
-                            marginBottom: theme.space8,
-                        }}
-                    />
-                    {result.testdata && (
-                        <View style={styles.testdataBanner}>
-                            <Text style={styles.testdataBannerText}>
-                                {getLabel("testdata", lang)}
-                            </Text>
-                        </View>
-                    )}
-                    {/* Hero section - centered document info and status */}
-                    <View style={styles.heroSection}>
-                        <Text
-                            selectable
-                            accessibilityRole="header"
-                            style={styles.documentTitle}
-                        >
-                            {documentType}
-                        </Text>
-                        <StatusBadge status={securityStatus} lang={lang} />
-                    </View>
-                </View>
-                <View style={styles.stickyTabs}>
-                    <View style={[styles.readableContent, { maxWidth: 760 }]}>
-                        <TabBarSurface
-                            {...(canUseGlass
-                                ? {
-                                      glassEffectStyle: "regular" as const,
-                                      colorScheme: scheme,
-                                      isInteractive: true,
-                                  }
-                                : {})}
+                        onLayout={(event) =>
+                            setHeroHeight(event.nativeEvent.layout.height)
+                        }
+                        style={[styles.readableContent, { maxWidth: 760 }]}
+                    >
+                        <Animated.View
                             style={[
-                                styles.tabContainer,
-                                !canUseGlass && styles.tabPillFallback,
+                                {
+                                    paddingTop: 8,
+                                    paddingBottom: 16,
+                                    transformOrigin: "center bottom",
+                                },
+                                heroMotion,
                             ]}
                         >
-                            {(["data", "details"] as const).map((tab) => {
-                                const selected = selectedTab === tab;
-                                return (
-                                    <Pressable
-                                        key={tab}
-                                        testID={`result-tab-${tab}`}
-                                        accessibilityRole="tab"
-                                        accessibilityLabel={getLabel(
-                                            tab === "data"
-                                                ? "data"
-                                                : "security",
-                                            lang,
-                                        )}
-                                        accessibilityState={{ selected }}
-                                        onPress={() => setSelectedTab(tab)}
-                                        style={[
-                                            styles.tabPill,
-                                            selected && styles.tabPillActive,
-                                        ]}
-                                    >
-                                        <Ionicons
-                                            name={
-                                                tab === "data"
-                                                    ? "document-text-outline"
-                                                    : "information-circle-outline"
-                                            }
-                                            size={24}
-                                            color={
-                                                selected
-                                                    ? c.primary
-                                                    : c.textSecondary
-                                            }
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.tabLabel,
-                                                selected &&
-                                                    styles.tabLabelActive,
-                                            ]}
-                                        >
-                                            {getLabel(
-                                                tab === "data"
-                                                    ? "data"
-                                                    : "security",
-                                                lang,
-                                            )}
-                                        </Text>
-                                    </Pressable>
-                                );
-                            })}
-                        </TabBarSurface>
-                    </View>
-                </View>
-                <View style={[styles.readableContent, { maxWidth: 760 }]}>
-                    <View>
-                        {selectedTab === "data" && (
-                            <View testID="result-data-panel">
-                                <Section
-                                    title={getLabel("data", lang)}
-                                    icon={
-                                        <Ionicons
-                                            name="document-text-outline"
-                                            size={20}
-                                            color={c.textPrimary}
-                                            style={{
-                                                marginRight: theme.space8,
-                                            }}
-                                        />
-                                    }
+                            {result.testdata && (
+                                <View style={styles.testdataBanner}>
+                                    <Text style={styles.testdataBannerText}>
+                                        {getLabel("testdata", lang)}
+                                    </Text>
+                                </View>
+                            )}
+                            {/* Hero section - centered document info and status */}
+                            <View style={styles.heroSection}>
+                                <Text
+                                    selectable
+                                    accessibilityRole="header"
+                                    style={styles.documentTitle}
                                 >
-                                    <View style={styles.sectionContent}>
-                                        {dataRows}
-                                    </View>
-                                </Section>
+                                    {documentType}
+                                </Text>
+                                <StatusBadge
+                                    status={securityStatus}
+                                    lang={lang}
+                                />
                             </View>
-                        )}
-                        {selectedTab === "details" && (
-                            <View testID="result-details-panel">
-                                {/* Header information section */}
-                                <Section
-                                    title={getLabel("header", lang)}
-                                    icon={
-                                        <Ionicons
-                                            name="browsers-outline"
-                                            size={20}
-                                            color={c.textPrimary}
-                                            style={{
-                                                marginRight: theme.space8,
-                                            }}
-                                        />
-                                    }
+                        </Animated.View>
+                    </View>
+                    <View
+                        onLayout={(event) =>
+                            setTabsHeight(event.nativeEvent.layout.height)
+                        }
+                    >
+                        <View style={styles.stickyTabs}>
+                            <View
+                                style={[
+                                    styles.readableContent,
+                                    { maxWidth: 760 },
+                                ]}
+                            >
+                                <TabBarSurface
+                                    {...(canUseGlass
+                                        ? {
+                                              glassEffectStyle:
+                                                  "regular" as const,
+                                              colorScheme: scheme,
+                                              isInteractive: true,
+                                          }
+                                        : {})}
+                                    style={[
+                                        styles.tabContainer,
+                                        !canUseGlass && styles.tabPillFallback,
+                                    ]}
                                 >
-                                    <View style={styles.sectionContent}>
-                                        {headerRows}
-                                    </View>
-                                </Section>
-
-                                {/* Signature section */}
-                                <Section
-                                    title={getLabel("signer", lang)}
-                                    icon={
-                                        <Ionicons
-                                            name={
-                                                securityStatus === "valid"
-                                                    ? "shield-checkmark"
-                                                    : securityStatus ===
-                                                        "invalid"
-                                                      ? "shield"
-                                                      : "shield-half"
-                                            }
-                                            size={20}
-                                            color={
-                                                securityStatus === "valid"
-                                                    ? theme.color.success
-                                                    : securityStatus ===
-                                                        "invalid"
-                                                      ? theme.color.error
-                                                      : theme.color.warning
-                                            }
-                                            style={{
-                                                marginRight: theme.space8,
-                                            }}
-                                        />
-                                    }
-                                >
-                                    {result.signer ? (
-                                        <View style={styles.sectionContent}>
-                                            {signerRows}
-                                        </View>
-                                    ) : (
-                                        <Text style={styles.noSignerText}>
-                                            {getLabel(
-                                                "sign_not_verified",
-                                                lang,
-                                            )}
-                                        </Text>
+                                    {(["data", "details"] as const).map(
+                                        (tab) => {
+                                            const selected =
+                                                selectedTab === tab;
+                                            return (
+                                                <Pressable
+                                                    key={tab}
+                                                    testID={`result-tab-${tab}`}
+                                                    accessibilityRole="tab"
+                                                    accessibilityLabel={getLabel(
+                                                        tab === "data"
+                                                            ? "data"
+                                                            : "security",
+                                                        lang,
+                                                    )}
+                                                    accessibilityState={{
+                                                        selected,
+                                                    }}
+                                                    onPress={() =>
+                                                        setSelectedTab(tab)
+                                                    }
+                                                    style={[
+                                                        styles.tabPill,
+                                                        selected &&
+                                                            styles.tabPillActive,
+                                                    ]}
+                                                >
+                                                    <Ionicons
+                                                        name={
+                                                            tab === "data"
+                                                                ? "document-text-outline"
+                                                                : "information-circle-outline"
+                                                        }
+                                                        size={24}
+                                                        color={
+                                                            selected
+                                                                ? c.primary
+                                                                : c.textSecondary
+                                                        }
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.tabLabel,
+                                                            selected &&
+                                                                styles.tabLabelActive,
+                                                        ]}
+                                                    >
+                                                        {getLabel(
+                                                            tab === "data"
+                                                                ? "data"
+                                                                : "security",
+                                                            lang,
+                                                        )}
+                                                    </Text>
+                                                </Pressable>
+                                            );
+                                        },
                                     )}
-                                </Section>
-
-                                {/* Compliance section */}
-                                <Section
-                                    title={getLabel("standard", lang)}
-                                    icon={
-                                        <Ionicons
-                                            name="checkmark-done-circle-outline"
-                                            size={20}
-                                            color={c.textPrimary}
-                                            style={{
-                                                marginRight: theme.space8,
-                                            }}
-                                        />
-                                    }
-                                >
-                                    <View style={styles.sectionContent}>
-                                        <AttributeRow
-                                            label={getLabel("compliance", lang)}
-                                            value={get_standard(
-                                                result.vds_standard,
-                                            )}
-                                            index={0}
-                                        />
-                                    </View>
-                                </Section>
+                                </TabBarSurface>
                             </View>
-                        )}
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
+                </Animated.View>
+            </View>
 
             <Host colorScheme={scheme} style={{ position: "absolute" }}>
                 <BottomSheet
@@ -1248,10 +1319,33 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                     isPresented={shareMenuVisible}
                     onDismiss={closeShareMenu}
                     containerColor={c.background}
+                    contentPadding={{ top: 32, left: 24, right: 24, bottom: 0 }}
+                    modifiers={
+                        Platform.OS === "ios"
+                            ? [
+                                  ignoreSafeArea({
+                                      regions: "container",
+                                      edges: "horizontal",
+                                  }),
+                              ]
+                            : undefined
+                    }
                 >
                     <Column
                         spacing={16}
                         style={{ paddingBottom: 24 }}
+                        modifiers={
+                            Platform.OS === "ios"
+                                ? [
+                                      frame({
+                                          maxWidth: Infinity,
+                                          alignment: "leading",
+                                      }),
+                                  ]
+                                : Platform.OS === "android"
+                                  ? [fillMaxWidth()]
+                                  : undefined
+                        }
                         onDisappear={runPendingShare}
                     >
                         <NativeText
@@ -1283,8 +1377,22 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                         <NativeText textStyle={{ color: c.textSecondary }}>
                             {getLabel("share_json_description", lang)}
                         </NativeText>
-                        <Row alignment="center" style={{ paddingTop: 8 }}>
-                            <Spacer flexible />
+                        <Column
+                            alignment="center"
+                            style={{ paddingTop: 8 }}
+                            modifiers={
+                                Platform.OS === "ios"
+                                    ? [
+                                          frame({
+                                              maxWidth: Infinity,
+                                              alignment: "center",
+                                          }),
+                                      ]
+                                    : Platform.OS === "android"
+                                      ? [fillMaxWidth()]
+                                      : undefined
+                            }
+                        >
                             <Button
                                 testID="share-cancel"
                                 variant="outlined"
@@ -1295,8 +1403,7 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                 onPress={closeShareMenu}
                                 label={getLabel("cancel", lang)}
                             />
-                            <Spacer flexible />
-                        </Row>
+                        </Column>
                     </Column>
                 </BottomSheet>
             </Host>
