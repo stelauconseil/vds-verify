@@ -152,6 +152,19 @@ without changing the global Xcode selection (adjust the path if necessary):
 DEVELOPER_DIR="$HOME/Downloads/Xcode.app/Contents/Developer" npm run ios
 ```
 
+If the simulator reports a Worklets JavaScript/native version mismatch, rebuild
+the development app installed on it:
+
+```sh
+DEVELOPER_DIR="$HOME/Downloads/Xcode.app/Contents/Developer" npm run ios -- --rebuild
+```
+
+`--rebuild` clears only the selected platform's local build fingerprint before
+running Expo's build planner. It preserves simulator data and the other platform's
+build record. This is useful when switching to a simulator with an older app;
+restarting Metro alone cannot update its native Worklets runtime. Android supports
+the same recovery with `npm run android -- --rebuild`.
+
 The `postinstall` workaround for ExpoModulesJSI 58.0.2 / 58.0.3 preserves this Xcode
 selection in its nested build and handles the Swift C++ interface cleanup.
 If compilation reports `cannot find type '__ObjC::expo' in scope`, ensure the postinstall script ran after dependency installation. It supports ExpoModulesJSI 58.0.2 and 58.0.3; a different version requires checking the upstream script again.
