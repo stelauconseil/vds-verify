@@ -31,7 +31,10 @@ import {
     Host,
     BottomSheet,
     Column,
-    Button,
+    ListItem,
+    Row,
+    Spacer,
+    RNHostView,
     Text as NativeText,
 } from "@expo/ui";
 import { frame, ignoreSafeArea } from "@expo/ui/swift-ui/modifiers";
@@ -1275,19 +1278,6 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                                             styles.tabPillActive,
                                                     ]}
                                                 >
-                                                    <Ionicons
-                                                        name={
-                                                            tab === "data"
-                                                                ? "document-text-outline"
-                                                                : "information-circle-outline"
-                                                        }
-                                                        size={24}
-                                                        color={
-                                                            selected
-                                                                ? c.primary
-                                                                : c.textSecondary
-                                                        }
-                                                    />
                                                     <Text
                                                         style={[
                                                             styles.tabLabel,
@@ -1318,8 +1308,8 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                     testID="share-sheet"
                     isPresented={shareMenuVisible}
                     onDismiss={closeShareMenu}
-                    containerColor={c.background}
-                    contentPadding={{ top: 32, left: 24, right: 24, bottom: 0 }}
+                    containerColor={c.backgroundSecondary}
+                    contentPadding={{ top: 24, left: 20, right: 20, bottom: 0 }}
                     modifiers={
                         Platform.OS === "ios"
                             ? [
@@ -1348,44 +1338,55 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                         }
                         onDisappear={runPendingShare}
                     >
-                        <NativeText
-                            textStyle={{
-                                fontSize: 22,
-                                fontWeight: "600",
-                                color: c.textPrimary,
-                            }}
-                        >
-                            {getLabel("share", lang)}
-                        </NativeText>
-                        <Button
-                            testID="share-pdf"
-                            variant="outlined"
-                            disabled={isSharing}
-                            onPress={handleSharePdf}
-                            label={getLabel("share_as_pdf", lang)}
-                        />
-                        <NativeText textStyle={{ color: c.textSecondary }}>
-                            {getLabel("share_pdf_description", lang)}
-                        </NativeText>
-                        <Button
-                            testID="share-json"
-                            variant="outlined"
-                            disabled={isSharing}
-                            onPress={handleShareJson}
-                            label={getLabel("share_as_json", lang)}
-                        />
-                        <NativeText textStyle={{ color: c.textSecondary }}>
-                            {getLabel("share_json_description", lang)}
-                        </NativeText>
+                        <Row alignment="center" spacing={16}>
+                            <NativeText
+                                textStyle={{
+                                    fontSize: 20,
+                                    fontWeight: "600",
+                                    color: c.textPrimary,
+                                }}
+                            >
+                                {getLabel("share", lang)}
+                            </NativeText>
+                            <Spacer flexible />
+                            <RNHostView matchContents>
+                                <Pressable
+                                    testID="share-close"
+                                    accessibilityRole="button"
+                                    accessibilityLabel={getLabel("close", lang)}
+                                    onPress={closeShareMenu}
+                                    style={({ pressed }) => ({
+                                        width: 44,
+                                        height: 44,
+                                        borderRadius: 22,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        backgroundColor: c.border,
+                                        opacity: pressed ? 0.6 : 1,
+                                    })}
+                                >
+                                    <Ionicons
+                                        name="close"
+                                        size={22}
+                                        color={c.textSecondary}
+                                        accessible={false}
+                                    />
+                                </Pressable>
+                            </RNHostView>
+                        </Row>
                         <Column
-                            alignment="center"
-                            style={{ paddingTop: 8 }}
+                            spacing={16}
+                            style={{
+                                padding: 20,
+                                borderRadius: 16,
+                                backgroundColor: c.background,
+                            }}
                             modifiers={
                                 Platform.OS === "ios"
                                     ? [
                                           frame({
                                               maxWidth: Infinity,
-                                              alignment: "center",
+                                              alignment: "leading",
                                           }),
                                       ]
                                     : Platform.OS === "android"
@@ -1393,16 +1394,69 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                       : undefined
                             }
                         >
-                            <Button
-                                testID="share-cancel"
-                                variant="outlined"
-                                style={{
-                                    paddingHorizontal: 16,
-                                    paddingVertical: 8,
-                                }}
-                                onPress={closeShareMenu}
-                                label={getLabel("cancel", lang)}
-                            />
+                            <ListItem
+                                testID="share-pdf"
+                                onPress={isSharing ? undefined : handleSharePdf}
+                                colors={{ containerColor: c.background }}
+                                supportingText={
+                                    <NativeText
+                                        textStyle={{
+                                            fontSize: 14,
+                                            color: c.textSecondary,
+                                        }}
+                                    >
+                                        {getLabel(
+                                            "share_pdf_description",
+                                            lang,
+                                        )}
+                                    </NativeText>
+                                }
+                            >
+                                <NativeText
+                                    textStyle={{
+                                        fontSize: 17,
+                                        fontWeight: "600",
+                                        color: c.textPrimary,
+                                    }}
+                                >
+                                    PDF
+                                </NativeText>
+                            </ListItem>
+                            <Row
+                                style={{ height: 1, backgroundColor: c.border }}
+                            >
+                                <Spacer flexible />
+                            </Row>
+                            <ListItem
+                                testID="share-json"
+                                onPress={
+                                    isSharing ? undefined : handleShareJson
+                                }
+                                colors={{ containerColor: c.background }}
+                                supportingText={
+                                    <NativeText
+                                        textStyle={{
+                                            fontSize: 14,
+                                            color: c.textSecondary,
+                                        }}
+                                    >
+                                        {getLabel(
+                                            "share_json_description",
+                                            lang,
+                                        )}
+                                    </NativeText>
+                                }
+                            >
+                                <NativeText
+                                    textStyle={{
+                                        fontSize: 17,
+                                        fontWeight: "600",
+                                        color: c.textPrimary,
+                                    }}
+                                >
+                                    JSON
+                                </NativeText>
+                            </ListItem>
                         </Column>
                     </Column>
                 </BottomSheet>
@@ -1500,7 +1554,7 @@ function makeStyles(c: Colors) {
             maxWidth: 360,
             marginTop: theme.space8,
             padding: 5,
-            borderRadius: 40,
+            borderRadius: 28,
             borderCurve: "continuous",
             gap: theme.space4,
         },
@@ -1511,10 +1565,10 @@ function makeStyles(c: Colors) {
         },
         tabPill: {
             flex: 1,
-            borderRadius: 35,
+            borderRadius: 23,
             borderCurve: "continuous",
             paddingVertical: theme.space8,
-            minHeight: 60,
+            minHeight: 44,
             paddingHorizontal: theme.space12,
             gap: theme.space4,
             alignItems: "center",
@@ -1524,7 +1578,7 @@ function makeStyles(c: Colors) {
             backgroundColor: c.border,
         },
         tabLabel: {
-            fontSize: theme.fontSize12,
+            fontSize: theme.fontSize14,
             fontWeight: "600",
             color: c.textSecondary,
             textAlign: "center",
