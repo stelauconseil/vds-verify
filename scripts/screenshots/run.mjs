@@ -9,7 +9,7 @@ const env = { ...process.env, MAESTRO_CLI_NO_ANALYTICS: "1", MAESTRO_CLI_ANALYSI
 const maestro = process.env.MAESTRO_BIN || (existsSync(path.join(homedir(), ".maestro/bin/maestro")) ? path.join(homedir(), ".maestro/bin/maestro") : "maestro");
 function run(command, args, capture = false) {
     const result = spawnSync(command, args, { env, encoding: "utf8", stdio: capture ? "pipe" : "inherit" });
-    if (result.error || result.status !== 0) throw Error(result.error?.message || result.stderr || `${command} failed`);
+    if (result.error || result.status !== 0) throw Error(`${command} ${args.join(" ")} failed (exit ${result.status}, signal ${result.signal}).\n${result.error?.message || result.stderr || result.stdout || "See command output above."}`);
     return result.stdout;
 }
 for (const target of platform === "all" ? ["ios", "android"] : [platform]) {

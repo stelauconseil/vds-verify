@@ -6,8 +6,7 @@ name: Settings
     timeout: 15000
 - tapOn: "Settings|Paramètres"
 - extendedWaitUntil:
-    visible:
-      id: theme-picker
+    visible: "Thème|Theme"
     timeout: 15000
 - waitForAnimationToEnd
 - takeScreenshot: 05-settings
