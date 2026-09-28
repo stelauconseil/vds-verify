@@ -1,7 +1,9 @@
 ---
 lang: en
 alt_url: /privacy-policy-fr.html
-title: "VDS Verify Privacy Policy"
+title: "Privacy policy"
+description: "VDS Verify privacy policy: no personal data collected or stored, seals are processed in memory only."
+locale: en_US
 ---
 # VDS Verify Privacy Policy
 

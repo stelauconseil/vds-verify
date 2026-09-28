@@ -1,7 +1,9 @@
 ---
 lang: en
 alt_url: /use-policy-fr.html
-title: "VDS Verify Terms of Use"
+title: "Terms of use"
+description: "Terms of use of Stelau Conseil's VDS Verify service: reading and verifying Visible Digital Seals without collecting personal data."
+locale: en_US
 ---
 # VDS Verify Terms of Use
 

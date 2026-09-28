@@ -1,7 +1,8 @@
 ---
 lang: fr
 alt_url: /use-policy-en.html
-title: "Conditions d'Utilisation de VDS Verify"
+title: "Conditions d'utilisation"
+description: "Conditions d'utilisation du service VDS Verify de Stelau Conseil : lecture et vérification de Cachets Électroniques Visibles sans collecte de données personnelles."
 ---
 # Conditions d'Utilisation de VDS Verify
 

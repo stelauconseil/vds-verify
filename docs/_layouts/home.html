@@ -2,6 +2,38 @@
 layout: default
 ---
 {%- assign t = site.data.i18n[page.lang] -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.stelau.com/#org",
+      "name": "Stelau Conseil",
+      "url": "https://www.stelau.com",
+      "email": {{ site.contact_email | jsonify }}
+    },
+    {
+      "@type": "MobileApplication",
+      "@id": "{{ '/#app' | absolute_url }}",
+      "name": "VDS Verify",
+      "url": {{ page.url | absolute_url | jsonify }},
+      "inLanguage": "{{ page.lang }}",
+      "description": {{ page.description | jsonify }},
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "iOS, Android",
+      "image": {{ '/assets/icon-256.png' | absolute_url | jsonify }},
+      "screenshot": {{ '/assets/screens/identity-' | append: page.lang | append: '-light.webp' | absolute_url | jsonify }},
+      "downloadUrl": [{{ site.appstore_url | jsonify }}, {{ site.playstore_url | jsonify }}],
+      "sameAs": [{{ site.appstore_url | jsonify }}, {{ site.playstore_url | jsonify }}],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "publisher": { "@id": "https://www.stelau.com/#org" },
+      "featureList": {{ t.features.items | map: "title" | jsonify }},
+      "keywords": "CEV, VDS, Visible Digital Seal, Cachet Électronique Visible, 2D-Doc, ISO 22376, AFNOR XP Z42-105, France Identité, ANTS"
+    }
+  ]
+}
+</script>
 <section class="hero">
   <div class="container hero-inner">
     <div class="hero-copy">

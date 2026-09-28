@@ -12,6 +12,7 @@
     <link rel="apple-touch-icon" href="{{ '/assets/icon-256.png' | relative_url }}">
     <link rel="alternate" hreflang="{{ lang }}" href="{{ page.url | absolute_url }}">
     <link rel="alternate" hreflang="{% if lang == 'fr' %}en{% else %}fr{% endif %}" href="{{ other_url | absolute_url }}">
+    <link rel="alternate" hreflang="x-default" href="{% if lang == 'fr' %}{{ page.url | absolute_url }}{% else %}{{ other_url | absolute_url }}{% endif %}">
     <meta name="apple-itunes-app" content="app-id=6463440128">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

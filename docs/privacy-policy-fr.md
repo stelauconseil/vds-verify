@@ -1,7 +1,8 @@
 ---
 lang: fr
 alt_url: /privacy-policy-en.html
-title: "Politique de Confidentialité de VDS Verify"
+title: "Politique de confidentialité"
+description: "Politique de confidentialité de VDS Verify : aucune donnée personnelle collectée ni stockée, traitement des CEV en mémoire uniquement."
 ---
 # Politique de Confidentialité de VDS Verify
 

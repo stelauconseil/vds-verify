@@ -1,5 +1,6 @@
 title: VDS Verify
 lang: fr
+locale: fr_FR
 logo: /assets/icon-256.png
 url: https://vds-verify.stelau.com
 description: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV, 2D-Doc, ISO 22376, AFNOR XP Z42-105) et s'appuie sur notre API de création, signature, décodage et vérification.
