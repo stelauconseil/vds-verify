@@ -92,6 +92,8 @@ p { margin: 0 0 1em; }
 
 .badges { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 28px; }
 .badges img { height: 48px; width: auto; }
+.recognized { margin: 20px 0 0; font-size: 15px; color: var(--muted); }
+.recognized .icon { color: var(--brand); }
 /* The Play badge PNG carries its own transparent padding */
 .badges .badge-play { height: 71px; margin: -11px -9px; }
 

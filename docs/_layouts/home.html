@@ -41,6 +41,7 @@ layout: default
       <h1>{{ t.hero.title }}</h1>
       <p class="lead">{{ t.hero.lead }}</p>
       {% include store-badges.html t=t %}
+      <p class="recognized">{% include icon.html name="check" %} <a href="https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc#comment-lire-un-2d-doc-">{{ t.hero.recognized }}</a></p>
     </div>
     <div class="hero-visual">
       {% include screen.html name="identity" lang=page.lang alt=t.hero.alt loading="eager" %}

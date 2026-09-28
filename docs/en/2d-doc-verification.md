@@ -12,7 +12,7 @@ The **2D-Doc** is the signed Datamatrix barcode printed on French proofs of addr
 
 ## Technology proven at national scale
 
-VDS Verify is published by [Stelau](https://www.stelau.com). The French State uses Stelau's Visible Digital Seal (VDS) technology in production:
+VDS Verify is one of the [2D-Doc reader apps recognised by France Titres](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc#comment-lire-un-2d-doc-). It is published by [Stelau](https://www.stelau.com). The French State uses Stelau's Visible Digital Seal (VDS) technology in production:
 
 - **France Titres (ANTS)**: the [official 2D-Doc verification service](https://web.2ddoc.services.ants.gouv.fr/) uses our API.
 - **France Identité**: our verification SDK ships in the [France Identité](https://france-identite.gouv.fr/) app, used by more than 5 million people, and France Identité uses our API to issue the seals on its [identity proofs](https://france-identite.gouv.fr/justificatif/).

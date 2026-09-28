@@ -11,6 +11,7 @@ Key facts:
 - Verification steps: scan and decode the 2D code; fetch signing certificates from the ANTS Trusted List; check certificate validity and revocation; verify the seal signature; display decoded data and signature details.
 - Privacy: the decoding API processes seals in memory only, stores nothing and keeps no logs. Scan history stays on the user's phone.
 - Stelau also provides a VDS issuing API (create, encode, sign with qualified certificates, HSM compatible, manifest management) and a mobile verification SDK.
+- Recognised by France Titres (ANTS) as a 2D-Doc reader app: https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc#comment-lire-un-2d-doc-
 - Production references: Stelau's verification SDK ships in the France Identité app (5M+ users); Stelau's API is the one used by France Identité to issue its VDS (identity proofs, SNCF face-to-face checks) and by the official France Titres (ANTS) 2D-Doc verification service (https://web.2ddoc.services.ants.gouv.fr/).
 
 ## Pages

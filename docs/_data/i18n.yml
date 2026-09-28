@@ -27,6 +27,7 @@ fr:
         title: Vérifiez un 2D-Doc ou un CEV <span>en un scan.</span>
         lead: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV) apposés sur les documents officiels, factures et justificatifs, et contrôle leur signature auprès de la liste de confiance de l'ANTS.
         alt: Écran de résultat de VDS Verify affichant un CEV valide
+        recognized: Application reconnue par France Titres (ANTS)
     trust: Notre SDK de vérification est intégré à l'app France Identité (plus de 5 millions d'utilisateurs) et notre API est celle utilisée par France Identité pour générer ses CEV et par le service de vérification 2D-Doc de France Titres (ANTS).
     trust_link: En savoir plus
     features:
@@ -131,6 +132,7 @@ en:
         title: Verify a 2D-Doc or VDS <span>in one scan.</span>
         lead: VDS Verify decodes and verifies Visible Digital Seals (VDS) printed on official documents, bills and certificates, and checks their signature against the ANTS trusted list.
         alt: VDS Verify result screen showing a valid seal
+        recognized: App recognised by France Titres (ANTS)
     trust: Our verification SDK ships in the France Identité app (5M+ users), and our API is the one used by France Identité to issue its seals and by the France Titres (ANTS) 2D-Doc verification service.
     trust_link: Learn more
     features:

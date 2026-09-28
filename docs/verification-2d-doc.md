@@ -11,7 +11,7 @@ Le **2D-Doc** est le code-barres Datamatrix signé que l'on trouve sur les justi
 
 ## Une technologie éprouvée à l'échelle nationale
 
-VDS Verify est édité par [Stelau](https://www.stelau.com), dont la technologie de Cachets Électroniques Visibles (CEV) est utilisée en production par l'État :
+VDS Verify fait partie des [applications reconnues par France Titres](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc#comment-lire-un-2d-doc-) pour lire les 2D-Doc. Elle est éditée par [Stelau](https://www.stelau.com), dont la technologie de Cachets Électroniques Visibles (CEV) est utilisée en production par l'État :
 
 - **France Titres (ANTS)** : le [service officiel de vérification 2D-Doc](https://web.2ddoc.services.ants.gouv.fr/) utilise notre API.
 - **France Identité** : notre SDK de vérification est intégré à l'application [France Identité](https://france-identite.gouv.fr/), utilisée par plus de 5 millions de personnes, et notre API génère les CEV de ses [justificatifs d'identité](https://france-identite.gouv.fr/justificatif/).
