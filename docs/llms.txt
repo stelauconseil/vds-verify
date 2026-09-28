@@ -10,12 +10,15 @@ Key facts:
 - Typical documents: French national ID card, France Identité single-use identity proof ("justificatif d'identité"), France Identité certified digital identity request, restricted information statement (RIR), driving entitlement certificate (ADCS), recreational boat licence, Crit'Air sticker, energy and phone bills.
 - Verification steps: scan and decode the 2D code; fetch signing certificates from the ANTS Trusted List; check certificate validity and revocation; verify the seal signature; display decoded data and signature details.
 - Privacy: the decoding API processes seals in memory only, stores nothing and keeps no logs. Scan history stays on the user's phone.
-- Stelau also provides a VDS issuing API (create, encode, sign with qualified certificates, HSM compatible, manifest management). It is used in production by the French Ministry of the Interior for France Identité identity proofs and face-to-face identity checks with SNCF.
+- Stelau also provides a VDS issuing API (create, encode, sign with qualified certificates, HSM compatible, manifest management) and a mobile verification SDK.
+- Production references: Stelau's verification SDK ships in the France Identité app (5M+ users); Stelau's API is the one used by France Identité to issue its VDS (identity proofs, SNCF face-to-face checks) and by the official France Titres (ANTS) 2D-Doc verification service (https://web.2ddoc.services.ants.gouv.fr/).
 
 ## Pages
 
 - [Accueil (FR)](https://vds-verify.stelau.com/): présentation de l'application et de l'API de création de CEV
 - [Home (EN)](https://vds-verify.stelau.com/en/): app and VDS issuing API overview
+- [Vérification 2D-Doc (FR)](https://vds-verify.stelau.com/verification-2d-doc.html): comment vérifier un 2D-Doc, normes, documents concernés, API et SDK
+- [2D-Doc verification (EN)](https://vds-verify.stelau.com/en/2d-doc-verification.html): how to verify a 2D-Doc, standards, documents, API and SDK
 - [FAQ (FR)](https://vds-verify.stelau.com/faq-fr.html): qu'est-ce qu'un CEV, documents pris en charge, fonctionnement, confidentialité
 - [FAQ (EN)](https://vds-verify.stelau.com/faq-en.html): what a VDS is, supported documents, how verification works, privacy
 

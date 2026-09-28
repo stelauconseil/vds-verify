@@ -104,7 +104,7 @@ p { margin: 0 0 1em; }
 
 /* Trust strip */
 .trust { border-block: 1px solid var(--border); background: var(--surface); }
-.trust p { margin: 0; padding: 18px 20px; text-align: center; color: var(--muted); font-size: 15px; }
+.trust p { max-width: 860px; margin: 0 auto; text-wrap: balance; padding: 18px 20px; text-align: center; color: var(--muted); font-size: 15px; }
 .trust .icon { color: var(--brand); margin-right: 4px; }
 .trust a { font-weight: 600; }
 

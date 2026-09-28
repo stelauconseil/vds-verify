@@ -11,8 +11,10 @@
     <link rel="icon" type="image/png" href="{{ '/assets/icon-256.png' | relative_url }}">
     <link rel="apple-touch-icon" href="{{ '/assets/icon-256.png' | relative_url }}">
     <link rel="alternate" hreflang="{{ lang }}" href="{{ page.url | absolute_url }}">
+    {%- if page.alt_url %}
     <link rel="alternate" hreflang="{% if lang == 'fr' %}en{% else %}fr{% endif %}" href="{{ other_url | absolute_url }}">
     <link rel="alternate" hreflang="x-default" href="{% if lang == 'fr' %}{{ page.url | absolute_url }}{% else %}{{ other_url | absolute_url }}{% endif %}">
+    {%- endif %}
     <meta name="apple-itunes-app" content="app-id=6463440128">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,6 +72,7 @@
           <p class="muted">{{ t.footer.tagline }}<br>{{ t.footer.by }} <a href="https://www.stelau.com">Stelau</a>.</p>
         </div>
         <nav aria-label="{{ t.footer.legal }}">
+          <a href="{{ t.guide | relative_url }}">{{ t.guide_label }}</a>
           <a href="{{ t.faq | relative_url }}">{{ t.nav.faq }}</a>
           <a href="{{ t.use_policy | relative_url }}">{{ t.footer.use_policy }}</a>
           <a href="{{ t.privacy_policy | relative_url }}">{{ t.footer.privacy_policy }}</a>
