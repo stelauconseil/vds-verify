@@ -1,8 +1,11 @@
-{% include nav.html %}
-
+---
+lang: fr
+alt_url: /use-policy-en.html
+title: "Conditions d'Utilisation de VDS Verify"
+---
 # Conditions d'Utilisation de VDS Verify
 
-_Date d'effet : [25/05/2025]_
+_Date d'effet : 25/05/2025_
 
 ## 1. Objet du Service
 
@@ -38,4 +41,4 @@ Nous nous réservons le droit de modifier ces conditions d'utilisation à tout m
 
 ## Contact
 
-Pour toute question ou préoccupation concernant ces conditions d'utilisation, veuillez nous contacter à l'adresse suivante : [privacy at stelau.com]
+Pour toute question ou préoccupation concernant ces conditions d'utilisation, veuillez nous contacter à l'adresse suivante : **privacy at stelau.com**

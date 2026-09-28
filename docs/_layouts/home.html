@@ -1,0 +1,99 @@
+---
+layout: default
+---
+{%- assign t = site.data.i18n[page.lang] -%}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ t.hero.eyebrow }}</p>
+      <h1>{{ t.hero.title }}</h1>
+      <p class="lead">{{ t.hero.lead }}</p>
+      {% include store-badges.html t=t %}
+    </div>
+    <div class="hero-visual">
+      {% include screen.html name="identity" lang=page.lang alt=t.hero.alt loading="eager" %}
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <p class="container">{% include icon.html name="shield" %} {{ t.trust }} <a href="https://france-identite.gouv.fr/">{{ t.trust_link }}</a>.</p>
+</section>
+
+<section id="features" class="section">
+  <div class="container">
+    <h2 class="section-title">{{ t.features.title }}</h2>
+    <div class="grid-4">
+      {%- for f in t.features.items %}
+      <div class="card">
+        <div class="card-icon">{% include icon.html name=f.icon %}</div>
+        <h3>{{ f.title }}</h3>
+        <p>{{ f.text }}</p>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="how" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">{{ t.how.title }}</h2>
+    <ol class="steps">
+      {%- for s in t.how.steps %}
+      <li><h3>{{ s.title }}</h3><p>{{ s.text }}</p></li>
+      {%- endfor %}
+    </ol>
+    <div class="gallery">
+      {%- for g in t.gallery %}
+      {% include screen.html name=g.src lang=page.lang alt=g.alt %}
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">{{ t.docs.title }}</h2>
+    <p class="section-lead">{{ t.docs.lead }}</p>
+    <ul class="chips">
+      {%- for d in t.docs.items %}
+      <li>{% include icon.html name="check" %}{{ d }}</li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+<section id="api" class="section section-dark">
+  <div class="container api">
+    <div>
+      <p class="eyebrow">{{ t.api.eyebrow }}</p>
+      <h2>{{ t.api.title }}</h2>
+      <p class="lead">{{ t.api.lead }}</p>
+      <ul class="checklist">
+        {%- for i in t.api.items %}
+        <li>{% include icon.html name="check" %}{{ i }}</li>
+        {%- endfor %}
+      </ul>
+      <h3>{{ t.api.refs_title }}</h3>
+      <ul class="refs">
+        {%- for r in t.api.refs %}
+        <li><a href="{{ r.url }}">{{ r.text }}</a></li>
+        {%- endfor %}
+      </ul>
+      <a class="button" href="mailto:{{ site.contact_email }}?subject=API%20CEV">{{ t.api.cta }} {% include icon.html name="arrow" %}</a>
+    </div>
+    <figure class="sample">
+      <img src="{{ '/assets/justificatif-identite.webp' | relative_url }}" alt="{{ t.api.sample_alt }}" width="1000" height="1414" loading="lazy">
+      <figcaption>{{ t.api.sample_caption }}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section cta">
+  <div class="container">
+    <img class="cta-icon" src="{{ '/assets/icon-256.png' | relative_url }}" alt="" width="72" height="72">
+    <h2>{{ t.cta.title }}</h2>
+    <p class="section-lead">{{ t.cta.text }}</p>
+    {% include store-badges.html t=t %}
+  </div>
+</section>

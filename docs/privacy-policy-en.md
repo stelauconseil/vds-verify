@@ -1,8 +1,11 @@
-{% include nav.html %}
-
+---
+lang: en
+alt_url: /privacy-policy-fr.html
+title: "VDS Verify Privacy Policy"
+---
 # VDS Verify Privacy Policy
 
-_Effective Date: [2023/05/25]_
+_Effective date: 2023/05/25_
 
 ## 1. Purpose of the Service
 
@@ -38,4 +41,4 @@ We reserve the right to modify these terms of use at any time. Any changes will 
 
 # 8. Contact
 
-If you have any questions or concerns about these terms of use, please contact us at [privacy at stelau.com].
+If you have any questions or concerns about this privacy policy, please contact us at **privacy at stelau.com**.

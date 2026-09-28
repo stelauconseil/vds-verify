@@ -1,11 +1,18 @@
 title: VDS Verify
-logo: assets/icon.png
-description: VDS Verify décode et vérifie les Cachets Electroniques Visibles - CEV. VDS Verify interagit avec notre API de fabrication, signature, décodage et vérification.
-# (EN) VDS Verify reads and verifies VDS (Visible Digital Seal). It sends the encoded data to our encode, sign, decode and verify API.
-show_downloads: false
-google_analytics:
-theme: jekyll-theme-minimal
+lang: fr
+logo: /assets/icon-256.png
+url: https://vds-verify.stelau.com
+description: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV, 2D-Doc, ISO 22376, AFNOR XP Z42-105) et s'appuie sur notre API de création, signature, décodage et vérification.
+contact_email: contact@stelau.com
+appstore_url: https://apps.apple.com/fr/app/vds-verify/id6463440128?itsct=apps_box_badge&itscg=30200
+playstore_url: https://play.google.com/store/apps/details?id=com.stelau.vdsverify
 include: [".well-known"]
+exclude: [Gemfile, Gemfile.lock, .sass-cache, vendor]
 plugins:
-  - jekyll-compress-images
+  - jekyll-seo-tag
   - jekyll-sitemap
+defaults:
+  - scope: { path: "" }
+    values: { layout: page, image: /assets/og-image.png }
+twitter:
+  card: summary_large_image

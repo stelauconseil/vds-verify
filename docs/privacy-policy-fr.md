@@ -1,8 +1,11 @@
-{% include nav.html %}
-
+---
+lang: fr
+alt_url: /privacy-policy-en.html
+title: "Politique de Confidentialité de VDS Verify"
+---
 # Politique de Confidentialité de VDS Verify
 
-_Date d'effet : [25/05/2025]_
+_Date d'effet : 25/05/2025_
 
 ## 1. Introduction
 
@@ -36,4 +39,4 @@ Nous nous réservons le droit de modifier cette politique de confidentialité à
 
 ## 7. Contact
 
-Si vous avez des questions ou des préoccupations concernant notre politique de confidentialité, veuillez nous contacter à [privacy at stelau.com].
+Si vous avez des questions ou des préoccupations concernant notre politique de confidentialité, veuillez nous contacter à **privacy at stelau.com**.

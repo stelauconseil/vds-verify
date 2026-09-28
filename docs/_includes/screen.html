@@ -1,0 +1,5 @@
+{%- assign base = '/assets/screens/' | append: include.name | append: '-' | append: include.lang -%}
+<div class="phone">
+  <img class="shot-light" src="{{ base | append: '-light.webp' | relative_url }}" alt="{{ include.alt }}" width="600" height="1305" loading="{{ include.loading | default: 'lazy' }}">
+  <img class="shot-dark" src="{{ base | append: '-dark.webp' | relative_url }}" alt="{{ include.alt }}" width="600" height="1305" loading="lazy">
+</div>

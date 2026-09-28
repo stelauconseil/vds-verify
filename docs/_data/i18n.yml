@@ -1,0 +1,195 @@
+fr:
+  nav:
+    features: Fonctionnalités
+    how: Fonctionnement
+    api: API CEV
+    faq: FAQ
+    contact: Contact
+  switch_label: English
+  theme_toggle: Basculer le thème clair / sombre
+  home: /
+  faq: /faq-fr.html
+  use_policy: /use-policy-fr.html
+  privacy_policy: /privacy-policy-fr.html
+  footer:
+    legal: Informations légales
+    use_policy: Conditions d'utilisation
+    privacy_policy: Politique de confidentialité
+    tagline: Décodage et vérification de Cachets Électroniques Visibles.
+    by: Une solution
+  badges:
+    appstore: Télécharger dans l'App Store
+    playstore: Disponible sur Google Play
+  hero:
+    eyebrow: 2D-Doc · ISO 22376 · AFNOR XP Z42-105
+    title: Vérifiez l'authenticité d'un document <span>en un scan.</span>
+    lead: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV) apposés sur les documents officiels, factures et justificatifs, et contrôle leur signature auprès de la liste de confiance de l'ANTS.
+    alt: Écran de résultat de VDS Verify affichant un CEV valide
+  trust: Notre technologie de création de CEV est utilisée en production par le Ministère de l'Intérieur pour
+  trust_link: France Identité
+  features:
+    title: Tout ce qu'il faut pour faire confiance à un document
+    items:
+      - icon: scan
+        title: Scan instantané
+        text: Lecture des Datamatrix et QR Codes directement avec l'appareil photo, même sur un document imprimé ou affiché à l'écran.
+      - icon: shield
+        title: Signature vérifiée
+        text: Contrôle de la signature électronique et de la validité du certificat (dates, révocation) via la Trusted List de l'ANTS.
+      - icon: doc
+        title: Données lisibles
+        text: Les données du cachet sont décodées et présentées clairement, avec le détail technique de l'en-tête et de la signature.
+      - icon: lock
+        title: Aucune donnée conservée
+        text: Le décodage est effectué en mémoire, sans stockage ni journalisation côté serveur. L'historique reste sur votre téléphone.
+  how:
+    title: Comment ça marche
+    steps:
+      - title: Scannez
+        text: Visez le code 2D-Doc ou CEV du document.
+      - title: Liste de confiance
+        text: Les certificats de signature sont récupérés auprès de l'ANTS.
+      - title: Vérification
+        text: Validité du certificat et signature du cachet sont contrôlées.
+      - title: Résultat
+        text: Statut du CEV, données décodées et informations de signature.
+  gallery:
+    - src: history
+      alt: Historique des documents vérifiés
+    - src: identity
+      alt: Justificatif d'identité vérifié
+    - src: details
+      alt: Détails techniques et signature du CEV
+    - src: driving-record
+      alt: Relevé d'information du permis de conduire
+  docs:
+    title: Documents pris en charge
+    lead: Tous les 2D-Doc et CEV conformes aux normes AFNOR XP Z42-105 et ISO 22376:2023, notamment
+    items:
+      - Carte nationale d'identité
+      - Justificatif d'identité France Identité
+      - Relevé d'information restreint (RIR)
+      - Attestation de droits à conduire (ADCS)
+      - Permis bateau de plaisance
+      - Vignette Crit'Air
+      - Factures d'énergie
+      - Factures de téléphone
+  api:
+    eyebrow: Pour les organisations
+    title: Créez et signez vos propres CEV
+    lead: VDS Verify s'appuie sur notre API de création, encodage, signature, décodage et vérification de CEV. C'est aujourd'hui la seule solution de création de CEV aux formats AFNOR et ISO utilisée en production.
+    items:
+      - Conformité ISO 22376:2023 et AFNOR XP Z42-105
+      - Gestion des manifests
+      - Gestion des certificats et des clés de signature
+      - Signature avec certificat qualifié, compatible HSM
+    refs_title: Ils l'utilisent
+    refs:
+      - text: Le justificatif d'identité de l'application France Identité
+        url: https://france-identite.gouv.fr/justificatif/
+      - text: La présentation de l'identité en face à face avec la SNCF
+        url: https://france-identite.gouv.fr/actualite/experimentation-SNCF/
+    cta: Nous contacter
+    sample_alt: Exemple de justificatif d'identité France Identité portant un CEV
+    sample_caption: Justificatif d'identité France Identité, signé par notre solution.
+  cta:
+    title: Téléchargez VDS Verify
+    text: Gratuit, sans compte, sur iPhone et Android.
+
+en:
+  nav:
+    features: Features
+    how: How it works
+    api: VDS API
+    faq: FAQ
+    contact: Contact
+  switch_label: Français
+  theme_toggle: Toggle light / dark theme
+  home: /en/
+  faq: /faq-en.html
+  use_policy: /use-policy-en.html
+  privacy_policy: /privacy-policy-en.html
+  footer:
+    legal: Legal
+    use_policy: Terms of use
+    privacy_policy: Privacy policy
+    tagline: Visible Digital Seal decoding and verification.
+    by: A solution by
+  badges:
+    appstore: Download on the App Store
+    playstore: Get it on Google Play
+  hero:
+    eyebrow: 2D-Doc · ISO 22376 · AFNOR XP Z42-105
+    title: Verify a document's authenticity <span>in one scan.</span>
+    lead: VDS Verify decodes and verifies Visible Digital Seals (VDS) printed on official documents, bills and certificates, and checks their signature against the ANTS trusted list.
+    alt: VDS Verify result screen showing a valid seal
+  trust: Our VDS issuing technology is used in production by the French Ministry of the Interior for
+  trust_link: France Identité
+  features:
+    title: Everything you need to trust a document
+    items:
+      - icon: scan
+        title: Instant scan
+        text: Reads Datamatrix and QR Codes straight from the camera, on paper or on screen.
+      - icon: shield
+        title: Verified signature
+        text: Checks the electronic signature and the certificate's validity (dates, revocation) against the ANTS Trusted List.
+      - icon: doc
+        title: Readable data
+        text: Seal data is decoded and clearly displayed, with full technical details of the header and signature.
+      - icon: lock
+        title: Nothing stored
+        text: Decoding happens in memory, with no server-side storage or logging. History stays on your phone.
+  how:
+    title: How it works
+    steps:
+      - title: Scan
+        text: Point the camera at the document's 2D-Doc or VDS code.
+      - title: Trusted list
+        text: Signing certificates are retrieved from ANTS.
+      - title: Verification
+        text: Certificate validity and seal signature are checked.
+      - title: Result
+        text: Seal status, decoded data and signature information.
+  gallery:
+    - src: history
+      alt: History of verified documents
+    - src: identity
+      alt: Verified identity proof
+    - src: details
+      alt: Seal technical details and signature
+    - src: driving-record
+      alt: Driving licence record
+  docs:
+    title: Supported documents
+    lead: Every 2D-Doc and every VDS compliant with AFNOR XP Z42-105 and ISO 22376:2023, including
+    items:
+      - French national ID card
+      - France Identité identity proof
+      - Restricted information statement (RIR)
+      - Driving entitlement certificate (ADCS)
+      - Recreational boat licence
+      - Crit'Air sticker
+      - Energy bills
+      - Phone bills
+  api:
+    eyebrow: For organisations
+    title: Issue and sign your own seals
+    lead: VDS Verify is built on our API for creating, encoding, signing, decoding and verifying VDS. It is currently the only AFNOR and ISO VDS issuing solution used in production.
+    items:
+      - ISO 22376:2023 and AFNOR XP Z42-105 compliant
+      - Manifest management
+      - Certificate and signing key management
+      - Qualified certificate signing, HSM compatible
+    refs_title: Who uses it
+    refs:
+      - text: The identity proof of the France Identité app
+        url: https://france-identite.gouv.fr/justificatif/
+      - text: Face-to-face identity checks with SNCF
+        url: https://france-identite.gouv.fr/actualite/experimentation-SNCF/
+    cta: Contact us
+    sample_alt: Sample France Identité identity proof carrying a VDS
+    sample_caption: France Identité identity proof, signed by our solution.
+  cta:
+    title: Get VDS Verify
+    text: Free, no account needed, on iPhone and Android.

@@ -301,6 +301,7 @@ npm run screenshots:build:ios
 npm run screenshots:ios
 
 # Start an Android emulator, then find its ID with adb devices.
+adb devices
 export ANDROID_DEVICE="emulator-5554"
 npm run screenshots:build:android
 npm run screenshots:android
