@@ -1,5 +1,6 @@
+import SettingsPicker from "@/components/SettingsPicker";
 import { filterHistory, type HistoryFilter } from "@/types/history-filter";
-import { Host, TextInput, Picker, type TextInputRef } from "@expo/ui";
+import { Host, TextInput, type TextInputRef } from "@expo/ui";
 import { screenshotsEnabled } from "@/screenshots";
 import { testResults } from "@/testdata";
 import { getLocalizedDocumentType } from "@/types/document-type";
@@ -583,24 +584,20 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                         {displayedHistory.length} / {history.length}
                     </Text>
                     <Host matchContents colorScheme={scheme}>
-                        <Picker<HistoryFilter>
+                        <SettingsPicker<HistoryFilter>
                             testID="history-filter"
-                            selectedValue={filter}
-                            onValueChange={setFilter}
-                        >
-                            {(["all", "pinned", "review"] as const).map(
-                                (value) => (
-                                    <Picker.Item
-                                        key={value}
-                                        value={value}
-                                        label={getLabel(
-                                            `history_filter_${value}`,
-                                            lang,
-                                        )}
-                                    />
-                                ),
+                            value={filter}
+                            onChange={setFilter}
+                            options={(["all", "pinned", "review"] as const).map(
+                                (value) => ({
+                                    value,
+                                    label: getLabel(
+                                        `history_filter_${value}`,
+                                        lang,
+                                    ),
+                                }),
                             )}
-                        </Picker>
+                        />
                     </Host>
                     {(query.length > 0 || filter !== "all") && (
                         <Pressable

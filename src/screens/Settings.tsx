@@ -1,12 +1,12 @@
+import SettingsPicker from "@/components/SettingsPicker";
 import { ScreenHeading } from "@/components/screen-heading";
 import { FC, useEffect } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import {
     Host,
     FieldGroup,
     ListItem,
     Switch,
-    Picker,
     Row,
     Spacer,
     Text,
@@ -85,7 +85,8 @@ const SettingsView: FC<SettingsViewProps> = ({
                             width: "100%",
                             maxWidth: 760,
                             alignSelf: "center",
-                            marginBottom: insets.bottom,
+                            marginBottom:
+                                Platform.OS === "ios" ? insets.bottom : 0,
                         }}
                     >
                         <FieldGroup testID="settings-form">
@@ -95,42 +96,33 @@ const SettingsView: FC<SettingsViewProps> = ({
                                 <Row spacing={12} alignment="center">
                                     <Text>{getLabel("theme", lang)}</Text>
                                     <Spacer flexible />
-                                    <Picker<ColorSchemePref>
+                                    <SettingsPicker<ColorSchemePref>
                                         testID="theme-picker"
-                                        selectedValue={colorSchemePref}
-                                        onValueChange={setColorSchemePref}
-                                    >
-                                        {(
+                                        value={colorSchemePref}
+                                        onChange={setColorSchemePref}
+                                        options={(
                                             ["system", "light", "dark"] as const
-                                        ).map((value) => (
-                                            <Picker.Item
-                                                key={value}
-                                                value={value}
-                                                label={getLabel(
-                                                    `theme_${value}`,
-                                                    lang,
-                                                )}
-                                            />
-                                        ))}
-                                    </Picker>
+                                        ).map((value) => ({
+                                            value,
+                                            label: getLabel(
+                                                `theme_${value}`,
+                                                lang,
+                                            ),
+                                        }))}
+                                    />
                                 </Row>
                                 <Row spacing={12} alignment="center">
                                     <Text>{getLabel("language", lang)}</Text>
                                     <Spacer flexible />
-                                    <Picker
+                                    <SettingsPicker
                                         testID="language-picker"
-                                        selectedValue={lang}
-                                        onValueChange={setLang}
-                                    >
-                                        <Picker.Item
-                                            value="fr"
-                                            label="Français"
-                                        />
-                                        <Picker.Item
-                                            value="en"
-                                            label="English"
-                                        />
-                                    </Picker>
+                                        value={lang}
+                                        onChange={setLang}
+                                        options={[
+                                            { value: "fr", label: "Français" },
+                                            { value: "en", label: "English" },
+                                        ]}
+                                    />
                                 </Row>
                             </FieldGroup.Section>
                             <FieldGroup.Section
@@ -171,6 +163,9 @@ const SettingsView: FC<SettingsViewProps> = ({
                                 ).map((route) => (
                                     <ListItem
                                         key={route}
+                                        colors={{
+                                            containerColor: "transparent",
+                                        }}
                                         trailing="›"
                                         testID={`settings-${route}`}
                                         onPress={() =>
