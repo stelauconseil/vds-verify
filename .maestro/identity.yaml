@@ -21,3 +21,10 @@ name: Identity
     timeout: 10000
 - waitForAnimationToEnd
 - takeScreenshot: 03-details
+- tapOn: "Partager|Share"
+- extendedWaitUntil:
+    visible:
+      id: share-pdf
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: 06-share

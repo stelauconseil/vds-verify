@@ -46,8 +46,8 @@ for (const target of platform === "all" ? ["ios", "android"] : [platform]) {
         }
         if (target === "ios") run("xcrun", ["simctl", "status_bar", device, "clear"]);
     }
-    const files = readdirSync(root, { recursive: true }).filter(f => /0[1-5]-.*\.png$/.test(f));
-    const expected = 5 * (process.env.SCREENSHOT_LANGUAGES || "fr,en").split(",").length * (process.env.SCREENSHOT_THEMES || "light,dark").split(",").length;
+    const files = readdirSync(root, { recursive: true }).filter(f => /0[1-6]-.*\.png$/.test(f));
+    const expected = 6 * (process.env.SCREENSHOT_LANGUAGES || "fr,en").split(",").length * (process.env.SCREENSHOT_THEMES || "light,dark").split(",").length;
     if (files.length !== expected) throw Error(`Expected ${expected} captures, found ${files.length} in ${root}`);
     const manifest = files.map(file => {
         const png = readFileSync(path.join(root, file));
