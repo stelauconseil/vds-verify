@@ -2,7 +2,7 @@
     "expo": {
         "name": "VDS Verify",
         "slug": "vds-verify",
-        "version": "2.7.0",
+        "version": "2.7.1",
         "orientation": "default",
         "icon": "./assets/icons/icon.png",
         "userInterfaceStyle": "automatic",
