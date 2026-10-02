@@ -128,7 +128,7 @@ p { margin: 0 0 1em; }
   background: var(--brand-soft); color: var(--brand); margin-bottom: 16px;
 }
 
-.steps { list-style: none; padding: 0; margin: 0 0 56px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
+.steps { list-style: none; padding: 0; margin: 0 0 56px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; counter-reset: step; }
 .steps li { counter-increment: step; position: relative; padding-top: 52px; }
 .steps li::before {
   content: counter(step); position: absolute; top: 0; left: 0;
@@ -143,7 +143,7 @@ p { margin: 0 0 1em; }
 .steps h3 { font-size: 1.05rem; }
 .steps p { color: var(--muted); font-size: 15px; margin: 0; }
 
-.gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.gallery { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
 .gallery .phone img { border-width: 6px; border-radius: 28px; box-shadow: var(--shadow); }
 
 .chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }

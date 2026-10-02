@@ -56,6 +56,8 @@ fr:
               text: Validité du certificat et signature du cachet sont contrôlées.
             - title: Résultat
               text: Statut du CEV, données décodées et informations de signature.
+            - title: Export
+              text: Partagez le résultat en PDF lisible ou en JSON structuré.
     gallery:
         - src: history
           alt: Historique des documents vérifiés
@@ -65,6 +67,8 @@ fr:
           alt: Détails techniques et signature du CEV
         - src: driving-record
           alt: Relevé d'information du permis de conduire
+        - src: share
+          alt: Export du résultat en PDF ou JSON
     docs:
         title: Documents pris en charge
         lead: Tous les 2D-Doc et CEV conformes aux normes AFNOR XP Z42-105 et ISO 22376:2023, notamment
@@ -161,6 +165,8 @@ en:
               text: Certificate validity and seal signature are checked.
             - title: Result
               text: Seal status, decoded data and signature information.
+            - title: Export
+              text: Share the result as a readable PDF or structured JSON.
     gallery:
         - src: history
           alt: History of verified documents
@@ -170,6 +176,8 @@ en:
           alt: Seal technical details and signature
         - src: driving-record
           alt: Driving licence record
+        - src: share
+          alt: Export the result as PDF or JSON
     docs:
         title: Supported documents
         lead: Every 2D-Doc and every VDS compliant with AFNOR XP Z42-105 and ISO 22376:2023, including

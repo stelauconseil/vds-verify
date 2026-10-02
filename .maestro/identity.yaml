@@ -28,3 +28,9 @@ name: Identity
     timeout: 10000
 - waitForAnimationToEnd
 - takeScreenshot: 06-share
+- tapOn:
+    id: share-close
+- extendedWaitUntil:
+    notVisible:
+      id: share-pdf
+    timeout: 10000
