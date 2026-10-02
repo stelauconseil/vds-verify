@@ -59,14 +59,14 @@ fr:
             - title: Export
               text: Partagez le résultat en PDF lisible ou en JSON structuré.
     gallery:
-        - src: history
-          alt: Historique des documents vérifiés
         - src: identity
           alt: Justificatif d'identité vérifié
         - src: details
           alt: Détails techniques et signature du CEV
         - src: driving-record
           alt: Relevé d'information du permis de conduire
+        - src: history
+          alt: Historique des documents vérifiés
         - src: share
           alt: Export du résultat en PDF ou JSON
     docs:
@@ -168,14 +168,14 @@ en:
             - title: Export
               text: Share the result as a readable PDF or structured JSON.
     gallery:
-        - src: history
-          alt: History of verified documents
         - src: identity
           alt: Verified identity proof
         - src: details
           alt: Seal technical details and signature
         - src: driving-record
           alt: Driving licence record
+        - src: history
+          alt: History of verified documents
         - src: share
           alt: Export the result as PDF or JSON
     docs:
