@@ -1,4 +1,7 @@
 module.exports = ({ config }) => {
+    if (process.env.EAS_BUILD_PROFILE === "development") {
+        config.ios.entitlements["com.apple.developer.devicecheck.appattest-environment"] = "development";
+    }
     if (process.env.VDS_SCREENSHOTS !== "1") return config;
     return {
         ...config,

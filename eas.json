@@ -9,15 +9,20 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_VDS_API_URL": "http://172.20.10.2:8000"
+        "EXPO_PUBLIC_VDS_API_URL": "http://172.20.10.2:8000",
+        "EXPO_PUBLIC_GCP_PROJECT_NUMBER": "687658104"
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_GCP_PROJECT_NUMBER": "687658104"
+      }
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_VDS_API_URL": "https://api.vds-verify.stelau.com"
+        "EXPO_PUBLIC_VDS_API_URL": "https://api.vds-verify.stelau.com",
+        "EXPO_PUBLIC_GCP_PROJECT_NUMBER": "687658104"
       },
       "autoIncrement": true
     }

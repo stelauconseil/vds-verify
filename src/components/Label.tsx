@@ -60,6 +60,14 @@ const label = {
         helpscan: "Présentez un 2D-Doc à scanner",
         error: "Erreur",
         error_invalid_qr: "Le QR code scanné n'est pas un 2D-Doc",
+        error_integrity: "Impossible de vérifier l'authenticité de l'application",
+        error_integrity_unavailable:
+            "Service de vérification momentanément indisponible, réessayez plus tard",
+        error_app_outdated:
+            "Cette version de VDS Verify n'est plus supportée, veuillez la mettre à jour",
+        update_title: "Mise à jour requise",
+        update_app_store: "Mettre à jour sur l'App Store",
+        update_play_store: "Mettre à jour sur Google Play",
         cameraerror: "VDS Verify a besoin d'accéder à votre caméra",
         camerapermission: "Demander l'accès",
         "Le CEV n'est pas authentique": "Le 2D-Doc n'est pas authentique",
@@ -172,6 +180,14 @@ const label = {
         helpscan: "Present a VDS to scan",
         error: "Error",
         error_invalid_qr: "The scanned QR code is not a VDS",
+        error_integrity: "Unable to verify the authenticity of the app",
+        error_integrity_unavailable:
+            "Verification service temporarily unavailable, please try again later",
+        error_app_outdated:
+            "This version of VDS Verify is no longer supported, please update it",
+        update_title: "Update required",
+        update_app_store: "Update on the App Store",
+        update_play_store: "Update on Google Play",
         cameraerror: "VDS Verify needs access to your camera",
         camerapermission: "Request access",
         "Le CEV n'est pas authentique": "VDS is not authentic",

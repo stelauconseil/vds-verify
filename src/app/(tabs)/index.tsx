@@ -21,6 +21,13 @@ import ScannerView from "@/screens/ScannerView";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
 import { normalizeVdsResult, type VdsResult } from "@/types/vds";
+import { integrityFetch } from "@/integrity";
+
+// Server integrity rejections (APP_INTEGRITY_PLAN.md), keyed by HTTP status.
+const INTEGRITY_ERRORS: Record<number, string> = {
+    401: "error_integrity", // invalid proof; unknown iOS key is retried in integrityFetch
+    503: "error_integrity_unavailable",
+};
 
 export default function ScanRoute() {
     const router = useRouter();
@@ -50,6 +57,8 @@ export default function ScanRoute() {
     // Prevent double navigation / double processing
     const presentedRef = useRef(false);
     const processingRef = useRef(false);
+    // Set on 426: stops the camera re-scanning the same code while /update opens.
+    const outdatedRef = useRef(false);
     const pinchStartDistanceRef = useRef<number | null>(null);
     const pinchStartZoomRef = useRef<number>(0.1);
 
@@ -169,7 +178,12 @@ export default function ScanRoute() {
 
     const processResult = useCallback(
         async ({ data }: { data: string }) => {
-            if (processingRef.current || decodedRef.current) return;
+            if (
+                processingRef.current ||
+                decodedRef.current ||
+                outdatedRef.current
+            )
+                return;
             processingRef.current = true;
             try {
                 const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
@@ -180,15 +194,14 @@ export default function ScanRoute() {
                     return;
                 }
                 try {
-                    const response = await fetch(`${apiUrl}/api/v1/decode`, {
-                        method: "POST",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ vds: b64encodedvds }),
-                    });
-                    const { success, message, vds } = await response.json();
+                    const response = await integrityFetch(
+                        apiUrl,
+                        "/api/v1/decode",
+                        JSON.stringify({ vds: b64encodedvds }),
+                    );
+                    const { success, message, vds } = await response
+                        .json()
+                        .catch(() => ({}));
                     if (success === true) {
                         const normalized = normalizeVdsResult(vds);
                         if (!normalized) {
@@ -223,8 +236,13 @@ export default function ScanRoute() {
                         }
                         decodedRef.current = true;
                         setResult(normalized);
+                    } else if (response.status === 426) {
+                        outdatedRef.current = true;
+                        router.push("/update");
                     } else {
-                        showError(message);
+                        showError(
+                            INTEGRITY_ERRORS[response.status] ?? message,
+                        );
                     }
                 } catch (error: any) {
                     showError(error?.message ?? "error");
@@ -233,7 +251,7 @@ export default function ScanRoute() {
                 processingRef.current = false;
             }
         },
-        [parseData, showError],
+        [parseData, showError, router],
     );
 
     useEffect(() => {
@@ -294,6 +312,10 @@ export default function ScanRoute() {
         appState,
         isFocused,
     ]);
+
+    useEffect(() => {
+        if (isFocused) outdatedRef.current = false;
+    }, [isFocused]);
 
     // When context result is cleared (e.g., user closes the result sheet), remount camera
     useEffect(() => {
