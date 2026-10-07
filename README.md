@@ -326,8 +326,9 @@ native simulator commands; Maestro then opens results from history, checks the
 visible screens, switches to Details, and saves the PNGs.
 
 Use an iPhone Pro Max and iPad for Apple assets and a phone/tablet emulator for
-Google Play. Duo/multi-display capture needs separate verification of Maestro's
-active-display selection. Camera screenshots are not part of this first flow;
+Google Play. On a multi-display simulator (iPhone Duo), Maestro reads the wrong
+display; set `IOS_DISPLAY=internal` to skip Maestro, open each screen by deep link
+and capture that display with `simctl` (`SCREENSHOT_WAIT` seconds per screen, default 4). Camera screenshots are not part of this first flow;
 a realistic camera source still needs to be configured.
 
 The helper regenerates the ignored native project with the capture identifier.

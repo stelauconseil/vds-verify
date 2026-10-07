@@ -44,6 +44,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Asset } from "expo-asset";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { screenshotsEnabled } from "@/screenshots";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
 import { normalizeVdsResult } from "@/types/vds";
 import { BlurView } from "expo-blur";
@@ -433,7 +434,9 @@ export default function ResultScreen() {
     const { result, setResult: setContextResult, setStatus } = useScanStatus();
     const { advancedMode } = useSettings();
     const [lang, setLang] = useState<string>("en");
-    const [selectedTab, setSelectedTab] = useState<"data" | "details">("data");
+    const [selectedTab, setSelectedTab] = useState<"data" | "details">(
+        screenshotsEnabled && params.tab === "details" ? "details" : "data",
+    );
     const [reduceTransparency, setReduceTransparency] = useState(true);
     useEffect(() => {
         let active = true;
@@ -459,7 +462,9 @@ export default function ResultScreen() {
         isGlassEffectAPIAvailable() &&
         !reduceTransparency;
 
-    const [shareMenuVisible, setShareMenuVisible] = useState(false);
+    const [shareMenuVisible, setShareMenuVisible] = useState(
+        screenshotsEnabled && params.share === "1",
+    );
     const [isSharing, setIsSharing] = useState(false);
     const headerHeight = useHeaderHeight();
     const pendingShareAction = useRef<(() => Promise<void>) | null>(null);

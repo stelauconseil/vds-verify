@@ -31,6 +31,17 @@ for (const target of platform === "all" ? ["ios", "android"] : [platform]) {
         for (const language of (process.env.SCREENSHOT_LANGUAGES || "fr,en").split(",")) {
             for (const theme of (process.env.SCREENSHOT_THEMES || "light,dark").split(",")) {
                 if (!["fr", "en"].includes(language) || !["light", "dark"].includes(theme)) throw Error("Unsupported language/theme");
+                // Multi-display iOS (iPhone Duo): Maestro reads the wrong display, so navigate by deep link and capture the chosen display.
+                if (target === "ios" && process.env.IOS_DISPLAY) {
+                    const dir = path.join(root, language, theme);
+                    mkdirSync(dir, { recursive: true });
+                    for (const [name, screen] of [["01-history", "history"], ["02-identity", "identity"], ["03-details", "details"], ["04-driving-record", "driving-record"], ["05-settings", "settings"], ["06-share", "share"]]) {
+                        run("xcrun", ["simctl", "openurl", device, `vdsverify-screenshots://screenshots?lang=${language}&theme=${theme}&screen=${screen}`]);
+                        run("sleep", [process.env.SCREENSHOT_WAIT || "4"]); // ponytail: fixed wait, raise SCREENSHOT_WAIT if a capture is mid-transition
+                        run("xcrun", ["simctl", "io", device, "screenshot", `--display=${process.env.IOS_DISPLAY}`, path.join(dir, `${name}.png`)]);
+                    }
+                    continue;
+                }
                 for (const flow of ["history", "identity", "driving-record", "settings"]) {
                     const url = `vdsverify-screenshots://screenshots?lang=${language}&theme=${theme}&screen=history`;
                     // Native launch avoids iOS browser confirmation and Android URL shell parsing.

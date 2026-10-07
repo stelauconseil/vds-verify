@@ -28,6 +28,19 @@ export default function ScreenshotSetup() {
             scan.setResult(null);
             scan.setStatus(null);
             router.replace("/history");
+            // Deep-link navigation for devices Maestro can't drive (iPhone Duo: second display).
+            const screen = params.screen;
+            if (screen === "settings") router.push("/settings");
+            else if (screen && screen !== "history") {
+                router.push({
+                    pathname: "/result",
+                    params: {
+                        result: JSON.stringify(testResults[screen === "driving-record" ? 1 : 0]),
+                        tab: screen === "details" ? "details" : "data",
+                        share: screen === "share" ? "1" : "",
+                    },
+                });
+            }
         })();
     }, [settings, scan, router, params]);
     return screenshotsEnabled ? null : <Redirect href="/" />;
