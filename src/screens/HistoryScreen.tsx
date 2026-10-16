@@ -25,7 +25,10 @@ import Swipeable, {
     type SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 import type { SharedValue } from "react-native-reanimated";
-import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
+import {
+    useEffectiveColorScheme,
+    useSettings,
+} from "@/contexts/SettingsContext";
 
 type HistoryEntry = { timestamp: string; data: any; pinned?: boolean };
 type Props = { navigation: any; lang: string; isFocused?: boolean };
@@ -338,6 +341,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const insets = useSafeAreaInsets();
     const openSwipeableRef = useRef<any>(null);
     const scheme = useEffectiveColorScheme();
+    const { historyEnabled } = useSettings();
     const containerBg = scheme === "dark" ? "#000000" : "#FFFFFF";
     const titleColor = scheme === "dark" ? "#F9FAFB" : "#0F172A";
 
@@ -507,9 +511,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                                                 style: "cancel",
                                             },
                                             {
-                                                text:
-                                                    getLabel("ok", lang) ||
-                                                    "Ok",
+                                                text: getLabel("delete", lang),
                                                 style: "destructive",
                                                 onPress: () =>
                                                     void deleteHistory(),
@@ -552,79 +554,90 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                     </View>
                 )}
             </ScreenHeading>
-            <View style={{ paddingHorizontal: SCREEN_MARGIN, gap: 8 }}>
-                <Host matchContents={{ vertical: true }} colorScheme={scheme}>
-                    <TextInput
-                        ref={searchRef}
-                        testID="history-search"
-                        placeholder={getLabel("history_search", lang)}
-                        onChangeText={setQuery}
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        returnKeyType="search"
-                        onSubmitEditing={() => searchRef.current?.blur()}
-                    />
-                </Host>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                        gap: 12,
-                    }}
-                >
-                    <Text
-                        accessibilityLiveRegion="polite"
-                        accessibilityLabel={getLabel("history_count", lang)
-                            .replace("{shown}", String(displayedHistory.length))
-                            .replace("{total}", String(history.length))}
-                        style={{ color: titleColor }}
+            {historyEnabled && (
+                <View style={{ paddingHorizontal: SCREEN_MARGIN, gap: 8 }}>
+                    <Host
+                        matchContents={{ vertical: true }}
+                        colorScheme={scheme}
                     >
-                        {displayedHistory.length} / {history.length}
-                    </Text>
-                    <Host matchContents colorScheme={scheme}>
-                        <SettingsPicker<HistoryFilter>
-                            testID="history-filter"
-                            value={filter}
-                            onChange={setFilter}
-                            options={(["all", "pinned", "review"] as const).map(
-                                (value) => ({
+                        <TextInput
+                            ref={searchRef}
+                            testID="history-search"
+                            placeholder={getLabel("history_search", lang)}
+                            onChangeText={setQuery}
+                            autoCorrect={false}
+                            autoCapitalize="none"
+                            returnKeyType="search"
+                            onSubmitEditing={() => searchRef.current?.blur()}
+                        />
+                    </Host>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            flexWrap: "wrap",
+                            gap: 12,
+                        }}
+                    >
+                        <Text
+                            accessibilityLiveRegion="polite"
+                            accessibilityLabel={getLabel("history_count", lang)
+                                .replace(
+                                    "{shown}",
+                                    String(displayedHistory.length),
+                                )
+                                .replace("{total}", String(history.length))}
+                            style={{ color: titleColor }}
+                        >
+                            {displayedHistory.length} / {history.length}
+                        </Text>
+                        <Host matchContents colorScheme={scheme}>
+                            <SettingsPicker<HistoryFilter>
+                                testID="history-filter"
+                                value={filter}
+                                onChange={setFilter}
+                                options={(
+                                    ["all", "pinned", "review"] as const
+                                ).map((value) => ({
                                     value,
                                     label: getLabel(
                                         `history_filter_${value}`,
                                         lang,
                                     ),
-                                }),
-                            )}
-                        />
-                    </Host>
-                    {(query.length > 0 || filter !== "all") && (
-                        <Pressable
-                            testID="history-reset"
-                            accessibilityRole="button"
-                            onPress={resetFilters}
-                            style={{ minHeight: 44, justifyContent: "center" }}
-                        >
-                            <Text
+                                }))}
+                            />
+                        </Host>
+                        {(query.length > 0 || filter !== "all") && (
+                            <Pressable
+                                testID="history-reset"
+                                accessibilityRole="button"
+                                onPress={resetFilters}
                                 style={{
-                                    color:
-                                        scheme === "dark"
-                                            ? "#60A5FA"
-                                            : "#0069b4",
+                                    minHeight: 44,
+                                    justifyContent: "center",
                                 }}
                             >
-                                {getLabel("history_reset", lang)}
-                            </Text>
-                        </Pressable>
+                                <Text
+                                    style={{
+                                        color:
+                                            scheme === "dark"
+                                                ? "#60A5FA"
+                                                : "#0069b4",
+                                    }}
+                                >
+                                    {getLabel("history_reset", lang)}
+                                </Text>
+                            </Pressable>
+                        )}
+                    </View>
+                    {filter === "review" && (
+                        <Text style={{ color: titleColor }}>
+                            {getLabel("history_review_help", lang)}
+                        </Text>
                     )}
                 </View>
-                {filter === "review" && (
-                    <Text style={{ color: titleColor }}>
-                        {getLabel("history_review_help", lang)}
-                    </Text>
-                )}
-            </View>
+            )}
             <FlatList
                 keyboardShouldPersistTaps="handled"
                 keyboardDismissMode="on-drag"
@@ -639,26 +652,66 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 keyExtractor={(item) => item.timestamp}
                 renderItem={renderItem}
                 ListEmptyComponent={
-                    <View style={styles.emptyState}>
-                        <Text
-                            style={[
-                                styles.emptyStateText,
-                                {
-                                    color:
-                                        scheme === "dark"
-                                            ? "#9CA3AF"
-                                            : "#4B5563",
-                                },
-                            ]}
-                        >
-                            {getLabel(
-                                history.length
-                                    ? "history_no_matches"
-                                    : "nohistory",
-                                lang,
-                            )}
-                        </Text>
-                    </View>
+                    !historyEnabled ? (
+                        <View testID="history-off" style={styles.emptyState}>
+                            <Text
+                                style={[
+                                    styles.emptyStateText,
+                                    {
+                                        color:
+                                            scheme === "dark"
+                                                ? "#9CA3AF"
+                                                : "#4B5563",
+                                    },
+                                ]}
+                            >
+                                {getLabel("history_off", lang)}
+                            </Text>
+                            <Pressable
+                                testID="history-open-settings"
+                                accessibilityRole="button"
+                                onPress={() => navigation.navigate("settings")}
+                                style={{
+                                    minHeight: 44,
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: "600",
+                                        color:
+                                            scheme === "dark"
+                                                ? "#60A5FA"
+                                                : "#0069b4",
+                                    }}
+                                >
+                                    {getLabel("open_settings", lang)}
+                                </Text>
+                            </Pressable>
+                        </View>
+                    ) : (
+                        <View style={styles.emptyState}>
+                            <Text
+                                style={[
+                                    styles.emptyStateText,
+                                    {
+                                        color:
+                                            scheme === "dark"
+                                                ? "#9CA3AF"
+                                                : "#4B5563",
+                                    },
+                                ]}
+                            >
+                                {getLabel(
+                                    history.length
+                                        ? "history_no_matches"
+                                        : "nohistory",
+                                    lang,
+                                )}
+                            </Text>
+                        </View>
+                    )
                 }
                 onScrollBeginDrag={() => {
                     openSwipeableRef.current?.close();
@@ -676,6 +729,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+        gap: 12,
     },
     emptyStateText: {
         color: "#6B7280",

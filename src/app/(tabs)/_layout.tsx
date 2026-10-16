@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
     Platform,
     DynamicColorIOS,
@@ -15,7 +14,6 @@ import {
     useSettings,
     useEffectiveColorScheme,
 } from "@/contexts/SettingsContext";
-import { usePathname, useRouter } from "expo-router";
 
 // Todo (betomoedano): In the future we can remove this type. Learn more: https://exponent-internal.slack.com/archives/C0447EFTS74/p1758042759724779?thread_ts=1758039375.241799&cid=C0447EFTS74
 type VectorIconFamily = {
@@ -27,10 +25,7 @@ type VectorIconFamily = {
 };
 
 export default function TabsLayout() {
-    const { lang, historyEnabled } = useSettings();
-    const router = useRouter();
-    const pathname = usePathname();
-    const { colorSchemePref } = useSettings();
+    const { lang, colorSchemePref } = useSettings();
     const scheme = useEffectiveColorScheme();
     // Only use DynamicColorIOS when following system — otherwise fix the color to the chosen scheme
     const screenBg =
@@ -53,17 +48,8 @@ export default function TabsLayout() {
     const labelSelectedStyle =
         Platform.OS === "ios" ? { color: tintColor } : undefined;
 
-    // If history gets disabled while user is on the history tab, redirect to scan
-    useEffect(() => {
-        if (!historyEnabled && pathname === "/history") {
-            router.replace("/");
-        }
-    }, [historyEnabled, pathname, router]);
-
     return (
         <NativeTabs
-            // Remount only when history flag changes so Android updates tab triggers, but keep the current tab on language changes
-            key={`tabs-${historyEnabled ? "on" : "off"}`}
             backgroundColor={tabBarBg}
             badgeBackgroundColor={tintColor}
             labelStyle={{
@@ -115,33 +101,29 @@ export default function TabsLayout() {
                 </NativeTabs.Trigger.Label>
             </NativeTabs.Trigger>
 
-            {/* History tab (conditionally visible if history is enabled) */}
-            {historyEnabled && (
-                <NativeTabs.Trigger
-                    name="history"
-                    contentStyle={{ backgroundColor: screenBg }}
-                >
-                    {Platform.select({
-                        ios: <NativeTabs.Trigger.Icon sf="archivebox" />,
-                        android: (
-                            <NativeTabs.Trigger.Icon
-                                src={
-                                    <NativeTabs.Trigger.VectorIcon
-                                        family={Ionicons as VectorIconFamily}
-                                        name="archive-outline"
-                                    />
-                                }
-                                selectedColor={tintColor}
-                            />
-                        ),
-                    })}
-                    <NativeTabs.Trigger.Label
-                        selectedStyle={labelSelectedStyle}
-                    >
-                        {getLabel("history", lang || "en")}
-                    </NativeTabs.Trigger.Label>
-                </NativeTabs.Trigger>
-            )}
+            {/* Always visible (HIG: never hide tabs); the screen explains when history is off */}
+            <NativeTabs.Trigger
+                name="history"
+                contentStyle={{ backgroundColor: screenBg }}
+            >
+                {Platform.select({
+                    ios: <NativeTabs.Trigger.Icon sf="archivebox" />,
+                    android: (
+                        <NativeTabs.Trigger.Icon
+                            src={
+                                <NativeTabs.Trigger.VectorIcon
+                                    family={Ionicons as VectorIconFamily}
+                                    name="archive-outline"
+                                />
+                            }
+                            selectedColor={tintColor}
+                        />
+                    ),
+                })}
+                <NativeTabs.Trigger.Label selectedStyle={labelSelectedStyle}>
+                    {getLabel("history", lang || "en")}
+                </NativeTabs.Trigger.Label>
+            </NativeTabs.Trigger>
 
             <NativeTabs.Trigger
                 name="settings"

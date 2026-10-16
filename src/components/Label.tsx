@@ -97,13 +97,16 @@ const label = {
         historytoggle: "Conserver l'historique",
         history: "Historique",
         nohistory: "Pas d'historique",
+        history_off:
+            "L'historique est désactivé. Activez « Conserver l'historique » dans les Paramètres pour garder vos scans sur cet appareil.",
+        open_settings: "Ouvrir les Paramètres",
         deleteHistory: "Supprimer l'historique",
         deleteHistoryMessage:
             "Etes-vous certain de vouloir supprimer toutes les entrées de l'historique ?",
         advancedmode: "Mode avancé",
         advancedmode_info:
             "Affiche les champs vides ou techniques dans le résultat",
-        ok: "Ok",
+        ok: "OK",
         cancel: "Annuler",
         delete: "Supprimer",
         share: "Partager",
@@ -217,12 +220,15 @@ const label = {
         historytoggle: "Save history",
         history: "History",
         nohistory: "No history",
+        history_off:
+            "History is off. Turn on “Save history” in Settings to keep your scans on this device.",
+        open_settings: "Open Settings",
         deleteHistory: "Clear history",
         deleteHistoryMessage:
             "Do you really want to delete all history entries?",
         advancedmode: "Advanced mode",
         advancedmode_info: "Show empty or technical fields in the result",
-        ok: "Ok",
+        ok: "OK",
         cancel: "Cancel",
         delete: "Delete",
         share: "Share",

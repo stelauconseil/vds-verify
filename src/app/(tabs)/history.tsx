@@ -22,6 +22,8 @@ export default function HistoryRoute() {
                                 ? { result: JSON.stringify(params.result) }
                                 : {},
                         });
+                    } else if (route === "settings") {
+                        router.navigate("/settings");
                     }
                 },
             }}
