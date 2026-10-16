@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
+    AccessibilityInfo,
     AppState,
     View,
     StyleSheet,
@@ -165,6 +166,10 @@ export default function ScanRoute() {
             const normalized = normalizeErrorMessage(message);
             const localized = getLabel(normalized, lang) || normalized;
             setErrorMessage(localized);
+            // The toast is visual and auto-dismisses; VoiceOver users need it spoken.
+            AccessibilityInfo.announceForAccessibility(
+                `${getLabel("error", lang)}: ${localized}`,
+            );
             if (errorTimerRef.current) {
                 clearTimeout(errorTimerRef.current);
             }
@@ -573,7 +578,8 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingVertical: 8,
         paddingHorizontal: 12,
-        backgroundColor: "rgba(239,68,68,0.9)",
+        // Opaque #B91C1C: white text at 6.5:1 (was ~3.8:1 on translucent #EF4444)
+        backgroundColor: "#B91C1C",
     },
     errorToastTitle: {
         color: "#fff",

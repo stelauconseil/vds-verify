@@ -32,9 +32,9 @@
         },
         "android": {
             "permissions": [
-                "android.permission.CAMERA",
-                "android.permission.RECORD_AUDIO"
+                "android.permission.CAMERA"
             ],
+            "blockedPermissions": ["android.permission.RECORD_AUDIO"],
             "package": "com.stelau.vdsverify",
             "intentFilters": [
                 {
@@ -68,7 +68,9 @@
             [
                 "expo-camera",
                 {
-                    "cameraPermission": "This app uses the camera to capture QR codes.",
+                    "cameraPermission": "$(PRODUCT_NAME) uses the camera to scan 2D-Doc codes and verify documents.",
+                    "microphonePermission": false,
+                    "recordAudioAndroid": false,
                     "barcodeScannerEnabled": true
                 }
             ],

@@ -1,7 +1,7 @@
 import SettingsPicker from "@/components/SettingsPicker";
 import { ScreenHeading } from "@/components/screen-heading";
 import { FC, useEffect } from "react";
-import { Platform, View } from "react-native";
+import { Alert, Platform, View } from "react-native";
 import {
     Host,
     FieldGroup,
@@ -56,6 +56,30 @@ const SettingsView: FC<SettingsViewProps> = ({
             }
         })();
     }, [historyEnabled, isFocused, setHistoryEnabled]);
+
+    // Turning history off deletes saved scans, which can't be undone: confirm first.
+    const onHistoryToggle = async (enabled: boolean) => {
+        const stored = await AsyncStorage.getItem("scanHistory").catch(
+            () => null,
+        );
+        if (enabled || !stored || stored === "[]") {
+            void setHistoryEnabled(enabled);
+            return;
+        }
+        Alert.alert(
+            getLabel("deleteHistory", lang),
+            getLabel("deleteHistoryMessage", lang),
+            [
+                { text: getLabel("cancel", lang), style: "cancel" },
+                {
+                    text: getLabel("delete", lang),
+                    style: "destructive",
+                    onPress: () => void setHistoryEnabled(false),
+                },
+            ],
+            { cancelable: true },
+        );
+    };
 
     return (
         <View
@@ -132,7 +156,7 @@ const SettingsView: FC<SettingsViewProps> = ({
                                     testID="history-toggle"
                                     label={getLabel("historytoggle", lang)}
                                     value={historyEnabled}
-                                    onValueChange={setHistoryEnabled}
+                                    onValueChange={onHistoryToggle}
                                 />
                             </FieldGroup.Section>
                             <FieldGroup.Section

@@ -1,6 +1,5 @@
 {
     "ios": {
-        "NSCameraUsageDescription": "$(PRODUCT_NAME) uses the camera to capture QR codes.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone."
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) uses the camera to scan 2D-Doc codes and verify documents."
     }
 }
