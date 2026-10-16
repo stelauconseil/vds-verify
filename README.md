@@ -61,6 +61,7 @@ This variable is embedded in the client bundle, so it must not contain secrets.
 Boot the target simulator/emulator, then run one of:
 
 ```sh
+EAS_BUILD_PROFILE=development VDS_SCREENSHOTS=0 npx expo run:ios --device
 npm run ios
 npm run android
 ```
