@@ -9,7 +9,7 @@ const { version } = JSON.parse(fs.readFileSync(packagePath, "utf8"));
 
 // Temporary workarounds for this version with Xcode 27.0/27.1.
 // Reassess after upgrading Expo rather than patching an unknown build script.
-if (!["58.0.12"].includes(version)) {
+if (!["58.0.14"].includes(version)) {
     console.warn(
         `[ExpoModulesJSI] Version ${version}: recheck the Xcode quiet-mode workaround.`,
     );
