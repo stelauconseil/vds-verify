@@ -95,6 +95,15 @@ function AppLayout() {
                         name="(tabs)"
                         options={{ headerShown: false }}
                     />
+                    {/* Presented modally: matches its Close (✕) button and swipe-down dismissal.
+                        Header visibility must be static here: toggling it from inside a modal remounts the screen. */}
+                    <Stack.Screen
+                        name="result"
+                        options={{
+                            presentation: "modal",
+                            headerShown: Platform.OS === "ios",
+                        }}
+                    />
                 </Stack>
             </ThemeProvider>
         </GestureHandlerRootView>

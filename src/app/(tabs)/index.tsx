@@ -245,9 +245,7 @@ export default function ScanRoute() {
                         outdatedRef.current = true;
                         router.push("/update");
                     } else {
-                        showError(
-                            INTEGRITY_ERRORS[response.status] ?? message,
-                        );
+                        showError(INTEGRITY_ERRORS[response.status] ?? message);
                     }
                 } catch (error: any) {
                     showError(error?.message ?? "error");
@@ -289,7 +287,17 @@ export default function ScanRoute() {
 
     // Update scan status based on local result and present sheet once
     useEffect(() => {
-        if (result && scanned && appState === "active" && isFocused) {
+        if (
+            result &&
+            scanned &&
+            appState === "active" &&
+            isFocused &&
+            !presentedRef.current
+        ) {
+            // Sync the context only when presenting. Re-syncing on refocus would
+            // undo the result screen's unmount cleanup after a swipe-down dismissal
+            // (both land in the same commit), leaving the scanner locked.
+            presentedRef.current = true;
             setContextResult(result);
             if (result.sign_is_valid && result.signer) {
                 setStatus("valid");
@@ -298,10 +306,7 @@ export default function ScanRoute() {
             } else {
                 setStatus("unsigned");
             }
-            if (!presentedRef.current) {
-                presentedRef.current = true;
-                router.push("/result");
-            }
+            router.push("/result");
         } else if (!result) {
             setStatus(null);
             setContextResult(null);
@@ -528,7 +533,7 @@ export default function ScanRoute() {
                             {getLabel(
                                 permission.canAskAgain
                                     ? "camerapermission"
-                                    : "settings",
+                                    : "open_settings",
                                 lang,
                             )}
                         </Text>

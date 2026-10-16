@@ -18,6 +18,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatData, getLabel } from "@/components/Label";
+import { systemColor } from "@/theme";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -70,10 +71,22 @@ const HistoryRow: FC<HistoryRowProps> = ({
     const dragTranslationRef = useRef<SharedValue<number> | null>(null);
     const rowWidthRef = useRef(0);
     const scheme = useEffectiveColorScheme();
-    const rowBg1 = scheme === "dark" ? ROW_BG_DARK_1 : ROW_BG_LIGHT_1;
-    const rowBg2 = scheme === "dark" ? ROW_BG_DARK_2 : ROW_BG_LIGHT_2;
-    const rowTextPrimary = scheme === "dark" ? "#F9FAFB" : "#0F172A";
-    const rowTextSecondary = scheme === "dark" ? "#9CA3AF" : "#374151";
+    const rowBg1 = systemColor(
+        "systemGray6",
+        scheme === "dark" ? ROW_BG_DARK_1 : ROW_BG_LIGHT_1,
+    );
+    const rowBg2 = systemColor(
+        "systemGray5",
+        scheme === "dark" ? ROW_BG_DARK_2 : ROW_BG_LIGHT_2,
+    );
+    const rowTextPrimary = systemColor(
+        "label",
+        scheme === "dark" ? "#F9FAFB" : "#0F172A",
+    );
+    const rowTextSecondary = systemColor(
+        "secondaryLabel",
+        scheme === "dark" ? "#9CA3AF" : "#374151",
+    );
 
     const measuredHeightRef = useRef<number | null>(null);
     const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -342,8 +355,18 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const openSwipeableRef = useRef<any>(null);
     const scheme = useEffectiveColorScheme();
     const { historyEnabled } = useSettings();
-    const containerBg = scheme === "dark" ? "#000000" : "#FFFFFF";
-    const titleColor = scheme === "dark" ? "#F9FAFB" : "#0F172A";
+    const containerBg = systemColor(
+        "systemBackground",
+        scheme === "dark" ? "#000000" : "#FFFFFF",
+    );
+    const titleColor = systemColor(
+        "label",
+        scheme === "dark" ? "#F9FAFB" : "#0F172A",
+    );
+    const emptyTextColor = systemColor(
+        "secondaryLabel",
+        scheme === "dark" ? "#9CA3AF" : "#4B5563",
+    );
 
     useEffect(() => {
         if (isFocused) {
@@ -657,12 +680,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                             <Text
                                 style={[
                                     styles.emptyStateText,
-                                    {
-                                        color:
-                                            scheme === "dark"
-                                                ? "#9CA3AF"
-                                                : "#4B5563",
-                                    },
+                                    { color: emptyTextColor },
                                 ]}
                             >
                                 {getLabel("history_off", lang)}
@@ -695,12 +713,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                             <Text
                                 style={[
                                     styles.emptyStateText,
-                                    {
-                                        color:
-                                            scheme === "dark"
-                                                ? "#9CA3AF"
-                                                : "#4B5563",
-                                    },
+                                    { color: emptyTextColor },
                                 ]}
                             >
                                 {getLabel(

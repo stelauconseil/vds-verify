@@ -1,10 +1,11 @@
 import SettingsPicker from "@/components/SettingsPicker";
 import { ScreenHeading } from "@/components/screen-heading";
 import { FC, useEffect } from "react";
-import { Alert, Platform, View } from "react-native";
+import { Alert, Platform, PlatformColor, View } from "react-native";
 import {
     Host,
     FieldGroup,
+    Icon,
     ListItem,
     Switch,
     Row,
@@ -13,6 +14,7 @@ import {
 } from "@expo/ui";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel } from "@/components/Label";
+import { systemColor } from "@/theme";
 import {
     useSettings,
     ColorSchemePref,
@@ -85,7 +87,10 @@ const SettingsView: FC<SettingsViewProps> = ({
         <View
             style={{
                 flex: 1,
-                backgroundColor: scheme === "dark" ? "#000000" : "#F2F2F7",
+                backgroundColor: systemColor(
+                    "systemGroupedBackground",
+                    scheme === "dark" ? "#000000" : "#F2F2F7",
+                ),
             }}
         >
             {isFocused && (
@@ -98,7 +103,10 @@ const SettingsView: FC<SettingsViewProps> = ({
                 >
                     <ScreenHeading
                         title={getLabel("settings", lang)}
-                        color={scheme === "dark" ? "#F9FAFB" : "#0F172A"}
+                        color={systemColor(
+                            "label",
+                            scheme === "dark" ? "#F9FAFB" : "#0F172A",
+                        )}
                         topInset={insets.top}
                     />
                     <Host
@@ -190,7 +198,18 @@ const SettingsView: FC<SettingsViewProps> = ({
                                         colors={{
                                             containerColor: "transparent",
                                         }}
-                                        trailing="›"
+                                        trailing={
+                                            // System disclosure indicator on iOS; Material rows have none.
+                                            Platform.OS === "ios" ? (
+                                                <Icon
+                                                    name="chevron.right"
+                                                    size={13}
+                                                    color={PlatformColor(
+                                                        "tertiaryLabel",
+                                                    )}
+                                                />
+                                            ) : undefined
+                                        }
                                         testID={`settings-${route}`}
                                         onPress={() =>
                                             navigation.navigate(route)

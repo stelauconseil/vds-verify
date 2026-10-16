@@ -1,5 +1,14 @@
 import { FC } from "react";
-import { StyleSheet, View, Text, ScrollView, Linking, Platform } from "react-native";
+import {
+    StyleSheet,
+    View,
+    Text,
+    ScrollView,
+    Linking,
+    Platform,
+    PlatformColor,
+    type ColorValue,
+} from "react-native";
 import * as Application from "expo-application";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffectiveColorScheme } from "@/contexts/SettingsContext";
@@ -25,21 +34,40 @@ const darkColors: typeof lightColors = {
     link: "#0A84FF",
 };
 
+// iOS semantic colors follow dark mode and Increase Contrast; the hex
+// palettes above remain the Android values.
+const iosColors: Colors = {
+    screen: PlatformColor("systemGroupedBackground"),
+    section: PlatformColor("secondarySystemGroupedBackground"),
+    label: PlatformColor("label"),
+    value: PlatformColor("secondaryLabel"),
+    separator: PlatformColor("separator"),
+    appName: PlatformColor("label"),
+    link: PlatformColor("link"),
+};
+type Colors = Record<keyof typeof lightColors, ColorValue>;
+
 type Row = { label: string; value?: string; onPress?: () => void };
 
-function InfoSection({ rows, colors }: { rows: Row[]; colors: typeof lightColors }) {
+function InfoSection({ rows, colors }: { rows: Row[]; colors: Colors }) {
     return (
         <View style={[styles.section, { backgroundColor: colors.section }]}>
             {rows.map((row, i) => (
                 <View key={row.label}>
                     <View style={styles.row}>
-                        <Text style={[styles.rowLabel, { color: colors.label }]}>
+                        <Text
+                            style={[styles.rowLabel, { color: colors.label }]}
+                        >
                             {row.label}
                         </Text>
                         <Text
                             style={[
                                 styles.rowValue,
-                                { color: row.onPress ? colors.link : colors.value },
+                                {
+                                    color: row.onPress
+                                        ? colors.link
+                                        : colors.value,
+                                },
                             ]}
                             onPress={row.onPress}
                             numberOfLines={1}
@@ -64,14 +92,22 @@ function InfoSection({ rows, colors }: { rows: Row[]; colors: typeof lightColors
 const About: FC = () => {
     const insets = useSafeAreaInsets();
     const scheme = useEffectiveColorScheme();
-    const colors = scheme === "dark" ? darkColors : lightColors;
+    const colors: Colors =
+        Platform.OS === "ios"
+            ? iosColors
+            : scheme === "dark"
+              ? darkColors
+              : lightColors;
     const { lang } = useSettings();
 
     const version = Application.nativeApplicationVersion ?? "";
     const build = Application.nativeBuildVersion ?? "";
     const bundleId = Application.applicationId ?? "com.stelau.vdsverify";
     const year = new Date().getFullYear();
-    const copyright = getLabel("about_copyright", lang).replace("{year}", String(year));
+    const copyright = getLabel("about_copyright", lang).replace(
+        "{year}",
+        String(year),
+    );
 
     return (
         <ScrollView
@@ -103,8 +139,18 @@ const About: FC = () => {
                     { label: getLabel("Version", lang), value: version },
                     { label: getLabel("about_build", lang), value: build },
                     ...(Platform.OS === "ios"
-                        ? [{ label: getLabel("about_bundle_id", lang), value: bundleId }]
-                        : [{ label: getLabel("about_package", lang), value: bundleId }]),
+                        ? [
+                              {
+                                  label: getLabel("about_bundle_id", lang),
+                                  value: bundleId,
+                              },
+                          ]
+                        : [
+                              {
+                                  label: getLabel("about_package", lang),
+                                  value: bundleId,
+                              },
+                          ]),
                 ]}
             />
 
@@ -115,12 +161,14 @@ const About: FC = () => {
                     {
                         label: getLabel("about_developer", lang),
                         value: "Stelau",
-                        onPress: () => Linking.openURL("https://www.stelau.com"),
+                        onPress: () =>
+                            Linking.openURL("https://www.stelau.com"),
                     },
                     {
                         label: getLabel("about_website", lang),
                         value: "stelau.com",
-                        onPress: () => Linking.openURL("https://www.stelau.com"),
+                        onPress: () =>
+                            Linking.openURL("https://www.stelau.com"),
                     },
                 ]}
             />

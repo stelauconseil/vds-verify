@@ -1,5 +1,11 @@
 import type { ReactNode } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    type ColorValue,
+} from "react-native";
 
 export const SCREEN_MARGIN = 20;
 
@@ -12,7 +18,7 @@ export function ScreenHeading({
     children,
 }: {
     title: string;
-    color: string;
+    color: ColorValue;
     topInset: number;
     children?: ReactNode;
 }) {

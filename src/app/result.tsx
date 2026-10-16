@@ -712,26 +712,38 @@ export default function ResultScreen() {
         getLangAsync();
     }, []);
 
-    // If no result in context but a route param is present (history navigation), load it
-    useEffect(() => {
-        if (!result && params.result && typeof params.result === "string") {
-            try {
-                const parsed = JSON.parse(params.result as string);
-                const normalized = normalizeVdsResult(parsed);
-                if (!normalized) return;
-                setContextResult(normalized);
-                if (normalized.sign_is_valid && normalized.signer) {
-                    setStatus("valid");
-                } else if (normalized.signer) {
-                    setStatus("invalid");
-                } else {
-                    setStatus("nonverifiable");
-                }
-            } catch {
-                // Invalid JSON: ignore and let redirect happen
-            }
+    // History navigation passes the result as a route param. Parse it during
+    // render so the first frame already knows a result is coming; otherwise
+    // <Redirect> fires before the effect below fills the context.
+    const paramResult = useMemo(() => {
+        if (typeof params.result !== "string") return null;
+        try {
+            return normalizeVdsResult(JSON.parse(params.result));
+        } catch {
+            return null;
         }
-    }, [params.result, result, setContextResult, setStatus]);
+    }, [params.result]);
+    useEffect(() => {
+        if (result || !paramResult) return;
+        setContextResult(paramResult);
+        if (paramResult.sign_is_valid && paramResult.signer) {
+            setStatus("valid");
+        } else if (paramResult.signer) {
+            setStatus("invalid");
+        } else {
+            setStatus("nonverifiable");
+        }
+    }, [paramResult, result, setContextResult, setStatus]);
+
+    // Swipe-down dismisses the modal without calling close(): clear the result
+    // on unmount too, or the scanner stays locked on the previous code.
+    useEffect(
+        () => () => {
+            setContextResult(null);
+            setStatus(null);
+        },
+        [setContextResult, setStatus],
+    );
 
     const openShareMenu = useCallback(() => setShareMenuVisible(true), []);
     const closeShareMenu = useCallback(() => setShareMenuVisible(false), []);
@@ -784,7 +796,7 @@ export default function ResultScreen() {
             ? Math.max(insets.top, headerHeight)
             : insets.top + 68;
 
-    if (!result) return <Redirect href="/" />;
+    if (!result) return paramResult ? null : <Redirect href="/" />;
 
     const securityStatus: "valid" | "invalid" | "unsigned" | "nonverifiable" =
         result.sign_is_valid && result.signer
@@ -972,7 +984,6 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                 <>
                     <Stack.Screen
                         options={{
-                            headerShown: true,
                             headerTransparent: true,
                             headerTitle: "",
                             headerBackVisible: false,

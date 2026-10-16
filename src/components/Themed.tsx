@@ -47,24 +47,23 @@ export function ThemedText(props: TextProps) {
 
     const color = useThemeColor(themeColor ?? theme.color.text);
 
-    const fontFamily = (() => {
-        if (fontWeight === "light") {
-            return italic ? theme.fontFamilyLightItalic : theme.fontFamilyLight;
-        } else if (fontWeight === "semiBold") {
-            return italic
-                ? theme.fontFamilySemiBoldItalic
-                : theme.fontFamilySemiBold;
-        } else if (fontWeight === "bold") {
-            return italic ? theme.fontFamilyBoldItalic : theme.fontFamilyBold;
-        } else {
-            return italic ? theme.fontFamilyItalic : theme.fontFamily;
-        }
-    })();
+    // System font (Montserrat was never bundled): weights map onto SF / Roboto.
+    const font: TextStyle = {
+        fontWeight:
+            fontWeight === "light"
+                ? "300"
+                : fontWeight === "semiBold"
+                  ? "600"
+                  : fontWeight === "bold"
+                    ? "700"
+                    : "500",
+        fontStyle: italic ? "italic" : "normal",
+    };
 
     if (animated) {
         return (
             <Animated.Text
-                style={[{ color, marginBottom, fontSize, fontFamily }, style]}
+                style={[{ color, marginBottom, fontSize, ...font }, style]}
                 {...otherProps}
             />
         );
@@ -72,7 +71,7 @@ export function ThemedText(props: TextProps) {
 
     return (
         <Text
-            style={[{ color, marginBottom, fontSize, fontFamily }, style]}
+            style={[{ color, marginBottom, fontSize, ...font }, style]}
             {...otherProps}
         />
     );
