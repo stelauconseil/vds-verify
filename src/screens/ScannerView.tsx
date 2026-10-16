@@ -1,14 +1,19 @@
 import { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { useReducedMotion } from "react-native-reanimated";
 
 type Props = { scanned: boolean };
 
 const ScannerView: FC<Props> = ({ scanned }) => {
+    // The idle pulse loops forever: keep the frame still when Reduce Motion is on.
+    const reduceMotion = useReducedMotion();
     return (
         <Animatable.View
             style={styles.scannerView}
-            animation={scanned ? "fadeOut" : "pulse"}
+            animation={
+                scanned ? "fadeOut" : reduceMotion ? undefined : "pulse"
+            }
             iterationCount={scanned ? 1 : "infinite"}
             pointerEvents="none"
         >

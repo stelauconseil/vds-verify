@@ -80,7 +80,8 @@ const darkColors: typeof lightColors = {
     success: "#10B981",
     error: "#EF4444",
     warning: "#F59E0B",
-    primary: "#3B82F6",
+    // 6.6:1 on the selected tab pill (#2D3748); #3B82F6 was 3.3:1
+    primary: "#93C5FD",
     buttonBg: "rgba(30,30,30,0.9)",
     buttonIconColor: "#EEEEEE",
 };

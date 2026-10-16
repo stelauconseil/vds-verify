@@ -410,7 +410,28 @@ export default function ScanRoute() {
                             onResponderRelease={handleTouchEnd}
                             onResponderTerminate={handleTouchEnd}
                         />
+                        {/* Pinch is unavailable to VoiceOver/TalkBack: the badge doubles as an adjustable zoom control (swipe up/down). */}
                         <View
+                            accessible
+                            accessibilityRole="adjustable"
+                            accessibilityLabel={getLabel("zoom", lang)}
+                            accessibilityValue={{
+                                min: 0,
+                                max: 100,
+                                now: Math.round(zoomLevel * 100),
+                                text: `${Math.round(zoomLevel * 100)}%`,
+                            }}
+                            accessibilityActions={[
+                                { name: "increment" },
+                                { name: "decrement" },
+                            ]}
+                            onAccessibilityAction={(event) => {
+                                const step =
+                                    event.nativeEvent.actionName === "increment"
+                                        ? 0.1
+                                        : -0.1;
+                                setZoomLevel((z) => clampZoom(z + step));
+                            }}
                             style={[
                                 styles.zoomBadge,
                                 {
@@ -420,7 +441,8 @@ export default function ScanRoute() {
                             ]}
                         >
                             <Text style={styles.zoomBadgeText}>
-                                Zoom {Math.round(zoomLevel * 100)}%
+                                {getLabel("zoom", lang)}{" "}
+                                {Math.round(zoomLevel * 100)}%
                             </Text>
                         </View>
                         <Pressable
