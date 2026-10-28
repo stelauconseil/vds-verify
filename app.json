@@ -2,7 +2,7 @@
     "expo": {
         "name": "VDS Verify",
         "slug": "vds-verify",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "orientation": "default",
         "icon": "./assets/icons/icon.png",
         "userInterfaceStyle": "automatic",
@@ -31,9 +31,7 @@
             }
         },
         "android": {
-            "permissions": [
-                "android.permission.CAMERA"
-            ],
+            "permissions": ["android.permission.CAMERA"],
             "blockedPermissions": ["android.permission.RECORD_AUDIO"],
             "package": "com.stelau.vdsverify",
             "intentFilters": [
