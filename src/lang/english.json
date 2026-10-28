@@ -1,5 +1,5 @@
 {
     "ios": {
-        "NSCameraUsageDescription": "$(PRODUCT_NAME) uses the camera to scan 2D-Doc codes and verify documents."
+        "NSCameraUsageDescription": "VDS Verify uses the camera to scan 2D-Doc codes and verify documents."
     }
 }

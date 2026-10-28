@@ -1,4 +1,4 @@
-export type HistoryFilter = "all" | "pinned" | "review";
+export type HistoryFilter = "all" | "pinned" | "not_verified";
 export type SearchableHistoryEntry = {
     timestamp: string;
     pinned?: boolean;
@@ -35,7 +35,7 @@ export function filterHistory<T extends SearchableHistoryEntry>(
             if (filter === "pinned" && !entry.pinned) return false;
             // Match the result screen: a verified signature needs both validity and signer details.
             if (
-                filter === "review" &&
+                filter === "not_verified" &&
                 entry.data.sign_is_valid === true &&
                 entry.data.signer
             )

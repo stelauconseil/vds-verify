@@ -14,10 +14,10 @@ import {
     Image,
     Modal,
     Alert,
-    AccessibilityInfo,
     Platform,
     StyleSheet,
     useColorScheme,
+    useWindowDimensions,
 } from "react-native";
 import { Stack, Redirect, useRouter, useLocalSearchParams } from "expo-router";
 import Animated, {
@@ -37,10 +37,17 @@ import {
     RNHostView,
     Text as NativeText,
 } from "@expo/ui";
-import { frame, ignoreSafeArea } from "@expo/ui/swift-ui/modifiers";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
+import {
+    Picker as SegmentedPicker,
+    Text as SegmentText,
+} from "@expo/ui/swift-ui";
+import { pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
 import { useHeaderHeight } from "expo-router/react-navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+    SafeAreaProvider,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Asset } from "expo-asset";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -48,11 +55,6 @@ import { screenshotsEnabled } from "@/screenshots";
 import { getLang, formatData, isBase64, getLabel } from "@/components/Label";
 import { normalizeVdsResult } from "@/types/vds";
 import { BlurView } from "expo-blur";
-import {
-    GlassView,
-    isLiquidGlassAvailable,
-    isGlassEffectAPIAvailable,
-} from "expo-glass-effect";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import * as Print from "expo-print";
@@ -414,12 +416,13 @@ function StatusBadge({
     return (
         <View
             accessible
+            accessibilityRole="header"
             accessibilityLabel={config.text}
             style={styles.statusBadge}
         >
             <Ionicons
                 name={config.icon as any}
-                size={20}
+                size={56}
                 color={config.color}
             />
             <Text style={[styles.statusText, { color: config.color }]}>
@@ -429,7 +432,17 @@ function StatusBadge({
     );
 }
 
-export default function ResultScreen() {
+// The sheet measures its own safe area: the window's side insets (iPhone Duo bars, cutouts)
+// belong to the screen underneath and would offset the content.
+export default function ResultSheet() {
+    return (
+        <SafeAreaProvider>
+            <ResultScreen />
+        </SafeAreaProvider>
+    );
+}
+
+function ResultScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { result, setResult: setContextResult, setStatus } = useScanStatus();
@@ -438,30 +451,6 @@ export default function ResultScreen() {
     const [selectedTab, setSelectedTab] = useState<"data" | "details">(
         screenshotsEnabled && params.tab === "details" ? "details" : "data",
     );
-    const [reduceTransparency, setReduceTransparency] = useState(true);
-    useEffect(() => {
-        let active = true;
-        AccessibilityInfo.isReduceTransparencyEnabled()
-            .then((enabled) => {
-                if (active) setReduceTransparency(enabled);
-            })
-            .catch(() => {
-                // Keep the opaque fallback if the accessibility setting is unavailable.
-            });
-        const subscription = AccessibilityInfo.addEventListener(
-            "reduceTransparencyChanged",
-            setReduceTransparency,
-        );
-        return () => {
-            active = false;
-            subscription.remove();
-        };
-    }, []);
-    const canUseGlass =
-        Platform.OS === "ios" &&
-        isLiquidGlassAvailable() &&
-        isGlassEffectAPIAvailable() &&
-        !reduceTransparency;
 
     const [shareMenuVisible, setShareMenuVisible] = useState(
         screenshotsEnabled && params.share === "1",
@@ -765,10 +754,17 @@ export default function ResultScreen() {
     const reduceMotion = useReducedMotion();
     const [heroHeight, setHeroHeight] = useState(0);
     const [tabsHeight, setTabsHeight] = useState(0);
-    const compactScale = reduceMotion ? 1 : 0.8;
-    const collapseDistance = heroHeight * (1 - compactScale);
+    // At accessibility text sizes the hero alone can fill the screen: let it scroll away
+    // with the content (only the segmented control stays pinned) instead of shrinking it.
+    const largeText = useWindowDimensions().fontScale > 1.35;
+    const compactScale = reduceMotion || largeText ? 1 : 0.8;
+    const collapseDistance = largeText
+        ? heroHeight
+        : heroHeight * (1 - compactScale);
     // Keep the same compact size, but reach it over a longer scroll gesture.
-    const collapseScrollRange = Math.max(160, collapseDistance * 2);
+    const collapseScrollRange = largeText
+        ? Math.max(1, heroHeight)
+        : Math.max(160, collapseDistance * 2);
     const onResultScroll = useAnimatedScrollHandler((event) => {
         scrollY.value = Math.max(0, event.contentOffset.y);
     });
@@ -924,59 +920,50 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
         );
     };
 
-    const handleShareJson = () => {
-        dismissAndRun(async () => {
-            setIsSharing(true);
-            try {
-                const json = JSON.stringify(result, null, 2);
-                const path = getSharePath("json");
-                await FileSystem.writeAsStringAsync(path, json, {
-                    encoding: FileSystem.EncodingType.UTF8,
+    const shareJson = async () => {
+        setIsSharing(true);
+        try {
+            const json = JSON.stringify(result, null, 2);
+            const path = getSharePath("json");
+            await FileSystem.writeAsStringAsync(path, json, {
+                encoding: FileSystem.EncodingType.UTF8,
+            });
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(path, {
+                    mimeType: "application/json",
                 });
-                if (await Sharing.isAvailableAsync()) {
-                    await Sharing.shareAsync(path, {
-                        mimeType: "application/json",
-                    });
-                }
-            } catch {
-                Alert.alert(
-                    getLabel("error", lang),
-                    getLabel("share_error", lang),
-                );
-            } finally {
-                setIsSharing(false);
             }
-        });
+        } catch {
+            Alert.alert(getLabel("error", lang), getLabel("share_error", lang));
+        } finally {
+            setIsSharing(false);
+        }
     };
 
-    const handleSharePdf = () => {
-        dismissAndRun(async () => {
-            setIsSharing(true);
-            try {
-                const html = await buildShareHtml();
-                const { uri } = await Print.printToFileAsync({
-                    html,
-                    base64: false,
+    const sharePdf = async () => {
+        setIsSharing(true);
+        try {
+            const html = await buildShareHtml();
+            const { uri } = await Print.printToFileAsync({
+                html,
+                base64: false,
+            });
+            const pdfPath = getSharePath("pdf");
+            await FileSystem.copyAsync({ from: uri, to: pdfPath });
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(pdfPath, {
+                    mimeType: "application/pdf",
                 });
-                const pdfPath = getSharePath("pdf");
-                await FileSystem.copyAsync({ from: uri, to: pdfPath });
-                if (await Sharing.isAvailableAsync()) {
-                    await Sharing.shareAsync(pdfPath, {
-                        mimeType: "application/pdf",
-                    });
-                }
-            } catch {
-                Alert.alert(
-                    getLabel("error", lang),
-                    getLabel("share_error", lang),
-                );
-            } finally {
-                setIsSharing(false);
             }
-        });
+        } catch {
+            Alert.alert(getLabel("error", lang), getLabel("share_error", lang));
+        } finally {
+            setIsSharing(false);
+        }
     };
-
-    const TabBarSurface = canUseGlass ? GlassView : View;
+    // Android picks the format in a bottom sheet; iOS uses the toolbar menu.
+    const handleShareJson = () => dismissAndRun(shareJson);
+    const handleSharePdf = () => dismissAndRun(sharePdf);
 
     return (
         <View style={styles.container}>
@@ -996,13 +983,32 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                         </Stack.Toolbar.Button>
                     </Stack.Toolbar>
                     <Stack.Toolbar placement="right">
-                        <Stack.Toolbar.Button
+                        <Stack.Toolbar.Menu
                             icon="square.and.arrow.up"
-                            onPress={openShareMenu}
+                            accessibilityLabel={getLabel("share", lang)}
                             disabled={isSharing}
                         >
-                            {getLabel("share", lang)}
-                        </Stack.Toolbar.Button>
+                            <Stack.Toolbar.MenuAction
+                                icon="doc.richtext"
+                                subtitle={getLabel(
+                                    "share_pdf_description",
+                                    lang,
+                                )}
+                                onPress={() => void sharePdf()}
+                            >
+                                PDF
+                            </Stack.Toolbar.MenuAction>
+                            <Stack.Toolbar.MenuAction
+                                icon="curlybraces"
+                                subtitle={getLabel(
+                                    "share_json_description",
+                                    lang,
+                                )}
+                                onPress={() => void shareJson()}
+                            >
+                                JSON
+                            </Stack.Toolbar.MenuAction>
+                        </Stack.Toolbar.Menu>
                     </Stack.Toolbar>
                 </>
             )}
@@ -1074,24 +1080,12 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                     <View style={[styles.readableContent, { maxWidth: 760 }]}>
                         <View>
                             {selectedTab === "data" && (
-                                <View testID="result-data-panel">
-                                    <Section
-                                        title={getLabel("data", lang)}
-                                        icon={
-                                            <Ionicons
-                                                name="document-text-outline"
-                                                size={20}
-                                                color={c.textPrimary}
-                                                style={{
-                                                    marginRight: theme.space8,
-                                                }}
-                                            />
-                                        }
-                                    >
-                                        <View style={styles.sectionContent}>
-                                            {dataRows}
-                                        </View>
-                                    </Section>
+                                // The "Data" segment already names this panel: no section heading.
+                                <View
+                                    testID="result-data-panel"
+                                    style={styles.sectionContent}
+                                >
+                                    {dataRows}
                                 </View>
                             )}
                             {selectedTab === "details" && (
@@ -1227,18 +1221,15 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                 </View>
                             )}
                             {/* Hero section - centered document info and status */}
+                            {/* Verdict first: it answers the question the scan was for */}
                             <View style={styles.heroSection}>
-                                <Text
-                                    selectable
-                                    accessibilityRole="header"
-                                    style={styles.documentTitle}
-                                >
-                                    {documentType}
-                                </Text>
                                 <StatusBadge
                                     status={securityStatus}
                                     lang={lang}
                                 />
+                                <Text selectable style={styles.documentTitle}>
+                                    {documentType}
+                                </Text>
                             </View>
                         </Animated.View>
                     </View>
@@ -1254,53 +1245,25 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                     { maxWidth: 760 },
                                 ]}
                             >
-                                <TabBarSurface
-                                    {...(canUseGlass
-                                        ? {
-                                              glassEffectStyle:
-                                                  "regular" as const,
-                                              colorScheme: scheme,
-                                              isInteractive: true,
-                                          }
-                                        : {})}
-                                    style={[
-                                        styles.tabContainer,
-                                        !canUseGlass && styles.tabPillFallback,
-                                    ]}
-                                >
-                                    {(["data", "details"] as const).map(
-                                        (tab) => {
-                                            const selected =
-                                                selectedTab === tab;
-                                            return (
-                                                <Pressable
-                                                    key={tab}
-                                                    testID={`result-tab-${tab}`}
-                                                    accessibilityRole="tab"
-                                                    accessibilityLabel={getLabel(
-                                                        tab === "data"
-                                                            ? "data"
-                                                            : "security",
-                                                        lang,
-                                                    )}
-                                                    accessibilityState={{
-                                                        selected,
-                                                    }}
-                                                    onPress={() =>
-                                                        setSelectedTab(tab)
-                                                    }
-                                                    style={[
-                                                        styles.tabPill,
-                                                        selected &&
-                                                            styles.tabPillActive,
-                                                    ]}
-                                                >
-                                                    <Text
-                                                        style={[
-                                                            styles.tabLabel,
-                                                            selected &&
-                                                                styles.tabLabelActive,
-                                                        ]}
+                                {Platform.OS === "ios" ? (
+                                    <Host
+                                        matchContents={{ vertical: true }}
+                                        colorScheme={scheme}
+                                        style={styles.tabContainer}
+                                    >
+                                        <SegmentedPicker
+                                            testID="result-tabs"
+                                            selection={selectedTab}
+                                            onSelectionChange={setSelectedTab}
+                                            modifiers={[
+                                                pickerStyle("segmented"),
+                                            ]}
+                                        >
+                                            {(["data", "details"] as const).map(
+                                                (tab) => (
+                                                    <SegmentText
+                                                        key={tab}
+                                                        modifiers={[tag(tab)]}
                                                     >
                                                         {getLabel(
                                                             tab === "data"
@@ -1308,176 +1271,212 @@ ${signerRows ? `<h2 style="${sectionStyle}">${getLabel("signer", lang)}</h2><tab
                                                                 : "security",
                                                             lang,
                                                         )}
-                                                    </Text>
-                                                </Pressable>
-                                            );
-                                        },
-                                    )}
-                                </TabBarSurface>
+                                                    </SegmentText>
+                                                ),
+                                            )}
+                                        </SegmentedPicker>
+                                    </Host>
+                                ) : (
+                                    <View
+                                        style={[
+                                            styles.tabContainer,
+                                            styles.tabPillFallback,
+                                        ]}
+                                    >
+                                        {(["data", "details"] as const).map(
+                                            (tab) => {
+                                                const selected =
+                                                    selectedTab === tab;
+                                                return (
+                                                    <Pressable
+                                                        key={tab}
+                                                        testID={`result-tab-${tab}`}
+                                                        accessibilityRole="tab"
+                                                        accessibilityLabel={getLabel(
+                                                            tab === "data"
+                                                                ? "data"
+                                                                : "security",
+                                                            lang,
+                                                        )}
+                                                        accessibilityState={{
+                                                            selected,
+                                                        }}
+                                                        onPress={() =>
+                                                            setSelectedTab(tab)
+                                                        }
+                                                        style={[
+                                                            styles.tabPill,
+                                                            selected &&
+                                                                styles.tabPillActive,
+                                                        ]}
+                                                    >
+                                                        <Text
+                                                            style={[
+                                                                styles.tabLabel,
+                                                                selected &&
+                                                                    styles.tabLabelActive,
+                                                            ]}
+                                                        >
+                                                            {getLabel(
+                                                                tab === "data"
+                                                                    ? "data"
+                                                                    : "security",
+                                                                lang,
+                                                            )}
+                                                        </Text>
+                                                    </Pressable>
+                                                );
+                                            },
+                                        )}
+                                    </View>
+                                )}
                             </View>
                         </View>
                     </View>
                 </Animated.View>
             </View>
 
-            <Host colorScheme={scheme} style={{ position: "absolute" }}>
-                <BottomSheet
-                    testID="share-sheet"
-                    isPresented={shareMenuVisible}
-                    onDismiss={closeShareMenu}
-                    containerColor={c.backgroundSecondary}
-                    contentPadding={{ top: 24, left: 20, right: 20, bottom: 0 }}
-                    modifiers={
-                        Platform.OS === "ios"
-                            ? [
-                                  ignoreSafeArea({
-                                      regions: "container",
-                                      edges: "horizontal",
-                                  }),
-                              ]
-                            : undefined
-                    }
-                >
-                    <Column
-                        spacing={16}
-                        style={{ paddingBottom: 24 }}
-                        modifiers={
-                            Platform.OS === "ios"
-                                ? [
-                                      frame({
-                                          maxWidth: Infinity,
-                                          alignment: "leading",
-                                      }),
-                                  ]
-                                : Platform.OS === "android"
-                                  ? [fillMaxWidth()]
-                                  : undefined
-                        }
-                        onDisappear={runPendingShare}
+            {Platform.OS !== "ios" && (
+                <Host colorScheme={scheme} style={{ position: "absolute" }}>
+                    <BottomSheet
+                        testID="share-sheet"
+                        isPresented={shareMenuVisible}
+                        onDismiss={closeShareMenu}
+                        containerColor={c.backgroundSecondary}
+                        contentPadding={{
+                            top: 24,
+                            left: 20,
+                            right: 20,
+                            bottom: 0,
+                        }}
                     >
-                        <Row alignment="center" spacing={16}>
-                            <NativeText
-                                textStyle={{
-                                    fontSize: 20,
-                                    fontWeight: "600",
-                                    color: c.textPrimary,
-                                }}
-                            >
-                                {getLabel("share", lang)}
-                            </NativeText>
-                            <Spacer flexible />
-                            <RNHostView matchContents>
-                                <Pressable
-                                    testID="share-close"
-                                    accessibilityRole="button"
-                                    accessibilityLabel={getLabel("close", lang)}
-                                    onPress={closeShareMenu}
-                                    style={({ pressed }) => ({
-                                        width: 44,
-                                        height: 44,
-                                        borderRadius: 22,
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        backgroundColor: c.border,
-                                        opacity: pressed ? 0.6 : 1,
-                                    })}
-                                >
-                                    <Ionicons
-                                        name="close"
-                                        size={22}
-                                        color={c.textSecondary}
-                                        accessible={false}
-                                    />
-                                </Pressable>
-                            </RNHostView>
-                        </Row>
                         <Column
                             spacing={16}
-                            style={{
-                                padding: 20,
-                                borderRadius: 16,
-                                backgroundColor: c.background,
-                            }}
-                            modifiers={
-                                Platform.OS === "ios"
-                                    ? [
-                                          frame({
-                                              maxWidth: Infinity,
-                                              alignment: "leading",
-                                          }),
-                                      ]
-                                    : Platform.OS === "android"
-                                      ? [fillMaxWidth()]
-                                      : undefined
-                            }
+                            style={{ paddingBottom: 24 }}
+                            modifiers={[fillMaxWidth()]}
+                            onDisappear={runPendingShare}
                         >
-                            <ListItem
-                                testID="share-pdf"
-                                onPress={isSharing ? undefined : handleSharePdf}
-                                colors={{ containerColor: c.background }}
-                                supportingText={
-                                    <NativeText
-                                        textStyle={{
-                                            fontSize: 14,
-                                            color: c.textSecondary,
-                                        }}
-                                    >
-                                        {getLabel(
-                                            "share_pdf_description",
-                                            lang,
-                                        )}
-                                    </NativeText>
-                                }
-                            >
+                            <Row alignment="center" spacing={16}>
                                 <NativeText
                                     textStyle={{
-                                        fontSize: 17,
+                                        fontSize: 20,
                                         fontWeight: "600",
                                         color: c.textPrimary,
                                     }}
                                 >
-                                    PDF
+                                    {getLabel("share", lang)}
                                 </NativeText>
-                            </ListItem>
-                            <Row
-                                style={{ height: 1, backgroundColor: c.border }}
-                            >
                                 <Spacer flexible />
-                            </Row>
-                            <ListItem
-                                testID="share-json"
-                                onPress={
-                                    isSharing ? undefined : handleShareJson
-                                }
-                                colors={{ containerColor: c.background }}
-                                supportingText={
-                                    <NativeText
-                                        textStyle={{
-                                            fontSize: 14,
-                                            color: c.textSecondary,
-                                        }}
-                                    >
-                                        {getLabel(
-                                            "share_json_description",
+                                <RNHostView matchContents>
+                                    <Pressable
+                                        testID="share-close"
+                                        accessibilityRole="button"
+                                        accessibilityLabel={getLabel(
+                                            "close",
                                             lang,
                                         )}
-                                    </NativeText>
-                                }
+                                        onPress={closeShareMenu}
+                                        style={({ pressed }) => ({
+                                            width: 44,
+                                            height: 44,
+                                            borderRadius: 22,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            backgroundColor: c.border,
+                                            opacity: pressed ? 0.6 : 1,
+                                        })}
+                                    >
+                                        <Ionicons
+                                            name="close"
+                                            size={22}
+                                            color={c.textSecondary}
+                                            accessible={false}
+                                        />
+                                    </Pressable>
+                                </RNHostView>
+                            </Row>
+                            <Column
+                                spacing={16}
+                                style={{
+                                    padding: 20,
+                                    borderRadius: 16,
+                                    backgroundColor: c.background,
+                                }}
+                                modifiers={[fillMaxWidth()]}
                             >
-                                <NativeText
-                                    textStyle={{
-                                        fontSize: 17,
-                                        fontWeight: "600",
-                                        color: c.textPrimary,
+                                <ListItem
+                                    testID="share-pdf"
+                                    onPress={
+                                        isSharing ? undefined : handleSharePdf
+                                    }
+                                    colors={{ containerColor: c.background }}
+                                    supportingText={
+                                        <NativeText
+                                            textStyle={{
+                                                fontSize: 14,
+                                                color: c.textSecondary,
+                                            }}
+                                        >
+                                            {getLabel(
+                                                "share_pdf_description",
+                                                lang,
+                                            )}
+                                        </NativeText>
+                                    }
+                                >
+                                    <NativeText
+                                        textStyle={{
+                                            fontSize: 17,
+                                            fontWeight: "600",
+                                            color: c.textPrimary,
+                                        }}
+                                    >
+                                        PDF
+                                    </NativeText>
+                                </ListItem>
+                                <Row
+                                    style={{
+                                        height: 1,
+                                        backgroundColor: c.border,
                                     }}
                                 >
-                                    JSON
-                                </NativeText>
-                            </ListItem>
+                                    <Spacer flexible />
+                                </Row>
+                                <ListItem
+                                    testID="share-json"
+                                    onPress={
+                                        isSharing ? undefined : handleShareJson
+                                    }
+                                    colors={{ containerColor: c.background }}
+                                    supportingText={
+                                        <NativeText
+                                            textStyle={{
+                                                fontSize: 14,
+                                                color: c.textSecondary,
+                                            }}
+                                        >
+                                            {getLabel(
+                                                "share_json_description",
+                                                lang,
+                                            )}
+                                        </NativeText>
+                                    }
+                                >
+                                    <NativeText
+                                        textStyle={{
+                                            fontSize: 17,
+                                            fontWeight: "600",
+                                            color: c.textPrimary,
+                                        }}
+                                    >
+                                        JSON
+                                    </NativeText>
+                                </ListItem>
+                            </Column>
                         </Column>
-                    </Column>
-                </BottomSheet>
-            </Host>
+                    </BottomSheet>
+                </Host>
+            )}
         </View>
     );
 }
@@ -1558,11 +1557,11 @@ function makeStyles(c: Colors) {
             marginBottom: theme.space8,
         },
         documentTitle: {
-            fontSize: theme.fontSize20,
+            fontSize: 17,
             fontWeight: "600",
-            color: c.textPrimary,
+            color: c.textSecondary,
             textAlign: "center",
-            marginBottom: theme.space12,
+            marginTop: theme.space8,
         },
         tabContainer: {
             flexDirection: "row",
@@ -1604,18 +1603,13 @@ function makeStyles(c: Colors) {
             color: c.primary,
         },
         statusBadge: {
-            flexDirection: "row",
             alignItems: "center",
-            gap: theme.space8,
-            paddingHorizontal: theme.space16,
-            paddingVertical: theme.space8,
-            borderRadius: theme.borderRadius20,
-            backgroundColor: c.backgroundSecondary,
+            gap: theme.space4,
         },
         statusText: {
-            flexShrink: 1,
-            fontSize: theme.fontSize16,
-            fontWeight: "600",
+            fontSize: 28,
+            fontWeight: "700",
+            textAlign: "center",
         },
         separator: {
             borderBottomWidth: StyleSheet.hairlineWidth,

@@ -6,8 +6,11 @@ import { testResults } from "@/testdata";
 import { getLocalizedDocumentType } from "@/types/document-type";
 import { ScreenHeading, SCREEN_MARGIN } from "@/components/screen-heading";
 import { FC, useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { Stack } from "expo-router";
+import type { SearchBarCommands } from "react-native-screens";
 import {
     FlatList,
+    Platform,
     View,
     StyleSheet,
     Text,
@@ -53,6 +56,8 @@ type HistoryRowProps = {
     index: number;
     lang: string;
     navigation: any;
+    // Leaves the native search field before the result sheet covers it.
+    blurSearch: () => void;
     openSwipeableRef: React.MutableRefObject<any>;
     deleteHistoryEntryImmediate: (timestamp: string) => void;
     togglePinned: (timestamp: string) => void;
@@ -63,6 +68,7 @@ const HistoryRow: FC<HistoryRowProps> = ({
     index,
     lang,
     navigation,
+    blurSearch,
     openSwipeableRef,
     deleteHistoryEntryImmediate,
     togglePinned,
@@ -157,15 +163,15 @@ const HistoryRow: FC<HistoryRowProps> = ({
         if (!Number.isNaN(parsed) && parsed > 1000) {
             const d = new Date(parsed);
             if (d.toString() !== "Invalid Date") {
-                const dateString = d.toLocaleDateString(languageTag);
                 const hasTime =
                     d.getHours() !== 0 ||
                     d.getMinutes() !== 0 ||
                     d.getSeconds() !== 0;
-                if (hasTime) {
-                    return `${dateString} ${d.toLocaleTimeString(languageTag)}`;
-                }
-                return dateString;
+                // "Sep 21, 2026 at 11:00 AM": seconds are noise in a scan list.
+                return d.toLocaleString(languageTag, {
+                    dateStyle: "medium",
+                    timeStyle: hasTime ? "short" : undefined,
+                });
             }
         }
         return (formatData(item.timestamp, lang) as string) || "";
@@ -265,6 +271,7 @@ const HistoryRow: FC<HistoryRowProps> = ({
                                 ) {
                                     openSwipeableRef.current = null;
                                 }
+                                blurSearch();
                                 navigation.navigate("result", {
                                     result: item.data,
                                 });
@@ -351,6 +358,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const [filter, setFilter] = useState<HistoryFilter>("all");
     const [query, setQuery] = useState("");
     const searchRef = useRef<TextInputRef>(null);
+    const nativeSearchRef = useRef<SearchBarCommands>(null);
     const insets = useSafeAreaInsets();
     const openSwipeableRef = useRef<any>(null);
     const scheme = useEffectiveColorScheme();
@@ -362,6 +370,10 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     const titleColor = systemColor(
         "label",
         scheme === "dark" ? "#F9FAFB" : "#0F172A",
+    );
+    const tintColor = systemColor(
+        "link",
+        scheme === "dark" ? "#60A5FA" : "#0069b4",
     );
     const emptyTextColor = systemColor(
         "secondaryLabel",
@@ -438,10 +450,46 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
     }, [query, filter]);
     const resetFilters = () => {
         searchRef.current?.clear();
+        nativeSearchRef.current?.clearText();
         setQuery("");
         setFilter("all");
     };
 
+    const confirmDeleteHistory = () =>
+        Alert.alert(
+            getLabel("deleteHistory", lang) || "Clear history",
+            getLabel("deleteHistoryMessage", lang) ||
+                "Do you really want to delete all history entries?",
+            [
+                { text: getLabel("cancel", lang) || "Cancel", style: "cancel" },
+                {
+                    text: getLabel("delete", lang),
+                    style: "destructive",
+                    onPress: () => void deleteHistory(),
+                },
+            ],
+            { cancelable: true },
+        );
+
+    const seedHistory = async () => {
+        const entries = testResults.map((data, i) => ({
+            timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
+            pinned: false,
+            data,
+        }));
+        await AsyncStorage.setItem("scanHistory", JSON.stringify(entries));
+        setHistory(entries);
+    };
+
+    const isFiltered = query.length > 0 || filter !== "all";
+    const filterOptions = (["all", "pinned", "not_verified"] as const).map(
+        (value) => ({
+            value,
+            label: getLabel(`history_filter_${value}`, lang),
+        }),
+    );
+
+    const blurSearch = useCallback(() => nativeSearchRef.current?.blur(), []);
     const renderItem = useCallback(
         ({ item, index }: { item: HistoryEntry; index: number }) => (
             <HistoryRow
@@ -449,12 +497,19 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 index={index}
                 lang={lang}
                 navigation={navigation}
+                blurSearch={blurSearch}
                 openSwipeableRef={openSwipeableRef}
                 deleteHistoryEntryImmediate={deleteHistoryEntryImmediate}
                 togglePinned={togglePinned}
             />
         ),
-        [deleteHistoryEntryImmediate, lang, navigation, togglePinned],
+        [
+            deleteHistoryEntryImmediate,
+            lang,
+            navigation,
+            togglePinned,
+            blurSearch,
+        ],
     );
 
     return (
@@ -464,120 +519,137 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 styles.container,
                 {
                     backgroundColor: containerBg,
+                },
+                Platform.OS !== "ios" && {
                     paddingLeft: insets.left,
                     paddingRight: insets.right,
                 },
             ]}
         >
-            <ScreenHeading
-                title={getLabel("history", lang)}
-                color={titleColor}
-                topInset={insets.top}
-            >
-                {__DEV__ && !screenshotsEnabled && (
-                    <Pressable
-                        onPress={async () => {
-                            const entries = testResults.map((data, i) => ({
-                                timestamp: new Date(
-                                    Date.now() - i * 3_600_000,
-                                ).toISOString(),
-                                pinned: false,
-                                data,
-                            }));
-                            await AsyncStorage.setItem(
-                                "scanHistory",
-                                JSON.stringify(entries),
-                            );
-                            setHistory(entries);
-                        }}
-                        hitSlop={10}
-                    >
-                        <Text
-                            style={{
-                                color: "#007AFF",
-                                fontSize: 13,
-                                fontWeight: "600",
-                            }}
-                        >
-                            Seed
-                        </Text>
-                    </Pressable>
-                )}
-                {history.length > 0 && (
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 8,
-                        }}
-                    >
-                        <BlurView
-                            intensity={70}
-                            tint={scheme === "dark" ? "dark" : "light"}
-                            style={{ borderRadius: 18, overflow: "hidden" }}
-                        >
-                            <Pressable
-                                onPress={() =>
-                                    Alert.alert(
-                                        getLabel("deleteHistory", lang) ||
-                                            "Clear history",
-                                        getLabel(
-                                            "deleteHistoryMessage",
-                                            lang,
-                                        ) ||
-                                            "Do you really want to delete all history entries?",
-                                        [
-                                            {
-                                                text:
-                                                    getLabel("cancel", lang) ||
-                                                    "Cancel",
-                                                style: "cancel",
-                                            },
-                                            {
-                                                text: getLabel("delete", lang),
-                                                style: "destructive",
-                                                onPress: () =>
-                                                    void deleteHistory(),
-                                            },
-                                        ],
-                                        { cancelable: true },
-                                    )
+            {Platform.OS === "ios" && (
+                <>
+                    {historyEnabled && (
+                        <Stack.SearchBar
+                            ref={nativeSearchRef}
+                            placeholder={getLabel("history_search", lang)}
+                            onChangeText={(event) =>
+                                setQuery(event.nativeEvent.text)
+                            }
+                            autoCapitalize="none"
+                        />
+                    )}
+                    <Stack.Toolbar placement="right">
+                        {__DEV__ && !screenshotsEnabled && (
+                            <Stack.Toolbar.Button onPress={seedHistory}>
+                                Seed
+                            </Stack.Toolbar.Button>
+                        )}
+                        {historyEnabled && (
+                            <Stack.Toolbar.Menu
+                                icon={
+                                    filter === "all"
+                                        ? "line.3.horizontal.decrease.circle"
+                                        : "line.3.horizontal.decrease.circle.fill"
                                 }
-                                hitSlop={10}
-                                accessibilityRole="button"
+                                accessibilityLabel={getLabel(
+                                    `history_filter_${filter}`,
+                                    lang,
+                                )}
+                            >
+                                {filterOptions.map((option) => (
+                                    <Stack.Toolbar.MenuAction
+                                        key={option.value}
+                                        isOn={filter === option.value}
+                                        onPress={() => setFilter(option.value)}
+                                    >
+                                        {option.label}
+                                    </Stack.Toolbar.MenuAction>
+                                ))}
+                            </Stack.Toolbar.Menu>
+                        )}
+                        {history.length > 0 && (
+                            <Stack.Toolbar.Button
+                                icon="trash"
                                 accessibilityLabel={getLabel(
                                     "deleteHistory",
                                     lang,
                                 )}
+                                onPress={confirmDeleteHistory}
+                            />
+                        )}
+                    </Stack.Toolbar>
+                </>
+            )}
+            {Platform.OS !== "ios" && (
+                <ScreenHeading
+                    title={getLabel("history", lang)}
+                    color={titleColor}
+                    topInset={insets.top}
+                >
+                    {__DEV__ && !screenshotsEnabled && (
+                        <Pressable onPress={seedHistory} hitSlop={10}>
+                            <Text
+                                style={{
+                                    color: "#007AFF",
+                                    fontSize: 13,
+                                    fontWeight: "600",
+                                }}
                             >
-                                <View
-                                    style={{
-                                        width: 48,
-                                        height: 48,
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        backgroundColor:
-                                            scheme === "dark"
-                                                ? "rgba(255,255,255,0.1)"
-                                                : "rgba(255,255,255,0.3)",
-                                    }}
+                                Seed
+                            </Text>
+                        </Pressable>
+                    )}
+                    {history.length > 0 && (
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 8,
+                            }}
+                        >
+                            <BlurView
+                                intensity={70}
+                                tint={scheme === "dark" ? "dark" : "light"}
+                                style={{ borderRadius: 18, overflow: "hidden" }}
+                            >
+                                <Pressable
+                                    onPress={confirmDeleteHistory}
+                                    hitSlop={10}
+                                    accessibilityRole="button"
+                                    accessibilityLabel={getLabel(
+                                        "deleteHistory",
+                                        lang,
+                                    )}
                                 >
-                                    <Ionicons
-                                        name="trash"
-                                        size={20}
-                                        color={
-                                            scheme === "dark"
-                                                ? "#E5E7EB"
-                                                : "#6b7280"
-                                        }
-                                    />
-                                </View>
-                            </Pressable>
-                        </BlurView>
-                    </View>
-                )}
-            </ScreenHeading>
-            {historyEnabled && (
+                                    <View
+                                        style={{
+                                            width: 48,
+                                            height: 48,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            backgroundColor:
+                                                scheme === "dark"
+                                                    ? "rgba(255,255,255,0.1)"
+                                                    : "rgba(255,255,255,0.3)",
+                                        }}
+                                    >
+                                        <Ionicons
+                                            name="trash"
+                                            size={20}
+                                            color={
+                                                scheme === "dark"
+                                                    ? "#E5E7EB"
+                                                    : "#6b7280"
+                                            }
+                                        />
+                                    </View>
+                                </Pressable>
+                            </BlurView>
+                        </View>
+                    )}
+                </ScreenHeading>
+            )}
+            {Platform.OS !== "ios" && historyEnabled && (
                 <View style={{ paddingHorizontal: SCREEN_MARGIN, gap: 8 }}>
                     <Host
                         matchContents={{ vertical: true }}
@@ -620,18 +692,10 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                                 testID="history-filter"
                                 value={filter}
                                 onChange={setFilter}
-                                options={(
-                                    ["all", "pinned", "review"] as const
-                                ).map((value) => ({
-                                    value,
-                                    label: getLabel(
-                                        `history_filter_${value}`,
-                                        lang,
-                                    ),
-                                }))}
+                                options={filterOptions}
                             />
                         </Host>
-                        {(query.length > 0 || filter !== "all") && (
+                        {isFiltered && (
                             <Pressable
                                 testID="history-reset"
                                 accessibilityRole="button"
@@ -654,7 +718,7 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                             </Pressable>
                         )}
                     </View>
-                    {filter === "review" && (
+                    {filter === "not_verified" && (
                         <Text style={{ color: titleColor }}>
                             {getLabel("history_review_help", lang)}
                         </Text>
@@ -662,12 +726,49 @@ const HistoryScreen: FC<Props> = ({ navigation, lang, isFocused = true }) => {
                 </View>
             )}
             <FlatList
+                contentInsetAdjustmentBehavior="automatic"
+                ListHeaderComponent={
+                    Platform.OS === "ios" && historyEnabled && isFiltered ? (
+                        <View style={styles.filterSummary}>
+                            <Text
+                                accessibilityLiveRegion="polite"
+                                style={{ flex: 1, color: emptyTextColor }}
+                            >
+                                {getLabel("history_count", lang)
+                                    .replace(
+                                        "{shown}",
+                                        String(displayedHistory.length),
+                                    )
+                                    .replace("{total}", String(history.length))}
+                            </Text>
+                            <Pressable
+                                testID="history-reset"
+                                accessibilityRole="button"
+                                onPress={resetFilters}
+                                style={{
+                                    minHeight: 44,
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Text style={{ color: tintColor }}>
+                                    {getLabel("history_reset", lang)}
+                                </Text>
+                            </Pressable>
+                        </View>
+                    ) : undefined
+                }
                 keyboardShouldPersistTaps="handled"
                 keyboardDismissMode="on-drag"
                 style={styles.center}
                 contentContainerStyle={{
                     paddingTop: 16,
-                    paddingHorizontal: SCREEN_MARGIN,
+                    // iOS: the list spans under the side bars (iPhone Duo) so its indicator sits at the display edge.
+                    paddingLeft:
+                        SCREEN_MARGIN +
+                        (Platform.OS === "ios" ? insets.left : 0),
+                    paddingRight:
+                        SCREEN_MARGIN +
+                        (Platform.OS === "ios" ? insets.right : 0),
                     paddingBottom: Math.max(insets.bottom, 8) + 8 + 70,
                     flexGrow: 1,
                 }}
@@ -773,6 +874,12 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "white",
         padding: 10,
+    },
+    filterSummary: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 8,
     },
     listTop: {},
     listMiddle: {},

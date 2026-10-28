@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@expo/ui";
+import { Button, Row, Spacer, Text as RowText } from "@expo/ui";
 import { DropdownMenu, DropdownMenuItem, Text } from "@expo/ui/jetpack-compose";
 import type { SettingsPickerProps } from "./SettingsPicker";
 
@@ -8,9 +8,10 @@ export default function SettingsPicker<T extends string>({
     onChange,
     options,
     testID,
+    label,
 }: SettingsPickerProps<T>) {
     const [expanded, setExpanded] = useState(false);
-    return (
+    const menu = (
         <DropdownMenu
             expanded={expanded}
             onDismissRequest={() => setExpanded(false)}
@@ -44,5 +45,13 @@ export default function SettingsPicker<T extends string>({
                 ))}
             </DropdownMenu.Items>
         </DropdownMenu>
+    );
+    if (!label) return menu;
+    return (
+        <Row spacing={12} alignment="center">
+            <RowText>{label}</RowText>
+            <Spacer flexible />
+            {menu}
+        </Row>
     );
 }

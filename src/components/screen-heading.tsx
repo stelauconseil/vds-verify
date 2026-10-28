@@ -24,7 +24,12 @@ export function ScreenHeading({
 }) {
     return (
         <View style={[styles.container, { paddingTop: topInset + 24 }]}>
-            <Text accessibilityRole="header" style={[styles.title, { color }]}>
+            {/* Capped like the native large title, which stops growing at accessibility sizes */}
+            <Text
+                accessibilityRole="header"
+                maxFontSizeMultiplier={1.5}
+                style={[styles.title, { color }]}
+            >
                 {title}
             </Text>
             {children && <View style={styles.actions}>{children}</View>}

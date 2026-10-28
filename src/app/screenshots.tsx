@@ -27,6 +27,11 @@ export default function ScreenshotSetup() {
             }))));
             scan.setResult(null);
             scan.setStatus(null);
+            // The scan tab shows the SPECIMEN card instead of the camera feed.
+            if (params.screen === "scan") {
+                router.replace({ pathname: "/", params: { demo: "card" } });
+                return;
+            }
             router.replace("/history");
             // Deep-link navigation for devices Maestro can't drive (iPhone Duo: second display).
             const screen = params.screen;

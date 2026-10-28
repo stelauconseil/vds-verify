@@ -27,7 +27,7 @@ const label = {
         history_search: "Rechercher un document, un nom, une date…",
         history_filter_all: "Tous",
         history_filter_pinned: "Épinglés",
-        history_filter_review: "À vérifier",
+        history_filter_not_verified: "À vérifier",
         history_reset: "Réinitialiser",
         history_no_matches: "Aucun résultat pour cette recherche ou ce filtre.",
         history_review_help:
@@ -61,7 +61,8 @@ const label = {
         helpscan: "Présentez un 2D-Doc à scanner",
         error: "Erreur",
         error_invalid_qr: "Le QR code scanné n'est pas un 2D-Doc",
-        error_integrity: "Impossible de vérifier l'authenticité de l'application",
+        error_integrity:
+            "Impossible de vérifier l'authenticité de l'application",
         error_integrity_unavailable:
             "Service de vérification momentanément indisponible, réessayez plus tard",
         error_app_outdated:
@@ -153,7 +154,7 @@ const label = {
         history_search: "Search documents, names, dates…",
         history_filter_all: "All",
         history_filter_pinned: "Pinned",
-        history_filter_review: "To review",
+        history_filter_not_verified: "Not verified",
         history_reset: "Reset",
         history_no_matches: "No results for this search or filter.",
         history_review_help:

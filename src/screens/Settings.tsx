@@ -2,16 +2,7 @@ import SettingsPicker from "@/components/SettingsPicker";
 import { ScreenHeading } from "@/components/screen-heading";
 import { FC, useEffect } from "react";
 import { Alert, Platform, PlatformColor, View } from "react-native";
-import {
-    Host,
-    FieldGroup,
-    Icon,
-    ListItem,
-    Switch,
-    Row,
-    Spacer,
-    Text,
-} from "@expo/ui";
+import { Host, FieldGroup, Icon, ListItem, Switch, Text } from "@expo/ui";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLabel } from "@/components/Label";
 import { systemColor } from "@/theme";
@@ -94,21 +85,22 @@ const SettingsView: FC<SettingsViewProps> = ({
             }}
         >
             {isFocused && (
-                <View
-                    style={{
-                        flex: 1,
-                        paddingLeft: insets.left,
-                        paddingRight: insets.right,
-                    }}
-                >
-                    <ScreenHeading
-                        title={getLabel("settings", lang)}
-                        color={systemColor(
-                            "label",
-                            scheme === "dark" ? "#F9FAFB" : "#0F172A",
-                        )}
-                        topInset={insets.top}
-                    />
+                <View style={{ flex: 1 }}>
+                    <View
+                        style={{
+                            paddingLeft: insets.left,
+                            paddingRight: insets.right,
+                        }}
+                    >
+                        <ScreenHeading
+                            title={getLabel("settings", lang)}
+                            color={systemColor(
+                                "label",
+                                scheme === "dark" ? "#F9FAFB" : "#0F172A",
+                            )}
+                            topInset={insets.top}
+                        />
+                    </View>
                     <Host
                         colorScheme={scheme}
                         seedColor="#007AFF"
@@ -117,6 +109,11 @@ const SettingsView: FC<SettingsViewProps> = ({
                             width: "100%",
                             maxWidth: 760,
                             alignSelf: "center",
+                            // iOS: the form spans under the side bars (iPhone Duo) and insets its rows itself.
+                            ...(Platform.OS !== "ios" && {
+                                marginLeft: insets.left,
+                                marginRight: insets.right,
+                            }),
                             marginBottom:
                                 Platform.OS === "ios" ? insets.bottom : 0,
                         }}
@@ -125,37 +122,28 @@ const SettingsView: FC<SettingsViewProps> = ({
                             <FieldGroup.Section
                                 title={getLabel("appearance", lang)}
                             >
-                                <Row spacing={12} alignment="center">
-                                    <Text>{getLabel("theme", lang)}</Text>
-                                    <Spacer flexible />
-                                    <SettingsPicker<ColorSchemePref>
-                                        testID="theme-picker"
-                                        value={colorSchemePref}
-                                        onChange={setColorSchemePref}
-                                        options={(
-                                            ["system", "light", "dark"] as const
-                                        ).map((value) => ({
-                                            value,
-                                            label: getLabel(
-                                                `theme_${value}`,
-                                                lang,
-                                            ),
-                                        }))}
-                                    />
-                                </Row>
-                                <Row spacing={12} alignment="center">
-                                    <Text>{getLabel("language", lang)}</Text>
-                                    <Spacer flexible />
-                                    <SettingsPicker
-                                        testID="language-picker"
-                                        value={lang}
-                                        onChange={setLang}
-                                        options={[
-                                            { value: "fr", label: "Français" },
-                                            { value: "en", label: "English" },
-                                        ]}
-                                    />
-                                </Row>
+                                <SettingsPicker<ColorSchemePref>
+                                    label={getLabel("theme", lang)}
+                                    testID="theme-picker"
+                                    value={colorSchemePref}
+                                    onChange={setColorSchemePref}
+                                    options={(
+                                        ["system", "light", "dark"] as const
+                                    ).map((value) => ({
+                                        value,
+                                        label: getLabel(`theme_${value}`, lang),
+                                    }))}
+                                />
+                                <SettingsPicker
+                                    label={getLabel("language", lang)}
+                                    testID="language-picker"
+                                    value={lang}
+                                    onChange={setLang}
+                                    options={[
+                                        { value: "fr", label: "Français" },
+                                        { value: "en", label: "English" },
+                                    ]}
+                                />
                             </FieldGroup.Section>
                             <FieldGroup.Section
                                 title={getLabel("history", lang)}

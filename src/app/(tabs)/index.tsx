@@ -7,6 +7,8 @@ import {
     Text,
     Pressable,
     type GestureResponderEvent,
+    type LayoutRectangle,
+    type ViewStyle,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter, useLocalSearchParams, usePathname } from "expo-router";
@@ -16,9 +18,15 @@ import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import {
+    ReservedRegionsProvider,
+    useReservedRegions,
+} from "react-native-reserved-regions";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import ScannerView from "@/screens/ScannerView";
+import ScanDemo from "@/screens/ScanDemo";
+import { screenshotsEnabled, takeLaunchTarget } from "@/screenshots";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
 import { normalizeVdsResult, type VdsResult } from "@/types/vds";
@@ -30,12 +38,50 @@ const INTEGRITY_ERRORS: Record<number, string> = {
     503: "error_integrity_unavailable",
 };
 
+// iPhone Duo shows its inner camera while the camera is active, and safe areas don't cover it:
+// push the overlay control below any occlusion it overlaps. Must render directly in the provider.
+function ClearOfOcclusions({
+    style,
+    children,
+}: {
+    style: ViewStyle;
+    children: React.ReactNode;
+}) {
+    const regions = useReservedRegions();
+    const [frame, setFrame] = useState<LayoutRectangle | null>(null);
+    const hit =
+        frame &&
+        regions.find(
+            ({ kind, frame: r }) =>
+                kind === "occlusion" &&
+                r.x < frame.x + frame.width &&
+                frame.x < r.x + r.width &&
+                r.y < frame.y + frame.height &&
+                frame.y < r.y + r.height,
+        );
+    const shift = hit ? hit.frame.y + hit.frame.height + 8 - frame.y : 0;
+    return (
+        <View
+            onLayout={(event) => setFrame(event.nativeEvent.layout)}
+            style={[style, { transform: [{ translateY: shift }] }]}
+        >
+            {children}
+        </View>
+    );
+}
+
 export default function ScanRoute() {
     const router = useRouter();
     const pathname = usePathname();
     const params = useLocalSearchParams();
     const { lang } = useSettings();
     const isFocused = pathname === "/" || pathname === "/index";
+    // Screenshot build: the first screen hands launch arguments to the capture route.
+    useEffect(() => {
+        const target = takeLaunchTarget();
+        if (target)
+            router.replace({ pathname: "/screenshots", params: target });
+    }, [router]);
     const [appState, setAppState] = useState(AppState.currentState);
     const appStateRef = useRef(AppState.currentState);
     const decodedRef = useRef(false);
@@ -342,7 +388,9 @@ export default function ScanRoute() {
         if (
             url !== null &&
             typeof url === "string" &&
-            (url.startsWith("http") || url.startsWith("vds"))
+            (url.startsWith("http") || url.startsWith("vds")) &&
+            // Capture-app navigation links are not documents to verify.
+            !url.startsWith("vdsverify-screenshots:")
         ) {
             processResult({ data: url });
             setUrl(null);
@@ -369,33 +417,45 @@ export default function ScanRoute() {
         }
     }, [params.result, router]);
 
+    const frameBox = {
+        top: insets.top + 56,
+        bottom: insets.bottom + 112,
+        left: insets.left + 16,
+        right: insets.right + 16,
+    };
+    const demoCard = screenshotsEnabled && params.demo === "card";
+
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1 }}>
+            <ReservedRegionsProvider style={{ flex: 1 }}>
                 {/* Keep the live preview through decoding; navigation releases the camera. */}
                 {cameraActive ? (
                     <>
-                        <CameraView
-                            zoom={zoomLevel}
-                            enableTorch={torchEnabled}
-                            barcodeScannerSettings={{
-                                barcodeTypes: ["qr", "datamatrix"],
-                            }}
-                            onMountError={() => {
-                                showError("cameraerror");
-                            }}
-                            onBarcodeScanned={(event) => {
-                                // A decoded barcode already proves the camera is ready.
-                                // Do not depend on ordering with onCameraReady/AppState events.
-                                if (
-                                    appStateRef.current === "active" &&
-                                    isFocused
-                                ) {
-                                    void processResult(event);
-                                }
-                            }}
-                            style={StyleSheet.absoluteFill}
-                        />
+                        {demoCard ? (
+                            <ScanDemo frameBox={frameBox} />
+                        ) : (
+                            <CameraView
+                                zoom={zoomLevel}
+                                enableTorch={torchEnabled}
+                                barcodeScannerSettings={{
+                                    barcodeTypes: ["qr", "datamatrix"],
+                                }}
+                                onMountError={() => {
+                                    showError("cameraerror");
+                                }}
+                                onBarcodeScanned={(event) => {
+                                    // A decoded barcode already proves the camera is ready.
+                                    // Do not depend on ordering with onCameraReady/AppState events.
+                                    if (
+                                        appStateRef.current === "active" &&
+                                        isFocused
+                                    ) {
+                                        void processResult(event);
+                                    }
+                                }}
+                                style={StyleSheet.absoluteFill}
+                            />
+                        )}
                         <View
                             style={StyleSheet.absoluteFill}
                             onStartShouldSetResponder={(event) =>
@@ -416,63 +476,73 @@ export default function ScanRoute() {
                             onResponderTerminate={handleTouchEnd}
                         />
                         {/* Pinch is unavailable to VoiceOver/TalkBack: the badge doubles as an adjustable zoom control (swipe up/down). */}
-                        <View
-                            accessible
-                            accessibilityRole="adjustable"
-                            accessibilityLabel={getLabel("zoom", lang)}
-                            accessibilityValue={{
-                                min: 0,
-                                max: 100,
-                                now: Math.round(zoomLevel * 100),
-                                text: `${Math.round(zoomLevel * 100)}%`,
+                        <ClearOfOcclusions
+                            style={{
+                                position: "absolute",
+                                top: Math.max(insets.top, 8) + 8,
+                                right: insets.right + 12,
                             }}
-                            accessibilityActions={[
-                                { name: "increment" },
-                                { name: "decrement" },
-                            ]}
-                            onAccessibilityAction={(event) => {
-                                const step =
-                                    event.nativeEvent.actionName === "increment"
-                                        ? 0.1
-                                        : -0.1;
-                                setZoomLevel((z) => clampZoom(z + step));
+                        >
+                            <View
+                                accessible
+                                accessibilityRole="adjustable"
+                                accessibilityLabel={getLabel("zoom", lang)}
+                                accessibilityValue={{
+                                    min: 0,
+                                    max: 100,
+                                    now: Math.round(zoomLevel * 100),
+                                    text: `${Math.round(zoomLevel * 100)}%`,
+                                }}
+                                accessibilityActions={[
+                                    { name: "increment" },
+                                    { name: "decrement" },
+                                ]}
+                                onAccessibilityAction={(event) => {
+                                    const step =
+                                        event.nativeEvent.actionName ===
+                                        "increment"
+                                            ? 0.1
+                                            : -0.1;
+                                    setZoomLevel((z) => clampZoom(z + step));
+                                }}
+                                style={styles.zoomBadge}
+                            >
+                                <Text style={styles.zoomBadgeText}>
+                                    {getLabel("zoom", lang)}{" "}
+                                    {Math.round(zoomLevel * 100)}%
+                                </Text>
+                            </View>
+                        </ClearOfOcclusions>
+                        <ClearOfOcclusions
+                            style={{
+                                position: "absolute",
+                                top: Math.max(insets.top, 8) + 8,
+                                left: insets.left + 12,
                             }}
-                            style={[
-                                styles.zoomBadge,
-                                {
-                                    top: Math.max(insets.top, 8) + 8,
-                                    right: insets.right + 12,
-                                },
-                            ]}
                         >
-                            <Text style={styles.zoomBadgeText}>
-                                {getLabel("zoom", lang)}{" "}
-                                {Math.round(zoomLevel * 100)}%
-                            </Text>
-                        </View>
-                        <Pressable
-                            onPress={() => setTorchEnabled((v) => !v)}
-                            style={[
-                                styles.torchButton,
-                                {
-                                    top: Math.max(insets.top, 8) + 8,
-                                    left: insets.left + 12,
-                                },
-                                torchEnabled && styles.torchButtonActive,
-                            ]}
-                            accessibilityLabel={getLabel(
-                                torchEnabled ? "torch_off" : "torch_on",
-                                lang,
-                            )}
-                            accessibilityState={{ selected: torchEnabled }}
-                            accessibilityRole="button"
-                        >
-                            <Ionicons
-                                name={torchEnabled ? "flash" : "flash-outline"}
-                                size={20}
-                                color="#fff"
-                            />
-                        </Pressable>
+                            <Pressable
+                                onPress={() => setTorchEnabled((v) => !v)}
+                                style={[
+                                    styles.torchButton,
+                                    torchEnabled && styles.torchButtonActive,
+                                ]}
+                                accessibilityLabel={getLabel(
+                                    torchEnabled ? "torch_off" : "torch_on",
+                                    lang,
+                                )}
+                                accessibilityState={{ selected: torchEnabled }}
+                                accessibilityRole="button"
+                            >
+                                <Ionicons
+                                    name={
+                                        torchEnabled ? "flash" : "flash-outline"
+                                    }
+                                    size={20}
+                                    // Black on the yellow "on" fill (~13:1); white is ~1.6:1 there.
+                                    color={torchEnabled ? "#000" : "#fff"}
+                                />
+                            </Pressable>
+                        </ClearOfOcclusions>
                         <View
                             style={[
                                 styles.helpTextWrapper,
@@ -489,21 +559,13 @@ export default function ScanRoute() {
                         </View>
                         <View
                             pointerEvents="none"
-                            style={[
-                                styles.content,
-                                {
-                                    top: insets.top + 56,
-                                    bottom: insets.bottom + 112,
-                                    left: insets.left + 16,
-                                    right: insets.right + 16,
-                                },
-                            ]}
+                            style={[styles.content, frameBox]}
                         >
                             <ScannerView scanned={!!result} />
                         </View>
                     </>
                 ) : null}
-            </View>
+            </ReservedRegionsProvider>
             {isFocused && permission && !permission.granted && (
                 <View
                     style={[
@@ -621,8 +683,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     zoomBadge: {
-        position: "absolute",
-        right: 12,
         borderRadius: 10,
         paddingVertical: 6,
         paddingHorizontal: 10,
@@ -638,8 +698,6 @@ const styles = StyleSheet.create({
         minHeight: 48,
         alignItems: "center",
         justifyContent: "center",
-        position: "absolute",
-        left: 12,
         borderRadius: 10,
         paddingVertical: 6,
         paddingHorizontal: 10,

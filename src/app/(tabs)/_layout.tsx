@@ -69,11 +69,8 @@ export default function TabsLayout() {
                       })
                     : inactiveTintColor
             }
-            tintColor={
-                Platform.OS === "ios"
-                    ? DynamicColorIOS(theme.color.reactBlue)
-                    : inactiveTintColor
-            }
+            // Monochrome: saturated color is reserved for the scan verdict.
+            tintColor={Platform.OS === "ios" ? tintColor : inactiveTintColor}
             labelVisibilityMode="labeled"
             indicatorColor={tintColor + "25"}
             disableTransparentOnScrollEdge={true} // Used to prevent transparent background on iOS 18 and older

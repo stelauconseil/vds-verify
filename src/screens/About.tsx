@@ -166,9 +166,9 @@ const About: FC = () => {
                     },
                     {
                         label: getLabel("about_website", lang),
-                        value: "stelau.com",
+                        value: "https://vds-verify.stelau.com",
                         onPress: () =>
-                            Linking.openURL("https://www.stelau.com"),
+                            Linking.openURL("https://vds-verify.stelau.com"),
                     },
                 ]}
             />
