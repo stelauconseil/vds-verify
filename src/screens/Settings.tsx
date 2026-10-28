@@ -78,10 +78,17 @@ const SettingsView: FC<SettingsViewProps> = ({
         <View
             style={{
                 flex: 1,
-                backgroundColor: systemColor(
-                    "systemGroupedBackground",
-                    scheme === "dark" ? "#000000" : "#F2F2F7",
-                ),
+                // Android: the Compose form paints Material `surface`; the heading band must match it.
+                // Required lazily: the Compose module is Android-only.
+                backgroundColor:
+                    Platform.OS === "android"
+                        ? require("@expo/ui/jetpack-compose").getMaterialColors(
+                              { scheme, seedColor: "#007AFF" },
+                          ).surface
+                        : systemColor(
+                              "systemGroupedBackground",
+                              scheme === "dark" ? "#000000" : "#F2F2F7",
+                          ),
             }}
         >
             {isFocused && (
@@ -183,9 +190,15 @@ const SettingsView: FC<SettingsViewProps> = ({
                                 ).map((route) => (
                                     <ListItem
                                         key={route}
-                                        colors={{
-                                            containerColor: "transparent",
-                                        }}
+                                        // Android: keep the section's card color (surfaceContainer) like the other rows.
+                                        colors={
+                                            Platform.OS === "ios"
+                                                ? {
+                                                      containerColor:
+                                                          "transparent",
+                                                  }
+                                                : undefined
+                                        }
                                         trailing={
                                             // System disclosure indicator on iOS; Material rows have none.
                                             Platform.OS === "ios" ? (
