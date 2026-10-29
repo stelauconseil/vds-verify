@@ -30,6 +30,13 @@
         apply();
         mq.addEventListener("change", apply);
         document.addEventListener("click", function (e) {
+          var pause = e.target.closest(".scan-demo-toggle");
+          if (pause) {
+            var paused = pause.getAttribute("aria-pressed") !== "true";
+            pause.setAttribute("aria-pressed", paused);
+            pause.parentNode.classList.toggle("is-paused", paused);
+            return;
+          }
           if (!e.target.closest(".theme-toggle")) return;
           var next = root.dataset.theme === "dark" ? "light" : "dark";
           try { localStorage.setItem("theme", next); } catch (err) {}

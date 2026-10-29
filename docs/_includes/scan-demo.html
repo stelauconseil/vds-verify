@@ -1,0 +1,23 @@
+{%- comment -%}
+  Hero animation: the app scans the 2D-Doc of a SPECIMEN ID card, then the verdict sheet slides up.
+  Overlay positions are fractions of the 1206×2622 iPhone captures (scan frame 273–933 × 865–1525, sheet top 186).
+  Images come from scripts/screenshots (run.mjs, screens 00-scan and 02-identity).
+{%- endcomment -%}
+{%- assign scan = '/assets/screens/scan-' | append: include.lang -%}
+{%- assign verdict = '/assets/screens/verdict-' | append: include.lang -%}
+<div class="phone scan-demo" role="img" aria-label="{{ include.t.hero.alt }}">
+  <img class="shot-light" src="{{ scan | append: '-light.webp' | relative_url }}" alt="" width="600" height="1304" fetchpriority="high">
+  <img class="shot-dark" src="{{ scan | append: '-dark.webp' | relative_url }}" alt="" width="600" height="1304" loading="lazy">
+  <span class="scan-line"></span>
+  <span class="scan-hit"></span>
+  <span class="scan-dim"></span>
+  <div class="scan-sheet">
+    <img class="shot-light" src="{{ verdict | append: '-light.webp' | relative_url }}" alt="" width="600" height="1212">
+    <img class="shot-dark" src="{{ verdict | append: '-dark.webp' | relative_url }}" alt="" width="600" height="1212" loading="lazy">
+    <span class="scan-check"></span>
+  </div>
+</div>
+<button class="scan-demo-toggle" type="button" aria-pressed="false" aria-label="{{ include.t.hero.pause }}" title="{{ include.t.hero.pause }}">
+  <svg class="icon-pause" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M7 5h3v14H7zM14 5h3v14h-3z"/></svg>
+  <svg class="icon-play" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+</button>

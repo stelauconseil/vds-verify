@@ -104,6 +104,73 @@ p { margin: 0 0 1em; }
   background: #0d1117;
 }
 
+/* Hero animation: scan the 2D-Doc, then the verdict sheet slides up (9 s loop).
+   The resting styles are the final frame, shown as is when motion is reduced.
+   Positions are fractions of the 1206×2622 captures (see _includes/scan-demo.html). */
+.scan-demo {
+  --loop: 9s;
+  position: relative; overflow: hidden;
+  border-radius: 36px; border: 8px solid #0d1117; background: #0d1117;
+  box-shadow: 0 30px 60px -20px rgba(0, 45, 90, .35), 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.scan-demo img { width: 100%; border: 0; border-radius: 0; box-shadow: none; background: none; }
+.scan-demo > span, .scan-sheet { position: absolute; pointer-events: none; }
+.scan-line {
+  left: 24%; width: 52%; top: 33%; height: 3px; opacity: 0; border-radius: 3px;
+  background: #34d399; box-shadow: 0 0 12px 3px rgba(52, 211, 153, .7);
+  animation: scan-line var(--loop) linear infinite;
+}
+.scan-hit {
+  left: 36.5%; width: 26.5%; top: 39.4%; height: 12.2%; opacity: 0;
+  border: 3px solid #34d399; border-radius: 10px; background: rgba(52, 211, 153, .18);
+  transform: rotate(-4deg);
+  animation: scan-hit var(--loop) ease-out infinite;
+}
+.scan-dim { inset: 0; background: #000; opacity: .45; animation: scan-dim var(--loop) ease infinite; }
+.scan-sheet {
+  left: 0; right: 0; top: 7.1%; bottom: 0; overflow: hidden;
+  border-radius: 7.5% 7.5% 0 0 / 3.7% 3.7% 0 0;
+  animation: scan-sheet var(--loop) cubic-bezier(.2, .8, .2, 1) infinite;
+}
+.scan-check {
+  position: absolute; left: 44.2%; width: 11.6%; top: 10.1%; height: 5.8%;
+  border: 3px solid var(--ok); border-radius: 50%; opacity: 0;
+  animation: scan-check var(--loop) ease-out infinite;
+}
+@keyframes scan-line {
+  0% { top: 33%; opacity: 0; } 2% { opacity: 1; }
+  14% { top: 57.5%; opacity: 1; } 16%, 100% { top: 57.5%; opacity: 0; }
+}
+@keyframes scan-hit {
+  0%, 14% { opacity: 0; transform: rotate(-4deg) scale(1.3); }
+  18%, 26% { opacity: 1; transform: rotate(-4deg) scale(1); }
+  30%, 100% { opacity: 0; transform: rotate(-4deg) scale(1); }
+}
+@keyframes scan-dim { 0%, 24% { opacity: 0; } 32%, 86% { opacity: .45; } 93%, 100% { opacity: 0; } }
+@keyframes scan-sheet {
+  0%, 24% { transform: translateY(101%); } 33%, 86% { transform: none; }
+  94%, 100% { transform: translateY(101%); }
+}
+@keyframes scan-check {
+  0%, 34% { opacity: 0; transform: scale(.7); } 38% { opacity: 1; transform: scale(1); }
+  48%, 100% { opacity: 0; transform: scale(1.7); }
+}
+.hero-visual { position: relative; }
+.scan-demo-toggle {
+  position: absolute; right: 8px; bottom: 0;
+  width: 36px; height: 36px; display: grid; place-items: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 50%; color: var(--text);
+  cursor: pointer; box-shadow: var(--shadow);
+}
+.scan-demo-toggle:hover { border-color: var(--brand); color: var(--brand); }
+.scan-demo-toggle .icon-play, .scan-demo-toggle[aria-pressed="true"] .icon-pause { display: none; }
+.scan-demo-toggle[aria-pressed="true"] .icon-play { display: block; }
+.hero-visual.is-paused .scan-demo * { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .scan-demo * { animation: none !important; }
+  .scan-demo-toggle { display: none; }
+}
+
 /* Trust strip */
 .trust { border-block: 1px solid var(--border); background: var(--surface); }
 .trust p { max-width: 860px; margin: 0 auto; text-wrap: balance; padding: 18px 20px; text-align: center; color: var(--muted); font-size: 15px; }
