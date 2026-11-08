@@ -31,8 +31,8 @@ yarn-error.log*
 pc-api-7507057973859638017-998-e9dd35e8b4ec.json
 
 # dev
-ios/
-android/
+/ios/
+/android/
 .idea/
 
 # bun
