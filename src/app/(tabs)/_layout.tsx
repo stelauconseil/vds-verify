@@ -4,6 +4,7 @@ import {
     ColorValue,
     ImageSourcePropType,
 } from "react-native";
+import { useRouter } from "expo-router";
 import { NativeTabs } from "expo-router/native-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { theme } from "@/theme";
@@ -26,6 +27,7 @@ type VectorIconFamily = {
 
 export default function TabsLayout() {
     const { lang, colorSchemePref } = useSettings();
+    const router = useRouter();
     const scheme = useEffectiveColorScheme();
     // Only use DynamicColorIOS when following system — otherwise fix the color to the chosen scheme
     const screenBg =
@@ -95,6 +97,38 @@ export default function TabsLayout() {
                 })}
                 <NativeTabs.Trigger.Label>
                     {getLabel("scan", lang || "en")}
+                </NativeTabs.Trigger.Label>
+            </NativeTabs.Trigger>
+
+            {/* An action, not a screen: `disabled` keeps the tab from being selected, the press opens
+                the document scanner on the scan screen. */}
+            <NativeTabs.Trigger
+                name="document"
+                disabled
+                accessibilityLabel={getLabel("scan_document", lang || "en")}
+                listeners={{
+                    tabPress: () =>
+                        router.navigate({
+                            pathname: "/",
+                            params: { scanDocument: Date.now() },
+                        }),
+                }}
+            >
+                {Platform.select({
+                    ios: <NativeTabs.Trigger.Icon sf="doc.viewfinder" />,
+                    android: (
+                        <NativeTabs.Trigger.Icon
+                            src={
+                                <NativeTabs.Trigger.VectorIcon
+                                    family={Ionicons as VectorIconFamily}
+                                    name="document-text-outline"
+                                />
+                            }
+                        />
+                    ),
+                })}
+                <NativeTabs.Trigger.Label>
+                    {getLabel("document", lang || "en")}
                 </NativeTabs.Trigger.Label>
             </NativeTabs.Trigger>
 

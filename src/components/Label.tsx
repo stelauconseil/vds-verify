@@ -22,6 +22,11 @@ const label = {
         close_image_preview: "Fermer l’aperçu de l’image",
         torch_on: "Allumer la lampe",
         torch_off: "Éteindre la lampe",
+        document: "Document",
+        scan_document: "Scanner un document papier",
+        error_no_code_in_document: "Aucun 2D-Doc trouvé sur le document scanné",
+        error_document_scanner_unavailable:
+            "Le scanner de documents n’est pas disponible sur cet appareil",
         zoom: "Zoom",
         history_count: "{shown} résultats sur {total}",
         history_search: "Rechercher un document, un nom, une date…",
@@ -149,6 +154,11 @@ const label = {
         close_image_preview: "Close image preview",
         torch_on: "Turn flashlight on",
         torch_off: "Turn flashlight off",
+        document: "Document",
+        scan_document: "Scan a paper document",
+        error_no_code_in_document: "No 2D-Doc found on the scanned document",
+        error_document_scanner_unavailable:
+            "The document scanner is not available on this device",
         zoom: "Zoom",
         history_count: "{shown} results out of {total}",
         history_search: "Search documents, names, dates…",
