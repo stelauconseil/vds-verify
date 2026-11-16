@@ -118,8 +118,8 @@ private final class ScanDelegate: NSObject, VNDocumentCameraViewControllerDelega
   }
 }
 
-// VisionKit lays its Save button out under the status bar on iPhone Duo, whatever the
-// presentation style: give it only the area below the status bar and the inner camera.
+// VisionKit lays its Save button out under the inner camera on iPhone Duo, whatever the
+// presentation style: keep the scanner clear of it (right strip on Duo, status bar elsewhere).
 private final class BelowStatusBarContainer: UIViewController {
   private let child: UIViewController
 
@@ -148,13 +148,18 @@ private final class BelowStatusBarContainer: UIViewController {
 
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
-    var top = view.safeAreaInsets.top
+    // iPhone Duo: the inner camera sits on the right edge, where the tab bar is. Give that strip
+    // to the black band and keep the full height for the scanner.
+    var right: CGFloat = 0
     if #available(iOS 27.1, *) {
       // ponytail: re-queried on layout only; add a UIHingeInteraction if folding mid-scan misplaces it.
-      for region in view.reservedRegions(kind: .occlusion) where region.frame.minY < view.bounds.midY {
-        top = max(top, region.frame.maxY)
+      for region in view.reservedRegions(kind: .occlusion) where region.frame.maxX >= view.bounds.maxX - 1 {
+        right = max(right, view.bounds.maxX - region.frame.minX)
       }
     }
-    child.view.frame = view.bounds.inset(by: UIEdgeInsets(top: top, left: 0, bottom: 0, right: 0))
+    let insets = right > 0
+      ? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: right)
+      : UIEdgeInsets(top: view.safeAreaInsets.top, left: 0, bottom: 0, right: 0)
+    child.view.frame = view.bounds.inset(by: insets)
   }
 }

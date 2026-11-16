@@ -422,13 +422,8 @@ export default function ScanRoute() {
     }, [contextResult]);
 
     useEffect(() => {
-        if (
-            url !== null &&
-            typeof url === "string" &&
-            (url.startsWith("http") || url.startsWith("vds")) &&
-            // Capture-app navigation links are not documents to verify.
-            !url.startsWith("vdsverify-screenshots:")
-        ) {
+        // Only web links carry a VDS; the app's own vdsverify:// links are navigation.
+        if (url?.startsWith("http")) {
             processResult({ data: url });
             setUrl(null);
         }
