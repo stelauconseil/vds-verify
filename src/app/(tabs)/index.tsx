@@ -122,9 +122,8 @@ export default function ScanRoute() {
                     setTorchEnabled(false);
                     pinchStartDistanceRef.current = null;
                 } else {
-                    void getCameraPermission().catch(() =>
-                        setErrorMessage("cameraerror"),
-                    );
+                    // Refreshes the permission panel below; it also covers the denied case.
+                    void getCameraPermission().catch(() => {});
                 }
             },
         );
@@ -340,18 +339,9 @@ export default function ScanRoute() {
         void scanDocument();
     }, [params.scanDocument, router, scanDocument]);
 
+    // A refusal shows the permission panel, which goes away once access is granted.
     useEffect(() => {
-        const getCameraPermission = async () => {
-            try {
-                const { status } = await requestPermission();
-                if (status !== "granted") {
-                    setErrorMessage("cameraerror");
-                }
-            } catch {
-                setErrorMessage("cameraerror");
-            }
-        };
-        getCameraPermission();
+        void requestPermission().catch(() => {});
     }, [requestPermission]);
 
     useEffect(() => {
