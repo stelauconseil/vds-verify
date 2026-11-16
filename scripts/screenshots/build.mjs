@@ -23,7 +23,7 @@ process.stdout.write(preparation.stdout || "");
 process.stderr.write(preparation.stderr || "");
 if (preparation.status !== 0) {
     const output = (preparation.stdout || "") + (preparation.stderr || "");
-    if (!output.includes("--wait-ready gave up")) throw Error("Native preparation failed");
+    if (!/--wait-ready gave up|is still building after/.test(output)) throw Error("Native preparation failed");
     // agent-cli keeps compiling after its short readiness timeout.
     const deadline = Date.now() + 30 * 60_000;
     let ready = false;

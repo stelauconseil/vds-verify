@@ -7,7 +7,7 @@ const platform = process.argv[2];
 if (!["ios", "android", "all"].includes(platform)) throw Error("Expected ios, android or all");
 const env = process.env;
 // Every screen is reached by deep link (see src/app/screenshots.tsx), so any device and display works.
-const SCREENS = [["00-scan", "scan"], ["01-history", "history"], ["02-identity", "identity"], ["03-details", "details"], ["04-driving-record", "driving-record"], ["05-settings", "settings"]];
+const SCREENS = [["00-scan", "scan"], ["01-history", "history"], ["02-identity", "identity"], ["03-details", "details"], ["04-driving-record", "driving-record"], ["05-settings", "settings"], ["06-document", "document"]];
 function run(command, args, capture = false) {
     const result = spawnSync(command, args, { env, encoding: "utf8", stdio: capture ? "pipe" : "inherit" });
     if (result.error || result.status !== 0) throw Error(`${command} ${args.join(" ")} failed (exit ${result.status}, signal ${result.signal}).\n${result.error?.message || result.stderr || result.stdout || "See command output above."}`);
@@ -70,7 +70,7 @@ for (const target of platform === "all" ? ["ios", "android"] : [platform]) {
         }
         if (target === "ios") run("xcrun", ["simctl", "status_bar", device, "clear"]);
     }
-    const files = readdirSync(root, { recursive: true }).filter(f => /0[0-5]-.*\.png$/.test(f));
+    const files = readdirSync(root, { recursive: true }).filter(f => /0[0-6]-.*\.png$/.test(f));
     const expected = SCREENS.length * (process.env.SCREENSHOT_LANGUAGES || "fr,en").split(",").length * (process.env.SCREENSHOT_THEMES || "light,dark").split(",").length;
     if (files.length !== expected) throw Error(`Expected ${expected} captures, found ${files.length} in ${root}`);
     const manifest = files.map(file => {
