@@ -9,12 +9,12 @@ faq:
     a: |
       Un Cachet Électronique Visible (CEV, en anglais *Visible Digital Seal* ou VDS) est un code 2D (Datamatrix ou QR Code) imprimé sur un document, qui contient les données essentielles du document et une signature électronique. En le scannant, on peut vérifier que le document a bien été émis par l'organisme indiqué et que ses données n'ont pas été modifiées.
 
-      Les principaux formats sont le **2D-Doc** de l'[ANTS](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc), la norme française **AFNOR XP Z42-105** et la norme internationale **ISO 22376:2023**.
+      Les principaux formats sont le **2D-Doc** de l'[ANTS](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc), les normes françaises **AFNOR XP Z42-101 à XP Z42-105**, la norme internationale **ISO 22376:2023** et le **VDS-NC** de l'OACI (ICAO).
   - q: Quels sont les types de CEV pris en charge ?
     a: |
       L'application VDS Verify décode et vérifie :
 
-      - **Tous les 2D-Doc**, dont ceux apposés sur les documents suivants :
+      - **Tous les 2D-Doc (AFNOR XP Z42-101 à XP Z42-104)**, dont ceux apposés sur les documents suivants :
         - Carte nationale d'identité française
         - Relevé d'information restreint (RIR)
         - Attestation de droits à conduire sécurisée (ADCS)
@@ -27,9 +27,13 @@ faq:
         - Demande d'identité numérique certifiée de [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
       - **Tous les CEV conformes à la norme ISO 22376:2023**, dont ceux apposés sur les documents suivants :
         - [Permis de conduire les bateaux de plaisance à moteur](https://www.mer.gouv.fr/le-permis-plaisance-permis-de-conduire-les-bateaux-de-plaisance-moteur#summary-target-0)
+      - **Les VDS-NC de l'OACI (ICAO)**, cachets en QR Code définis par l'Organisation de l'aviation civile internationale pour les documents de voyage et de santé
   - q: Comment vérifier un justificatif d'identité France Identité ?
     a: |
       Ouvrez VDS Verify et scannez le code 2D imprimé sur le justificatif. L'application vérifie la signature électronique du cachet et affiche les données du justificatif (nom, prénoms, date de naissance, durée de validité, destinataire). Si les données affichées correspondent au document présenté et que le statut est « CEV valide », le justificatif est authentique.
+  - q: Comment scanner un document papier ?
+    a: |
+      Touchez l'onglet **Document** : le scanner de documents de votre téléphone s'ouvre. Photographiez la page entière, sans viser le code : VDS Verify trouve le 2D-Doc (Datamatrix ou QR Code) sur la page et le vérifie. Pratique pour un document A4 ou un code trop petit pour être visé de près.
   - q: Comment fonctionne la vérification d'un CEV ?
     a: |
       Afin de décoder et vérifier un CEV, l'application VDS Verify :

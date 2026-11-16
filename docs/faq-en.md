@@ -10,12 +10,12 @@ faq:
     a: |
       A Visible Digital Seal (VDS, in French *Cachet Électronique Visible* or CEV) is a 2D code (Datamatrix or QR Code) printed on a document. It contains the document's key data and an electronic signature. Scanning it proves that the document was issued by the stated authority and that its data has not been tampered with.
 
-      The main formats are the French **2D-Doc** from [ANTS](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc), the French **AFNOR XP Z42-105** standard and the international **ISO 22376:2023** standard.
+      The main formats are the French **2D-Doc** from [ANTS](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc), the French **AFNOR XP Z42-101 to XP Z42-105** standards, the international **ISO 22376:2023** standard and the ICAO **VDS-NC**.
   - q: What types of VDS are supported?
     a: |
       VDS Verify decodes and verifies:
 
-      - **Every 2D-Doc**, including those printed on:
+      - **Every 2D-Doc (AFNOR XP Z42-101 to XP Z42-104)**, including those printed on:
         - French national identity card
         - Restricted information statement (RIR)
         - Secure driving entitlement certificate (ADCS)
@@ -28,9 +28,13 @@ faq:
         - The certified digital identity request of [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
       - **Every VDS compliant with ISO 22376:2023**, including those printed on:
         - [French recreational motor boat licence](https://www.mer.gouv.fr/le-permis-plaisance-permis-de-conduire-les-bateaux-de-plaisance-moteur#summary-target-0)
+      - **ICAO VDS-NC**, QR Code seals defined by the International Civil Aviation Organization for travel and health documents
   - q: How do I verify a France Identité identity proof?
     a: |
       Open VDS Verify and scan the 2D code printed on the identity proof. The app verifies the seal's electronic signature and displays the proof's data (names, date of birth, validity period, recipient). If the displayed data matches the document and the status is "Valid VDS", the proof is authentic.
+  - q: How do I scan a paper document?
+    a: |
+      Tap the **Document** tab: your phone's document scanner opens. Snap the whole page, no need to aim at the code: VDS Verify finds the 2D-Doc (Datamatrix or QR Code) on the page and verifies it. Handy for an A4 document or a code too small to aim at up close.
   - q: How does VDS verification work?
     a: |
       To decode and verify a VDS, VDS Verify:

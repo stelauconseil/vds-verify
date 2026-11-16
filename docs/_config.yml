@@ -3,7 +3,7 @@ lang: fr
 locale: fr_FR
 logo: /assets/icon-256.png
 url: https://vds-verify.stelau.com
-description: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV, 2D-Doc, ISO 22376, AFNOR XP Z42-105) et s'appuie sur notre API de création, signature, décodage et vérification.
+description: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV, 2D-Doc, AFNOR XP Z42-101 à 105, ISO 22376, VDS-NC de l'OACI) et s'appuie sur notre API de création, signature, décodage et vérification.
 contact_email: contact@stelau.com
 appstore_url: https://apps.apple.com/fr/app/vds-verify/id6463440128?itsct=apps_box_badge&itscg=30200
 playstore_url: https://play.google.com/store/apps/details?id=com.stelau.vdsverify

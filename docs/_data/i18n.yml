@@ -23,7 +23,7 @@ fr:
         appstore: Télécharger dans l'App Store
         playstore: Disponible sur Google Play
     hero:
-        eyebrow: 2D-Doc · ISO 22376 · AFNOR XP Z42-105
+        eyebrow: 2D-Doc · AFNOR XP Z42-101 à 105 · ISO 22376 · ICAO VDS-NC
         title: Vérifiez un 2D-Doc ou un CEV <span>en un scan.</span>
         lead: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV) apposés sur les documents officiels, factures et justificatifs, et contrôle leur signature auprès de la liste de confiance de l'ANTS.
         alt: VDS Verify scanne le 2D-Doc au verso d'une carte d'identité et affiche « 2D-Doc Valide »
@@ -36,7 +36,7 @@ fr:
         items:
             - icon: scan
               title: Scan instantané
-              text: Lecture des Datamatrix et QR Codes directement avec l'appareil photo, même sur un document imprimé ou affiché à l'écran.
+              text: Lecture des Datamatrix et QR Codes directement avec l'appareil photo, sur papier ou à l'écran. Ou photographiez la page entière avec l'onglet Document, le 2D-Doc est trouvé automatiquement.
             - icon: shield
               title: Signature vérifiée
               text: Contrôle de la signature électronique et de la validité du certificat (dates, révocation) via la Trusted List de l'ANTS.
@@ -50,7 +50,7 @@ fr:
         title: Comment ça marche
         steps:
             - title: Scannez
-              text: Visez le code 2D-Doc ou CEV du document.
+              text: Visez le code 2D-Doc ou CEV, ou photographiez le document entier.
             - title: Liste de confiance
               text: Les certificats de signature sont récupérés auprès de l'ANTS.
             - title: Vérification
@@ -60,6 +60,8 @@ fr:
             - title: Export
               text: Partagez le résultat en PDF lisible ou en JSON structuré.
     gallery:
+        - src: document
+          alt: Scan d'un document papier pour y trouver son 2D-Doc
         - src: identity
           alt: Justificatif d'identité vérifié
         - src: details
@@ -72,7 +74,7 @@ fr:
           alt: Export du résultat en PDF ou JSON
     docs:
         title: Documents pris en charge
-        lead: Tous les 2D-Doc et CEV conformes aux normes AFNOR XP Z42-105 et ISO 22376:2023, notamment
+        lead: Tous les CEV conformes aux normes AFNOR XP Z42-101 à XP Z42-105 (dont le 2D-Doc) et ISO 22376:2023, ainsi que les VDS-NC de l'OACI (ICAO), notamment
         items:
             - Carte nationale d'identité
             - Justificatif d'identité France Identité
@@ -87,7 +89,7 @@ fr:
         title: Créez et signez vos propres CEV
         lead: VDS Verify s'appuie sur notre API de création, encodage, signature, décodage et vérification de CEV. C'est aujourd'hui la seule solution de création de CEV aux formats AFNOR et ISO utilisée en production.
         items:
-            - Conformité ISO 22376:2023 et AFNOR XP Z42-105
+            - Encodage conforme ISO 22376:2023 et AFNOR XP Z42-105
             - Gestion des manifests
             - Gestion des certificats et des clés de signature
             - Signature avec certificat qualifié, compatible HSM
@@ -133,7 +135,7 @@ en:
         appstore: Download on the App Store
         playstore: Get it on Google Play
     hero:
-        eyebrow: 2D-Doc · ISO 22376 · AFNOR XP Z42-105
+        eyebrow: 2D-Doc · AFNOR XP Z42-101 to 105 · ISO 22376 · ICAO VDS-NC
         title: Verify a 2D-Doc or VDS <span>in one scan.</span>
         lead: VDS Verify decodes and verifies Visible Digital Seals (VDS) printed on official documents, bills and certificates, and checks their signature against the ANTS trusted list.
         alt: VDS Verify scans the 2D-Doc on the back of an ID card and shows “Valid VDS”
@@ -146,7 +148,7 @@ en:
         items:
             - icon: scan
               title: Instant scan
-              text: Reads Datamatrix and QR Codes straight from the camera, on paper or on screen.
+              text: Reads Datamatrix and QR Codes straight from the camera, on paper or on screen. Or snap the whole page with the Document tab and the 2D-Doc is found for you.
             - icon: shield
               title: Verified signature
               text: Checks the electronic signature and the certificate's validity (dates, revocation) against the ANTS Trusted List.
@@ -160,7 +162,7 @@ en:
         title: How it works
         steps:
             - title: Scan
-              text: Point the camera at the document's 2D-Doc or VDS code.
+              text: Point the camera at the 2D-Doc or VDS code, or snap the whole document.
             - title: Trusted list
               text: Signing certificates are retrieved from ANTS.
             - title: Verification
@@ -170,6 +172,8 @@ en:
             - title: Export
               text: Share the result as a readable PDF or structured JSON.
     gallery:
+        - src: document
+          alt: Scanning a paper document to find its 2D-Doc
         - src: identity
           alt: Verified identity proof
         - src: details
@@ -182,7 +186,7 @@ en:
           alt: Export the result as PDF or JSON
     docs:
         title: Supported documents
-        lead: Every 2D-Doc and every VDS compliant with AFNOR XP Z42-105 and ISO 22376:2023, including
+        lead: Every VDS compliant with AFNOR XP Z42-101 to XP Z42-105 (2D-Doc included) and ISO 22376:2023, as well as ICAO VDS-NC, including
         items:
             - French national ID card
             - France Identité identity proof
@@ -197,7 +201,7 @@ en:
         title: Issue and sign your own seals
         lead: VDS Verify is built on our API for creating, encoding, signing, decoding and verifying VDS. It is currently the only AFNOR and ISO VDS issuing solution used in production.
         items:
-            - ISO 22376:2023 and AFNOR XP Z42-105 compliant
+            - Encoding compliant with ISO 22376:2023 and AFNOR XP Z42-105
             - Manifest management
             - Certificate and signing key management
             - Qualified certificate signing, HSM compatible
