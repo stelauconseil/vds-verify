@@ -210,7 +210,7 @@ p { margin: 0 0 1em; }
 .steps h3 { font-size: 1.05rem; }
 .steps p { color: var(--muted); font-size: 15px; margin: 0; }
 
-.gallery { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+.gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
 .gallery .phone img { border-width: 6px; border-radius: 28px; box-shadow: var(--shadow); }
 
 .chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
@@ -283,7 +283,8 @@ p { margin: 0 0 1em; }
 
 /* Responsive */
 @media (max-width: 960px) {
-  .grid-4, .steps, .gallery { grid-template-columns: repeat(2, 1fr); }
+  .grid-4, .steps { grid-template-columns: repeat(2, 1fr); }
+  .gallery { grid-template-columns: repeat(3, 1fr); }
   .steps li::after { display: none; }
   .api { grid-template-columns: 1fr; gap: 48px; }
 }
@@ -295,7 +296,7 @@ p { margin: 0 0 1em; }
   .hero .badges { justify-content: center; }
   .hero-visual .phone { width: min(260px, 70%); }
   .section { padding: 64px 0; }
-  .gallery { gap: 16px; }
+  .gallery { gap: 16px; grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 480px) {
   .grid-4 { grid-template-columns: 1fr; }

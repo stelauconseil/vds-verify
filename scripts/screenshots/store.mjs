@@ -19,6 +19,7 @@ if (!config || !captures || !existsSync(captures)) throw Error("Usage: store.mjs
 
 const SLIDES = [
     { capture: "light/00-scan", fr: ["Scannez le cachet électronique", "Le code 2D-Doc des documents officiels"], en: ["Scan the digital seal", "The 2D-Doc code on official documents"] },
+    { capture: "light/06-document", fr: ["Aussi sur papier", "Photographiez la page, le 2D-Doc est trouvé"], en: ["Paper documents too", "Snap the page, the 2D-Doc is found"] },
     { capture: "light/02-identity", fr: ["Un verdict immédiat", "Authentique ou non, en un coup d'œil"], en: ["An instant verdict", "Genuine or not, at a glance"] },
     { capture: "light/03-details", fr: ["Signature vérifiée", "Émetteur, certificat et date de signature"], en: ["Verified signature", "Issuer, certificate and signing date"] },
     { capture: "light/04-driving-record", fr: ["Aussi pour le permis", "Relevé d'information du permis de conduire"], en: ["Driving records too", "French driving licence statements"] },

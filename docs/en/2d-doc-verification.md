@@ -47,13 +47,13 @@ If any of these steps fails, the document should not be considered authentic.
 
 ## 2D-Doc, VDS, AFNOR and ISO 22376: the standards
 
-The **2D-Doc** was created by ANTS (now France Titres) and standardised by AFNOR (XP Z42-101 to 104). It evolved into the **Visible Digital Seal** defined by **AFNOR XP Z42-105**, then by the international standard **ISO 22376:2023**. VDS Verify supports all three formats.
+The **2D-Doc** was created by ANTS (now France Titres) and standardised by AFNOR (XP Z42-101 to 104). It evolved into the **Visible Digital Seal** defined by **AFNOR XP Z42-105**, then by the international standard **ISO 22376:2023**. VDS Verify supports all three formats, as well as ICAO seals: the classic **VDS** defined by **Doc 9303 Part 13** (Datamatrix) and the **VDS-NC** (QR Code), used on travel and health documents.
 
 ## 2D-Doc verification for businesses: API and SDK
 
 To verify 2D-Docs at scale (KYC, rental applications, lending, HR) or to **issue and sign your own seals**, Stelau offers:
 
-- an **API** to create, sign, decode and verify VDS, compliant with AFNOR XP Z42-105 and ISO 22376:2023, HSM and qualified certificate ready;
+- an **API** to create and sign VDS compliant with AFNOR XP Z42-105 and ISO 22376:2023, and to decode and verify them under AFNOR XP Z42-101 to XP Z42-105 and ISO 22376:2023, HSM and qualified certificate ready;
 - a **mobile verification SDK**, already deployed to more than 5 million users through France Identité.
 
 [Contact us](mailto:{{ site.contact_email }}?subject=2D-Doc%20API%20%2F%20SDK) for a demo.

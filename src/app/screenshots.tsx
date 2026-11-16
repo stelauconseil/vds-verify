@@ -27,9 +27,12 @@ export default function ScreenshotSetup() {
             }))));
             scan.setResult(null);
             scan.setStatus(null);
-            // The scan tab shows the SPECIMEN card instead of the camera feed.
-            if (params.screen === "scan") {
-                router.replace({ pathname: "/", params: { demo: "card" } });
+            // The scan tab shows the SPECIMEN card (or a paper document) instead of the camera feed.
+            if (params.screen === "scan" || params.screen === "document") {
+                router.replace({
+                    pathname: "/",
+                    params: { demo: params.screen === "scan" ? "card" : "document" },
+                });
                 return;
             }
             router.replace("/history");

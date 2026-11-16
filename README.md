@@ -319,8 +319,9 @@ npm run screenshots:android
 ```
 
 `npm run screenshots:all` captures both already-installed apps. Each run generates
-five screenshots (history, identity, details, driving record, settings), for French
-and English, in light and dark themes: 20 images per device. To run a smaller set:
+seven screenshots (scan, history, identity, details, driving record, settings, and
+the paper document scene of the Document tab), for French and English, in light and
+dark themes: 28 images per device. To run a smaller set:
 
 ```sh
 SCREENSHOT_LANGUAGES=fr SCREENSHOT_THEMES=light npm run screenshots:ios
@@ -338,7 +339,7 @@ visible screens, switches to Details, and saves the PNGs.
 
 Use an iPhone Pro Max and iPad for Apple assets and a phone/tablet emulator for
 Google Play. On a multi-display simulator (iPhone Duo), Maestro reads the wrong
-display; set `IOS_DISPLAY=internal` to skip Maestro, open each screen by deep link
+display; set `IOS_DISPLAY` to the display number that `simctl io <device> screenshot` lists (`1` for the 1398×2034 display) to skip Maestro, open each screen by deep link
 and capture that display with `simctl` (`SCREENSHOT_WAIT` seconds per screen, default 4). Camera screenshots are not part of this first flow;
 a realistic camera source still needs to be configured.
 

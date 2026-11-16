@@ -46,13 +46,13 @@ Si l'une de ces étapes échoue, le document ne doit pas être considéré comme
 
 ## 2D-Doc, CEV, AFNOR et ISO 22376 : les normes
 
-Le **2D-Doc** a été créé par l'ANTS (aujourd'hui France Titres) et normalisé par l'AFNOR (série XP Z42-101 à 104). Il a évolué vers le **Cachet Électronique Visible** défini par la norme **AFNOR XP Z42-105**, puis par la norme internationale **ISO 22376:2023**. VDS Verify prend en charge les trois formats.
+Le **2D-Doc** a été créé par l'ANTS (aujourd'hui France Titres) et normalisé par l'AFNOR (série XP Z42-101 à 104). Il a évolué vers le **Cachet Électronique Visible** défini par la norme **AFNOR XP Z42-105**, puis par la norme internationale **ISO 22376:2023**. VDS Verify prend en charge ces trois formats, ainsi que les cachets de l'OACI (ICAO) : le **VDS** classique défini par le **Doc 9303 partie 13** (Datamatrix) et le **VDS-NC** (QR Code), utilisés sur les documents de voyage et de santé.
 
 ## Vérification 2D-Doc pour les entreprises : API et SDK
 
 Pour vérifier des 2D-Doc à grande échelle (KYC, dossiers de location, crédit, RH) ou pour **créer et signer vos propres CEV**, Stelau propose :
 
-- une **API** de création, signature, décodage et vérification de CEV, conforme AFNOR XP Z42-105 et ISO 22376:2023, compatible HSM et certificats qualifiés ;
+- une **API** de création et de signature de CEV conforme AFNOR XP Z42-105 et ISO 22376:2023, de décodage et de vérification conforme AFNOR XP Z42-101 à XP Z42-105 et ISO 22376:2023, compatible HSM et certificats qualifiés ;
 - un **SDK mobile** de vérification, déjà déployé auprès de plus de 5 millions d'utilisateurs via France Identité.
 
 [Contactez-nous](mailto:{{ site.contact_email }}?subject=API%20%2F%20SDK%202D-Doc) pour une démonstration.

@@ -445,7 +445,11 @@ export default function ScanRoute() {
         left: insets.left + 16,
         right: insets.right + 16,
     };
-    const demoCard = screenshotsEnabled && params.demo === "card";
+    const demo =
+        screenshotsEnabled &&
+        (params.demo === "card" || params.demo === "document")
+            ? params.demo
+            : null;
 
     return (
         <View style={styles.container}>
@@ -453,8 +457,8 @@ export default function ScanRoute() {
                 {/* Keep the live preview through decoding; navigation releases the camera. */}
                 {cameraActive ? (
                     <>
-                        {demoCard ? (
-                            <ScanDemo frameBox={frameBox} />
+                        {demo ? (
+                            <ScanDemo frameBox={frameBox} variant={demo} />
                         ) : (
                             <CameraView
                                 zoom={zoomLevel}
@@ -563,26 +567,31 @@ export default function ScanRoute() {
                                 />
                             </Pressable>
                         </ClearOfOcclusions>
-                        <View
-                            style={[
-                                styles.helpTextWrapper,
-                                {
-                                    bottom: Math.max(insets.bottom, 8) + 40,
-                                    left: insets.left,
-                                    right: insets.right,
-                                },
-                            ]}
-                        >
-                            <Text style={styles.helpText}>
-                                {getLabel("helpscan", lang)}
-                            </Text>
-                        </View>
-                        <View
-                            pointerEvents="none"
-                            style={[styles.content, frameBox]}
-                        >
-                            <ScannerView scanned={!!result} />
-                        </View>
+                        {/* The document demo shows a whole page, not a code to frame. */}
+                        {demo !== "document" && (
+                            <>
+                            <View
+                                style={[
+                                    styles.helpTextWrapper,
+                                    {
+                                        bottom: Math.max(insets.bottom, 8) + 40,
+                                        left: insets.left,
+                                        right: insets.right,
+                                    },
+                                ]}
+                            >
+                                <Text style={styles.helpText}>
+                                    {getLabel("helpscan", lang)}
+                                </Text>
+                            </View>
+                            <View
+                                pointerEvents="none"
+                                style={[styles.content, frameBox]}
+                            >
+                                <ScannerView scanned={!!result} />
+                            </View>
+                            </>
+                        )}
                     </>
                 ) : null}
             </ReservedRegionsProvider>
