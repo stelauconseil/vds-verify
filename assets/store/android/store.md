@@ -29,7 +29,7 @@ classification du contenu.
 
 ```
 • Nouvel onglet Document : photographiez la page entière, le 2D-Doc est trouvé et vérifié
-• Prise en charge des VDS-NC de l'OACI (ICAO)
+• Prise en charge des VDS de l'OACI (ICAO Doc 9303 partie 13)
 • Affichage en portrait sur les téléphones
 • Corrections : retour du viseur après un scan de document, message d'accès à la caméra
 ```
@@ -38,7 +38,7 @@ classification du contenu.
 
 ```
 • New Document tab: snap the whole page, the 2D-Doc is found and verified
-• Support for ICAO VDS-NC
+• Support for ICAO VDS (Doc 9303 Part 13)
 • Portrait layout on phones
 • Fixes: viewfinder returns after a document scan, camera access message
 ```
@@ -75,7 +75,7 @@ FORMATS PRIS EN CHARGE
 • 2D-Doc selon les spécifications de l'ANTS (AFNOR XP Z42-101 à XP Z42-104)
 • VDS/CEV selon la norme AFNOR XP Z42-105
 • VDS/CEV selon la norme ISO 22376:2023
-• VDS-NC de l'OACI (ICAO)
+• VDS de l'OACI selon l'ICAO Doc 9303 partie 13
 
 Téléchargez VDS Verify dès aujourd'hui pour sécuriser votre flux de vérification de documents et éliminer instantanément les risques de non-conformité.
 ```
@@ -110,7 +110,7 @@ SUPPORTED FORMATS
 • 2D-Doc according to ANTS specifications (AFNOR XP Z42-101 to XP Z42-104)
 • VDS/CEV according to AFNOR XP Z42-105
 • VDS/CEV according to ISO 22376:2023
-• ICAO VDS-NC
+• ICAO VDS according to Doc 9303 Part 13
 
 Download VDS Verify today to secure your document verification workflow and eliminate compliance risks instantly.
 ```

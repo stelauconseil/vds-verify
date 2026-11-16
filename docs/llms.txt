@@ -1,12 +1,12 @@
 # VDS Verify
 
-> VDS Verify is a free iOS and Android app by Stelau Conseil (France) that decodes and verifies Visible Digital Seals (VDS, in French "Cachets Électroniques Visibles" or CEV): 2D-Doc (ANTS), AFNOR XP Z42-101 to XP Z42-105, ISO 22376:2023 and ICAO VDS-NC. It scans the Datamatrix or QR Code printed on a document (aimed at with the camera, or found on a photo of the whole page with the Document tab), checks the electronic signature and the signing certificate against the ANTS trusted list, and displays the decoded data.
+> VDS Verify is a free iOS and Android app by Stelau Conseil (France) that decodes and verifies Visible Digital Seals (VDS, in French "Cachets Électroniques Visibles" or CEV): 2D-Doc (ANTS), AFNOR XP Z42-101 to XP Z42-105, ISO 22376:2023 and ICAO VDS (Doc 9303 Part 13). It scans the Datamatrix or QR Code printed on a document (aimed at with the camera, or found on a photo of the whole page with the Document tab), checks the electronic signature and the signing certificate against the ANTS trusted list, and displays the decoded data.
 
 Key facts:
 
 - Publisher: Stelau Conseil, France (https://www.stelau.com). Contact: contact@stelau.com
 - Price: free, no account, no ads. Platforms: iPhone (App Store id6463440128) and Android (package com.stelau.vdsverify).
-- Supported formats: every 2D-Doc (AFNOR XP Z42-101 to XP Z42-104); every VDS compliant with AFNOR XP Z42-105; every VDS compliant with ISO 22376:2023; ICAO VDS-NC (QR Code seals for travel and health documents).
+- Supported formats: every 2D-Doc (AFNOR XP Z42-101 to XP Z42-104); every VDS compliant with AFNOR XP Z42-105; every VDS compliant with ISO 22376:2023; ICAO VDS according to Doc 9303 Part 13 (Datamatrix seals on travel documents).
 - Typical documents: French national ID card, France Identité single-use identity proof ("justificatif d'identité"), France Identité certified digital identity request, restricted information statement (RIR), driving entitlement certificate (ADCS), recreational boat licence, Crit'Air sticker, energy and phone bills.
 - Verification steps: scan and decode the 2D code; fetch signing certificates from the ANTS Trusted List; check certificate validity and revocation; verify the seal signature; display decoded data and signature details.
 - Privacy: the decoding API processes seals in memory only, stores nothing and keeps no logs. Scan history stays on the user's phone.

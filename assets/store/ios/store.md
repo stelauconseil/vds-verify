@@ -34,7 +34,7 @@ Champs non publics, à reprendre depuis App Store Connect : sous-titre, mots-cl�
 
 ```
 • Nouvel onglet Document : photographiez la page entière d'un document papier, VDS Verify y trouve le 2D-Doc et le vérifie.
-• Prise en charge des VDS-NC de l'OACI (ICAO).
+• Prise en charge des VDS de l'OACI (ICAO Doc 9303 partie 13).
 • iPhone Duo : le scanner de documents utilise toute la hauteur de l'écran.
 • Libellés des données plus lisibles et corrections diverses.
 ```
@@ -43,7 +43,7 @@ Champs non publics, à reprendre depuis App Store Connect : sous-titre, mots-cl�
 
 ```
 • New Document tab: snap the whole page of a paper document, VDS Verify finds its 2D-Doc and verifies it.
-• Support for ICAO VDS-NC.
+• Support for ICAO VDS (Doc 9303 Part 13).
 • iPhone Duo: the document scanner uses the full height of the screen.
 • Clearer data labels and bug fixes.
 ```
@@ -80,7 +80,7 @@ FORMATS PRIS EN CHARGE
 • 2D-Doc selon les spécifications de l'ANTS (AFNOR XP Z42-101 à XP Z42-104)
 • VDS/CEV selon la norme AFNOR XP Z42-105
 • VDS/CEV selon la norme ISO 22376:2023
-• VDS-NC de l'OACI (ICAO)
+• VDS de l'OACI selon l'ICAO Doc 9303 partie 13
 
 Téléchargez VDS Verify dès aujourd'hui pour sécuriser votre flux de vérification de documents et éliminer instantanément les risques de non-conformité.
 ```
@@ -115,7 +115,7 @@ SUPPORTED FORMATS
 • 2D-Doc according to ANTS specifications (AFNOR XP Z42-101 to XP Z42-104)
 • VDS/CEV according to AFNOR XP Z42-105
 • VDS/CEV according to ISO 22376:2023
-• ICAO VDS-NC
+• ICAO VDS according to Doc 9303 Part 13
 
 Download VDS Verify today to secure your document verification workflow and eliminate compliance risks instantly.
 ```
