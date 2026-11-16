@@ -135,6 +135,8 @@ function get_standard(vds_standard?: string): string {
             return "AFNOR XP Z42 105";
         case "DOC_101":
             return "AFNOR XP Z42 101 - 104";
+        case "DOC_ICAO_VDS":
+            return "ICAO Doc 9303 Part 13: Visible Digital Seals";
         default:
             return vds_standard ?? "";
     }
