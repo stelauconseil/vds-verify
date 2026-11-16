@@ -145,7 +145,7 @@ function get_standard(vds_standard?: string): string {
 function labelForKey(key: string, lang?: string) {
     const guess = getLabel(key, lang);
     if (guess && guess !== key) return guess;
-    return key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ");
+    return key.charAt(0).toUpperCase() + key.slice(1).replaceAll("_", " ");
 }
 
 function formatDocumentTypeTitle(value: unknown): string | undefined {
