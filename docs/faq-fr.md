@@ -9,7 +9,7 @@ faq:
     a: |
       Un Cachet Électronique Visible (CEV, en anglais *Visible Digital Seal* ou VDS) est un code 2D (Datamatrix ou QR Code) imprimé sur un document, qui contient les données essentielles du document et une signature électronique. En le scannant, on peut vérifier que le document a bien été émis par l'organisme indiqué et que ses données n'ont pas été modifiées.
 
-      Les principaux formats sont le **2D-Doc** de l'[ANTS](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc), les normes françaises **AFNOR XP Z42-101 à XP Z42-105**, la norme internationale **ISO 22376:2023** et le **VDS de l'OACI** (ICAO Doc 9303 partie 13).
+      Les principaux formats sont le **2D-Doc** de l'[ANTS](https://ants.gouv.fr/nos-missions/les-solutions-numeriques/2d-doc), les normes françaises **AFNOR XP Z42-101 à XP Z42-105**, la norme internationale **ISO 22376:2023** et les **VDS** (ICAO Doc 9303 partie 13) et **VDS-NC** de l'OACI.
   - q: Quels sont les types de CEV pris en charge ?
     a: |
       L'application VDS Verify décode et vérifie :
@@ -28,6 +28,7 @@ faq:
       - **Tous les CEV conformes à la norme ISO 22376:2023**, dont ceux apposés sur les documents suivants :
         - [Permis de conduire les bateaux de plaisance à moteur](https://www.mer.gouv.fr/le-permis-plaisance-permis-de-conduire-les-bateaux-de-plaisance-moteur#summary-target-0)
       - **Les VDS de l'OACI conformes au Doc 9303 partie 13**, cachets en Datamatrix définis par l'Organisation de l'aviation civile internationale pour les documents de voyage
+      - **Les VDS-NC de l'OACI**, cachets en QR Code définis par l'Organisation de l'aviation civile internationale pour les documents de voyage et de santé
   - q: Comment vérifier un justificatif d'identité France Identité ?
     a: |
       Ouvrez VDS Verify et scannez le code 2D imprimé sur le justificatif. L'application vérifie la signature électronique du cachet et affiche les données du justificatif (nom, prénoms, date de naissance, durée de validité, destinataire). Si les données affichées correspondent au document présenté et que le statut est « CEV valide », le justificatif est authentique.

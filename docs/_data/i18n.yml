@@ -23,7 +23,7 @@ fr:
         appstore: Télécharger dans l'App Store
         playstore: Disponible sur Google Play
     hero:
-        eyebrow: 2D-Doc · AFNOR XP Z42-101 à 105 · ISO 22376 · ICAO VDS
+        eyebrow: 2D-Doc · AFNOR XP Z42-101 à 105 · ISO 22376 · ICAO VDS / VDS-NC
         title: Vérifiez un 2D-Doc ou un CEV <span>en un scan.</span>
         lead: VDS Verify décode et vérifie les Cachets Électroniques Visibles (CEV) apposés sur les documents officiels, factures et justificatifs, et contrôle leur signature auprès de la liste de confiance de l'ANTS.
         alt: VDS Verify scanne le 2D-Doc au verso d'une carte d'identité et affiche « 2D-Doc Valide »
@@ -74,7 +74,7 @@ fr:
           alt: Export du résultat en PDF ou JSON
     docs:
         title: Documents pris en charge
-        lead: Tous les CEV conformes aux normes AFNOR XP Z42-101 à XP Z42-105 (dont le 2D-Doc) et ISO 22376:2023, ainsi que les VDS de l'OACI (ICAO Doc 9303 partie 13), notamment
+        lead: Tous les CEV conformes aux normes AFNOR XP Z42-101 à XP Z42-105 (dont le 2D-Doc) et ISO 22376:2023, ainsi que les VDS (ICAO Doc 9303 partie 13) et VDS-NC de l'OACI, notamment
         items:
             - Carte nationale d'identité
             - Justificatif d'identité France Identité
@@ -135,7 +135,7 @@ en:
         appstore: Download on the App Store
         playstore: Get it on Google Play
     hero:
-        eyebrow: 2D-Doc · AFNOR XP Z42-101 to 105 · ISO 22376 · ICAO VDS
+        eyebrow: 2D-Doc · AFNOR XP Z42-101 to 105 · ISO 22376 · ICAO VDS / VDS-NC
         title: Verify a 2D-Doc or VDS <span>in one scan.</span>
         lead: VDS Verify decodes and verifies Visible Digital Seals (VDS) printed on official documents, bills and certificates, and checks their signature against the ANTS trusted list.
         alt: VDS Verify scans the 2D-Doc on the back of an ID card and shows “Valid VDS”
@@ -186,7 +186,7 @@ en:
           alt: Export the result as PDF or JSON
     docs:
         title: Supported documents
-        lead: Every VDS compliant with AFNOR XP Z42-101 to XP Z42-105 (2D-Doc included) and ISO 22376:2023, as well as ICAO VDS (Doc 9303 Part 13), including
+        lead: Every VDS compliant with AFNOR XP Z42-101 to XP Z42-105 (2D-Doc included) and ISO 22376:2023, as well as ICAO VDS (Doc 9303 Part 13) and VDS-NC, including
         items:
             - French national ID card
             - France Identité identity proof
