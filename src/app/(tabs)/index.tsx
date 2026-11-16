@@ -31,6 +31,7 @@ import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
 import { normalizeVdsResult, type VdsResult } from "@/types/vds";
 import { integrityFetch } from "@/integrity";
+import { scanDocumentAsync } from "../../../modules/document-scan";
 
 // Server integrity rejections (APP_INTEGRITY_PLAN.md), keyed by HTTP status.
 const INTEGRITY_ERRORS: Record<number, string> = {
@@ -89,6 +90,8 @@ export default function ScanRoute() {
     const [scanned, setScanned] = useState<boolean>(false);
     const [zoomLevel, setZoomLevel] = useState<number>(0.1);
     const [torchEnabled, setTorchEnabled] = useState<boolean>(false);
+    // The system document scanner needs the camera: release the live preview meanwhile.
+    const [documentScanning, setDocumentScanning] = useState(false);
     const [permission, requestPermission, getCameraPermission] =
         useCameraPermissions();
     const insets = useSafeAreaInsets();
@@ -119,9 +122,8 @@ export default function ScanRoute() {
                     setTorchEnabled(false);
                     pinchStartDistanceRef.current = null;
                 } else {
-                    void getCameraPermission().catch(() =>
-                        setErrorMessage("cameraerror"),
-                    );
+                    // Refreshes the permission panel below; it also covers the denied case.
+                    void getCameraPermission().catch(() => {});
                 }
             },
         );
@@ -132,7 +134,12 @@ export default function ScanRoute() {
     }, [getCameraPermission]);
 
     const cameraActive =
-        isFocused && appState === "active" && !!permission?.granted;
+        isFocused &&
+        appState === "active" &&
+        !!permission?.granted &&
+        !documentScanning &&
+        // Arriving from the "Document" tab: don't start the live camera only to stop it.
+        !params.scanDocument;
     useEffect(() => {
         if (!cameraActive) {
             setTorchEnabled(false);
@@ -303,18 +310,38 @@ export default function ScanRoute() {
         [parseData, showError, router],
     );
 
+    const processCodes = useCallback(
+        async (codes: string[] | null) => {
+            if (!codes) return; // cancelled
+            if (codes.length === 0) return showError("error_no_code_in_document");
+            // ponytail: first code wins; add a picker if documents with several 2D-Docs show up.
+            await processResult({ data: codes[0] });
+        },
+        [processResult, showError],
+    );
+
+    const scanDocument = useCallback(async () => {
+        if (processingRef.current || decodedRef.current) return;
+        setDocumentScanning(true);
+        try {
+            await processCodes(await scanDocumentAsync());
+        } catch (error: any) {
+            showError(error?.message ?? "error");
+        } finally {
+            setDocumentScanning(false);
+        }
+    }, [processCodes, showError]);
+
+    // Set by the "Document" tab (src/app/(tabs)/document.tsx); a timestamp so each press counts.
     useEffect(() => {
-        const getCameraPermission = async () => {
-            try {
-                const { status } = await requestPermission();
-                if (status !== "granted") {
-                    setErrorMessage("cameraerror");
-                }
-            } catch {
-                setErrorMessage("cameraerror");
-            }
-        };
-        getCameraPermission();
+        if (!params.scanDocument) return;
+        router.setParams({ scanDocument: undefined });
+        void scanDocument();
+    }, [params.scanDocument, router, scanDocument]);
+
+    // A refusal shows the permission panel, which goes away once access is granted.
+    useEffect(() => {
+        void requestPermission().catch(() => {});
     }, [requestPermission]);
 
     useEffect(() => {
@@ -385,13 +412,8 @@ export default function ScanRoute() {
     }, [contextResult]);
 
     useEffect(() => {
-        if (
-            url !== null &&
-            typeof url === "string" &&
-            (url.startsWith("http") || url.startsWith("vds")) &&
-            // Capture-app navigation links are not documents to verify.
-            !url.startsWith("vdsverify-screenshots:")
-        ) {
+        // Only web links carry a VDS; the app's own vdsverify:// links are navigation.
+        if (url?.startsWith("http")) {
             processResult({ data: url });
             setUrl(null);
         }
@@ -440,9 +462,7 @@ export default function ScanRoute() {
                                 barcodeScannerSettings={{
                                     barcodeTypes: ["qr", "datamatrix"],
                                 }}
-                                onMountError={() => {
-                                    showError("cameraerror");
-                                }}
+                                onMountError={() => showError("cameraerror")}
                                 onBarcodeScanned={(event) => {
                                     // A decoded barcode already proves the camera is ready.
                                     // Do not depend on ordering with onCameraReady/AppState events.
