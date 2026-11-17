@@ -34,7 +34,9 @@ faq:
       Ouvrez VDS Verify et scannez le code 2D imprimé sur le justificatif. L'application vérifie la signature électronique du cachet et affiche les données du justificatif (nom, prénoms, date de naissance, durée de validité, destinataire). Si les données affichées correspondent au document présenté et que le statut est « CEV valide », le justificatif est authentique.
   - q: Comment scanner un document papier ?
     a: |
-      Touchez l'onglet **Document** : le scanner de documents de votre téléphone s'ouvre. Photographiez la page entière, sans viser le code : VDS Verify trouve le 2D-Doc (Datamatrix ou QR Code) sur la page et le vérifie. Pratique pour un document A4 ou un code trop petit pour être visé de près.
+      Touchez l'onglet **Document** puis **Scanner avec l'appareil photo** : le scanner de documents de votre téléphone s'ouvre. Photographiez la page entière, sans viser le code : VDS Verify trouve le 2D-Doc (Datamatrix ou QR Code) sur la page et le vérifie. Pratique pour un document A4 ou un code trop petit pour être visé de près.
+
+      Le document est déjà une photo ou un fichier (PDF reçu par e-mail, capture d'écran) ? Touchez **Document** puis **Choisir une photo** (photothèque) ou **Importer un fichier** : VDS Verify cherche le 2D-Doc dans l'image ou dans les pages du PDF.
   - q: Comment fonctionne la vérification d'un CEV ?
     a: |
       Afin de décoder et vérifier un CEV, l'application VDS Verify :
