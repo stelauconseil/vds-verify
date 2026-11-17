@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
     AccessibilityInfo,
+    ActionSheetIOS,
+    Alert,
     AppState,
+    Platform,
     View,
     StyleSheet,
     Text,
@@ -31,13 +34,47 @@ import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
 import { normalizeVdsResult, type VdsResult } from "@/types/vds";
 import { integrityFetch } from "@/integrity";
-import { scanDocumentAsync } from "../../../modules/document-scan";
+import {
+    importDocumentAsync,
+    importPhotoAsync,
+    scanDocumentAsync,
+} from "../../../modules/document-scan";
 
 // Server integrity rejections (APP_INTEGRITY_PLAN.md), keyed by HTTP status.
 const INTEGRITY_ERRORS: Record<number, string> = {
     401: "error_integrity", // invalid proof; unknown iOS key is retried in integrityFetch
     503: "error_integrity_unavailable",
 };
+
+// The "Document" tab: scan a paper document with the camera, or import a photo or a file.
+const DOCUMENT_SOURCES = {
+    camera: scanDocumentAsync,
+    photo: importPhotoAsync,
+    file: importDocumentAsync,
+};
+type DocumentSource = keyof typeof DOCUMENT_SOURCES;
+
+function chooseDocumentSource(lang?: string): Promise<DocumentSource | null> {
+    const sources: DocumentSource[] = ["camera", "photo", "file"];
+    const labels = sources.map((s) => getLabel(`document_${s}`, lang));
+    return new Promise((resolve) => {
+        if (Platform.OS === "ios")
+            return ActionSheetIOS.showActionSheetWithOptions(
+                {
+                    options: [...labels, getLabel("cancel", lang)],
+                    cancelButtonIndex: sources.length,
+                },
+                (i) => resolve(sources[i] ?? null),
+            );
+        // Android shows 3 buttons at most: no Cancel button, a tap outside or Back cancels.
+        Alert.alert(
+            getLabel("document", lang),
+            undefined,
+            sources.map((s, i) => ({ text: labels[i], onPress: () => resolve(s) })),
+            { cancelable: true, onDismiss: () => resolve(null) },
+        );
+    });
+}
 
 // iPhone Duo shows its inner camera while the camera is active, and safe areas don't cover it:
 // push the overlay control below any occlusion it overlaps. Must render directly in the provider.
@@ -322,15 +359,17 @@ export default function ScanRoute() {
 
     const scanDocument = useCallback(async () => {
         if (processingRef.current || decodedRef.current) return;
-        setDocumentScanning(true);
+        setDocumentScanning(true); // also keeps the live camera off while choosing
         try {
-            await processCodes(await scanDocumentAsync());
+            const source = await chooseDocumentSource(lang);
+            if (!source) return;
+            await processCodes(await DOCUMENT_SOURCES[source]());
         } catch (error: any) {
             showError(error?.message ?? "error");
         } finally {
             setDocumentScanning(false);
         }
-    }, [processCodes, showError]);
+    }, [processCodes, showError, lang]);
 
     // Set by the "Document" tab (src/app/(tabs)/document.tsx); a timestamp so each press counts.
     useEffect(() => {

@@ -1,6 +1,9 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
   "apple": {
     "modules": ["DocumentScanModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.documentscan.DocumentScanModule"]
   }
 }
