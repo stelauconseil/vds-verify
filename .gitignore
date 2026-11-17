@@ -13,6 +13,10 @@ package-lock.json
 # production
 /build
 
+# local Expo modules: Gradle output
+modules/*/android/build/
+modules/*/android/.gradle/
+
 # misc
 .DS_Store
 .env.local
