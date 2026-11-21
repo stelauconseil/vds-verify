@@ -5,14 +5,14 @@ Fiche Play Console de la version 2.7.3 (téléphones Android). Base : fiche publ
 
 ## Informations générales
 
-| Champ | Valeur |
-|---|---|
-| Version | 2.7.3 |
-| Package | com.stelau.vdsverify |
-| Développeur | Stelau Conseil |
-| Langues | Français, Anglais |
-| Prix | Gratuit |
-| Site web | https://vds-verify.stelau.com/ |
+| Champ                        | Valeur                                                                                                           |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Version                      | 2.7.3                                                                                                            |
+| Package                      | com.stelau.vdsverify                                                                                             |
+| Développeur                  | Stelau Conseil                                                                                                   |
+| Langues                      | Français, Anglais                                                                                                |
+| Prix                         | Gratuit                                                                                                          |
+| Site web                     | https://vds-verify.stelau.com/                                                                                   |
 | Politique de confidentialité | https://vds-verify.stelau.com/privacy-policy-fr.html (EN : https://vds-verify.stelau.com/privacy-policy-en.html) |
 
 Champs non publics, à reprendre depuis la Play Console : description courte, catégorie,
@@ -88,7 +88,7 @@ Téléchargez VDS Verify dès aujourd'hui pour sécuriser votre flux de vérific
 ```
 Are you struggling to verify the authenticity of critical business documents on the go? Forged certificates and unverified digital signatures pose massive compliance risks to your organization. VDS Verify provides an instant, secure scanning solution to validate Visible Digital Seals (VDS) and 2D-Doc codes directly from your smartphone.
 
-Recognized as an outstanding utility and featured among the top secure tools, this professional-grade document scanner ensures absolute trust in your verification workflow.
+Recognized as an outstanding utility, this professional-grade document scanner ensures absolute trust in your verification workflow.
 
 SECURE INSTANT VERIFICATION
 Protect your business from fraud by verifying electronic signatures and certificates in seconds. Simply point your camera at any VDS, CEV, or 2D-Doc barcode to decode and validate the embedded security data instantly. On a paper document, snap the whole page with the Document tab and the 2D-Doc is found for you. VDS Verify makes complex cryptographic checks simple and accessible.
@@ -121,10 +121,10 @@ Download VDS Verify today to secure your document verification workflow and elim
 
 ## Éléments graphiques
 
-| Fichier | Taille | Emplacement Play Console |
-|---|---|---|
-| `feature-graphic-fr.png` | 1024 × 500 | Image de présentation (FR) |
-| `feature-graphic-en.png` | 1024 × 500 | Image de présentation (EN) |
+| Fichier                            | Taille      | Emplacement Play Console        |
+| ---------------------------------- | ----------- | ------------------------------- |
+| `feature-graphic-fr.png`           | 1024 × 500  | Image de présentation (FR)      |
+| `feature-graphic-en.png`           | 1024 × 500  | Image de présentation (EN)      |
 | `phone/fr/*.png`, `phone/en/*.png` | 1080 × 1920 | Captures d'écran pour téléphone |
 
 Images de présentation générées par `scripts/screenshots/banner.mjs` à partir des captures
@@ -132,18 +132,12 @@ Android (document scanné et verdict) et de `logo.stelau.png` (dépôt `stelauco
 
 Captures générées par `scripts/screenshots` (`run.mjs` puis `store.mjs`), même ordre dans `fr/` et `en/` :
 
-| Fichier | Titre FR | Titre EN |
-|---|---|---|
-| `01-scan.png` | Scannez le cachet électronique | Scan the digital seal |
-| `02-document.png` | Aussi sur papier | Paper documents too |
-| `03-identity.png` | Un verdict immédiat | An instant verdict |
-| `04-details.png` | Signature vérifiée | Verified signature |
-| `05-driving-record.png` | Aussi pour le permis | Driving records too |
-| `06-history.png` | Retrouvez vos contrôles | Find past checks |
-| `07-identity-dark.png` | Clair ou sombre | Light or dark |
-
-## À vérifier avant envoi
-
-- La description EN affirme « featured among the top secure tools » : à retirer si ce n'est pas
-  vérifiable (règles Google Play sur les métadonnées : pas d'allégations de classement non
-  attribuées).
+| Fichier                 | Titre FR                       | Titre EN              |
+| ----------------------- | ------------------------------ | --------------------- |
+| `01-scan.png`           | Scannez le cachet électronique | Scan the digital seal |
+| `02-document.png`       | Aussi sur papier               | Paper documents too   |
+| `03-identity.png`       | Un verdict immédiat            | An instant verdict    |
+| `04-details.png`        | Signature vérifiée             | Verified signature    |
+| `05-driving-record.png` | Aussi pour le permis           | Driving records too   |
+| `06-history.png`        | Retrouvez vos contrôles        | Find past checks      |
+| `07-identity-dark.png`  | Clair ou sombre                | Light or dark         |
