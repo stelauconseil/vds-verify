@@ -5,20 +5,20 @@ Fiche App Store Connect de la version 2.7.3 (iPhone, iPad). Base : fiche publié
 
 ## Informations générales
 
-| Champ | Valeur |
-|---|---|
-| Version | 2.7.3 |
-| Identifiant Apple | 6463440128 |
-| Bundle ID | com.stelau.vdsverify |
-| Vendeur | Stelau Conseil |
-| Catégorie principale | Productivité |
-| Catégorie secondaire | Utilitaires |
-| Classification | 4+ |
-| iOS minimum | 16.4 |
-| Langues | Français, Anglais |
-| Prix | Gratuit |
-| Site marketing | https://vds-verify.stelau.com/ |
-| Assistance | https://vds-verify.stelau.com/faq-fr.html |
+| Champ                        | Valeur                                                                                                           |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Version                      | 2.7.3                                                                                                            |
+| Identifiant Apple            | 6463440128                                                                                                       |
+| Bundle ID                    | com.stelau.vdsverify                                                                                             |
+| Vendeur                      | Stelau Conseil                                                                                                   |
+| Catégorie principale         | Productivité                                                                                                     |
+| Catégorie secondaire         | Utilitaires                                                                                                      |
+| Classification               | 4+                                                                                                               |
+| iOS minimum                  | 16.4                                                                                                             |
+| Langues                      | Français, Anglais                                                                                                |
+| Prix                         | Gratuit                                                                                                          |
+| Site marketing               | https://vds-verify.stelau.com/                                                                                   |
+| Assistance                   | https://vds-verify.stelau.com/faq-fr.html                                                                        |
 | Politique de confidentialité | https://vds-verify.stelau.com/privacy-policy-fr.html (EN : https://vds-verify.stelau.com/privacy-policy-en.html) |
 
 Champs non publics, à reprendre depuis App Store Connect : sous-titre, mots-clés, texte promotionnel.
@@ -93,7 +93,7 @@ Téléchargez VDS Verify dès aujourd'hui pour sécuriser votre flux de vérific
 ```
 Are you struggling to verify the authenticity of critical business documents on the go? Forged certificates and unverified digital signatures pose massive compliance risks to your organization. VDS Verify provides an instant, secure scanning solution to validate Visible Digital Seals (VDS) and 2D-Doc codes directly from your smartphone.
 
-Recognized as an outstanding utility and featured among the top secure tools on the App Store, this professional-grade scanner ensures absolute trust in your document verification workflow.
+Recognized as an outstanding utility, this professional-grade scanner ensures absolute trust in your document verification workflow.
 
 SECURE INSTANT VERIFICATION
 Protect your business from fraud by verifying electronic signatures and certificates in seconds. Simply point your camera at any VDS, CEV, or 2D-Doc barcode to decode and validate the embedded security data instantly. On a paper document, snap the whole page with the Document tab and the 2D-Doc is found for you.
@@ -129,21 +129,21 @@ Download VDS Verify today to secure your document verification workflow and elim
 Même ordre pour chaque appareil, dans `fr/` et `en/`. Générées par `scripts/screenshots`
 (`run.mjs` puis `store.mjs`).
 
-| Dossier | Taille | Emplacement App Store Connect |
-|---|---|---|
-| `iphone/` | 1320 × 2868 | iPhone 6,9" |
-| `ipad/` | 2064 × 2752 | iPad 13" |
-| `iphone-duo/` | 1398 × 2034 | iPhone Duo |
+| Dossier       | Taille      | Emplacement App Store Connect |
+| ------------- | ----------- | ----------------------------- |
+| `iphone/`     | 1320 × 2868 | iPhone 6,9"                   |
+| `ipad/`       | 2064 × 2752 | iPad 13"                      |
+| `iphone-duo/` | 1398 × 2034 | iPhone Duo                    |
 
-| Fichier | Titre FR | Titre EN |
-|---|---|---|
-| `01-scan.png` | Scannez le cachet électronique | Scan the digital seal |
-| `02-document.png` | Aussi sur papier | Paper documents too |
-| `03-identity.png` | Un verdict immédiat | An instant verdict |
-| `04-details.png` | Signature vérifiée | Verified signature |
-| `05-driving-record.png` | Aussi pour le permis | Driving records too |
-| `06-history.png` | Retrouvez vos contrôles | Find past checks |
-| `07-identity-dark.png` | Clair ou sombre | Light or dark |
+| Fichier                 | Titre FR                       | Titre EN              |
+| ----------------------- | ------------------------------ | --------------------- |
+| `01-scan.png`           | Scannez le cachet électronique | Scan the digital seal |
+| `02-document.png`       | Aussi sur papier               | Paper documents too   |
+| `03-identity.png`       | Un verdict immédiat            | An instant verdict    |
+| `04-details.png`        | Signature vérifiée             | Verified signature    |
+| `05-driving-record.png` | Aussi pour le permis           | Driving records too   |
+| `06-history.png`        | Retrouvez vos contrôles        | Find past checks      |
+| `07-identity-dark.png`  | Clair ou sombre                | Light or dark         |
 
 ## À vérifier avant envoi
 
