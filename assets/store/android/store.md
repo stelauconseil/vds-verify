@@ -29,6 +29,7 @@ classification du contenu.
 
 ```
 • Nouvel onglet Document : photographiez la page entière, le 2D-Doc est trouvé et vérifié
+• Onglet Document : import d'une photo de la photothèque ou d'un PDF
 • Prise en charge des VDS (ICAO Doc 9303 partie 13) et VDS-NC de l'OACI
 • Affichage en portrait sur les téléphones
 • Corrections : retour du viseur après un scan de document, message d'accès à la caméra
@@ -38,6 +39,7 @@ classification du contenu.
 
 ```
 • New Document tab: snap the whole page, the 2D-Doc is found and verified
+• Document tab: import a photo from your library or a PDF
 • Support for ICAO VDS (Doc 9303 Part 13) and VDS-NC
 • Portrait layout on phones
 • Fixes: viewfinder returns after a document scan, camera access message
@@ -60,7 +62,7 @@ Assurez-vous que vos contrôles de documents respectent les normes réglementair
 
 FONCTIONNALITÉS CLÉS
 • Numérisation instantanée via une intégration de caméra haute précision
-• Onglet Document : photographiez la page entière, le 2D-Doc est trouvé automatiquement
+• Onglet Document : photographiez la page entière ou importez une photo ou un PDF, le 2D-Doc est trouvé automatiquement
 • Vérification cryptographique des signatures numériques en temps réel
 • Analyse détaillée de l'émetteur, des dates de validité et des données de conformité
 • Historique local des scans avec options d'épinglage et de suppression facile
@@ -96,7 +98,7 @@ Ensure your document checks meet strict regulatory standards. This advanced docu
 
 KEY FEATURES
 • Instant scan via high-precision camera integration
-• Document tab: snap the whole page, the 2D-Doc is found for you
+• Document tab: snap the whole page or import a photo or a PDF, the 2D-Doc is found for you
 • Real-time cryptographic digital signature verification
 • Detailed breakdown of issuer, validity dates, and compliance data
 • Local scan history with pinning and easy deletion options

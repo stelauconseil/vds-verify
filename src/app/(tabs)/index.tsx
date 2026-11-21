@@ -29,14 +29,29 @@ import ScanDemo from "@/screens/ScanDemo";
 import { screenshotsEnabled, takeLaunchTarget } from "@/screenshots";
 import { useScanStatus } from "@/contexts/ScanStatusContext";
 import { getLabel } from "@/components/Label";
+import {
+    useDocumentSourceSheet,
+    type DocumentSource,
+} from "@/components/DocumentSourceSheet";
 import { normalizeVdsResult, type VdsResult } from "@/types/vds";
 import { integrityFetch } from "@/integrity";
-import { scanDocumentAsync } from "../../../modules/document-scan";
+import {
+    importDocumentAsync,
+    importPhotoAsync,
+    scanDocumentAsync,
+} from "../../../modules/document-scan";
 
 // Server integrity rejections (APP_INTEGRITY_PLAN.md), keyed by HTTP status.
 const INTEGRITY_ERRORS: Record<number, string> = {
     401: "error_integrity", // invalid proof; unknown iOS key is retried in integrityFetch
     503: "error_integrity_unavailable",
+};
+
+// The "Document" tab: scan a paper document with the camera, or import a photo or a file.
+const DOCUMENT_SOURCES: Record<DocumentSource, () => Promise<string[] | null>> = {
+    camera: scanDocumentAsync,
+    photo: importPhotoAsync,
+    file: importDocumentAsync,
 };
 
 // iPhone Duo shows its inner camera while the camera is active, and safe areas don't cover it:
@@ -320,17 +335,22 @@ export default function ScanRoute() {
         [processResult, showError],
     );
 
+    const documentSourceSheet = useDocumentSourceSheet(lang);
+    const chooseDocumentSource = documentSourceSheet.choose;
     const scanDocument = useCallback(async () => {
         if (processingRef.current || decodedRef.current) return;
-        setDocumentScanning(true);
+        setDocumentScanning(true); // also keeps the live camera off while choosing
         try {
-            await processCodes(await scanDocumentAsync());
+            const source = await chooseDocumentSource();
+            if (!source) return;
+            await processCodes(await DOCUMENT_SOURCES[source]());
         } catch (error: any) {
             showError(error?.message ?? "error");
         } finally {
-            setDocumentScanning(false);
+            // Decoded: stay off until the result closes, or the viewfinder flashes before it opens.
+            if (!decodedRef.current) setDocumentScanning(false);
         }
-    }, [processCodes, showError]);
+    }, [processCodes, showError, chooseDocumentSource]);
 
     // Set by the "Document" tab (src/app/(tabs)/document.tsx); a timestamp so each press counts.
     useEffect(() => {
@@ -404,6 +424,7 @@ export default function ScanRoute() {
     useEffect(() => {
         if (!contextResult) {
             decodedRef.current = false;
+            setDocumentScanning(false);
             setScanned(false);
             setResult(null);
             setTorchEnabled(false);
@@ -651,6 +672,7 @@ export default function ScanRoute() {
                     </Text>
                 </View>
             )}
+            {documentSourceSheet.sheet}
         </View>
     );
 }

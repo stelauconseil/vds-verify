@@ -36,7 +36,7 @@ fr:
         items:
             - icon: scan
               title: Scan instantané
-              text: Lecture des Datamatrix et QR Codes directement avec l'appareil photo, sur papier ou à l'écran. Ou photographiez la page entière avec l'onglet Document, le 2D-Doc est trouvé automatiquement.
+              text: "Lecture des Datamatrix et QR Codes directement avec l'appareil photo, sur papier ou à l'écran. Ou photographiez la page entière, ou importez une photo ou un PDF, avec l'onglet Document : le 2D-Doc est trouvé automatiquement."
             - icon: shield
               title: Signature vérifiée
               text: Contrôle de la signature électronique et de la validité du certificat (dates, révocation) via la Trusted List de l'ANTS.
@@ -148,7 +148,7 @@ en:
         items:
             - icon: scan
               title: Instant scan
-              text: Reads Datamatrix and QR Codes straight from the camera, on paper or on screen. Or snap the whole page with the Document tab and the 2D-Doc is found for you.
+              text: "Reads Datamatrix and QR Codes straight from the camera, on paper or on screen. Or snap the whole page, or import a photo or a PDF, with the Document tab: the 2D-Doc is found for you."
             - icon: shield
               title: Verified signature
               text: Checks the electronic signature and the certificate's validity (dates, revocation) against the ANTS Trusted List.

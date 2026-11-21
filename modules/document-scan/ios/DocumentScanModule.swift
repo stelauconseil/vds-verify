@@ -76,6 +76,18 @@ public class DocumentScanModule: Module {
         presenter.present(controller, animated: true)
       }
     }.runOnQueue(.main)
+
+    // Imported file (image or PDF), runs on the module's background queue.
+    AsyncFunction("detectCodesInFileAsync") { (url: URL) throws -> [String] in
+      do {
+        return try detectCodes(inFile: url)
+      } catch FileError.locked {
+        throw Exception(name: "ERR_LOCKED", description: "error_file_locked")
+      } catch {
+        // The label key first (JS extracts it), the cause after for diagnosis.
+        throw Exception(name: "ERR_FILE", description: "error_file_unreadable: \(error)")
+      }
+    }
   }
 
   private func whenCameraFree(_ action: @escaping () -> Void) {

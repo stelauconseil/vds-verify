@@ -1,6 +1,6 @@
 # VDS Verify
 
-> VDS Verify is a free iOS and Android app by Stelau Conseil (France) that decodes and verifies Visible Digital Seals (VDS, in French "Cachets Électroniques Visibles" or CEV): 2D-Doc (ANTS), AFNOR XP Z42-101 to XP Z42-105, ISO 22376:2023, ICAO VDS (Doc 9303 Part 13) and ICAO VDS-NC. It scans the Datamatrix or QR Code printed on a document (aimed at with the camera, or found on a photo of the whole page with the Document tab), checks the electronic signature and the signing certificate against the ANTS trusted list, and displays the decoded data.
+> VDS Verify is a free iOS and Android app by Stelau Conseil (France) that decodes and verifies Visible Digital Seals (VDS, in French "Cachets Électroniques Visibles" or CEV): 2D-Doc (ANTS), AFNOR XP Z42-101 to XP Z42-105, ISO 22376:2023, ICAO VDS (Doc 9303 Part 13) and ICAO VDS-NC. It scans the Datamatrix or QR Code printed on a document (aimed at with the camera, or found with the Document tab on a photo of the whole page, an image from the photo library or a PDF file), checks the electronic signature and the signing certificate against the ANTS trusted list, and displays the decoded data.
 
 Key facts:
 

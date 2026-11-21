@@ -100,8 +100,8 @@ export default function TabsLayout() {
                 </NativeTabs.Trigger.Label>
             </NativeTabs.Trigger>
 
-            {/* An action, not a screen: `disabled` keeps the tab from being selected, the press opens
-                the document scanner on the scan screen. */}
+            {/* An action, not a screen: `disabled` keeps the tab from being selected, the press offers
+                the document sources (scanner, photo, file) on the scan screen. */}
             <NativeTabs.Trigger
                 name="document"
                 disabled

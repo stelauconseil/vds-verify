@@ -34,6 +34,7 @@ Champs non publics, à reprendre depuis App Store Connect : sous-titre, mots-cl�
 
 ```
 • Nouvel onglet Document : photographiez la page entière d'un document papier, VDS Verify y trouve le 2D-Doc et le vérifie.
+• Onglet Document : importez aussi une photo de la photothèque ou un PDF de l'app Fichiers.
 • Prise en charge des VDS (ICAO Doc 9303 partie 13) et VDS-NC de l'OACI.
 • iPhone Duo : le scanner de documents utilise toute la hauteur de l'écran.
 • Libellés des données plus lisibles et corrections diverses.
@@ -43,6 +44,7 @@ Champs non publics, à reprendre depuis App Store Connect : sous-titre, mots-cl�
 
 ```
 • New Document tab: snap the whole page of a paper document, VDS Verify finds its 2D-Doc and verifies it.
+• Document tab: also import a photo from your library or a PDF from the Files app.
 • Support for ICAO VDS (Doc 9303 Part 13) and VDS-NC.
 • iPhone Duo: the document scanner uses the full height of the screen.
 • Clearer data labels and bug fixes.
@@ -65,7 +67,7 @@ Assurez-vous que vos contrôles de documents respectent les normes réglementair
 
 FONCTIONNALITÉS CLÉS
 • Numérisation instantanée via une intégration de caméra haute précision
-• Onglet Document : photographiez la page entière, le 2D-Doc est trouvé automatiquement
+• Onglet Document : photographiez la page entière ou importez une photo ou un PDF, le 2D-Doc est trouvé automatiquement
 • Vérification cryptographique des signatures numériques en temps réel
 • Analyse détaillée de l'émetteur, des dates de validité et des données de conformité
 • Historique local des scans avec options d'épinglage et de suppression facile
@@ -101,7 +103,7 @@ Ensure your document checks meet strict regulatory standards. The app fully supp
 
 KEY FEATURES
 • Instant scan via high-precision camera integration
-• Document tab: snap the whole page, the 2D-Doc is found for you
+• Document tab: snap the whole page or import a photo or a PDF, the 2D-Doc is found for you
 • Real-time cryptographic signature verification
 • Detailed breakdown of issuer, validity dates, and compliance data
 • Local scan history with pinning and easy deletion options
