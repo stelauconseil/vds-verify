@@ -90,7 +90,8 @@
             "expo-sharing",
             "expo-status-bar",
             "expo-font",
-            "expo-asset"
+            "expo-asset",
+            "./plugins/withOptionalPortrait"
         ],
         "scheme": "vdsverify",
         "extra": {
