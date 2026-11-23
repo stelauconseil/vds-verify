@@ -28,7 +28,7 @@ faq:
         - The certified digital identity request of [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
       - **Every VDS compliant with ISO 22376:2023**, including those printed on:
         - [French recreational motor boat licence](https://www.mer.gouv.fr/le-permis-plaisance-permis-de-conduire-les-bateaux-de-plaisance-moteur#summary-target-0)
-      - **ICAO VDS according to Doc 9303 Part 13**, Datamatrix seals defined by the International Civil Aviation Organization for travel documents
+      - **ICAO VDS according to Doc 9303 Part 13**, Datamatrix seals defined by the International Civil Aviation Organization for travel documents, including German seals compliant with **BSI TR-03137**
       - **ICAO VDS-NC**, QR Code seals defined by the International Civil Aviation Organization for travel and health documents
   - q: How do I verify a France Identité identity proof?
     a: |

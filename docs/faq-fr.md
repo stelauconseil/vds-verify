@@ -27,7 +27,7 @@ faq:
         - Demande d'identité numérique certifiée de [France Identité](https://france-identite.gouv.fr/identite-numerique-certifiee/)
       - **Tous les CEV conformes à la norme ISO 22376:2023**, dont ceux apposés sur les documents suivants :
         - [Permis de conduire les bateaux de plaisance à moteur](https://www.mer.gouv.fr/le-permis-plaisance-permis-de-conduire-les-bateaux-de-plaisance-moteur#summary-target-0)
-      - **Les VDS de l'OACI conformes au Doc 9303 partie 13**, cachets en Datamatrix définis par l'Organisation de l'aviation civile internationale pour les documents de voyage
+      - **Les VDS de l'OACI conformes au Doc 9303 partie 13**, cachets en Datamatrix définis par l'Organisation de l'aviation civile internationale pour les documents de voyage, dont les cachets allemands conformes à la **BSI TR-03137**
       - **Les VDS-NC de l'OACI**, cachets en QR Code définis par l'Organisation de l'aviation civile internationale pour les documents de voyage et de santé
   - q: Comment vérifier un justificatif d'identité France Identité ?
     a: |

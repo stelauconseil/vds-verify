@@ -74,7 +74,7 @@ fr:
           alt: Export du résultat en PDF ou JSON
     docs:
         title: Documents pris en charge
-        lead: Tous les CEV conformes aux normes AFNOR XP Z42-101 à XP Z42-105 (dont le 2D-Doc) et ISO 22376:2023, ainsi que les VDS (ICAO Doc 9303 partie 13) et VDS-NC de l'OACI, notamment
+        lead: Tous les CEV conformes aux normes AFNOR XP Z42-101 à XP Z42-105 (dont le 2D-Doc) et ISO 22376:2023, ainsi que les VDS (ICAO Doc 9303 partie 13, BSI TR-03137) et VDS-NC de l'OACI, notamment
         items:
             - Carte nationale d'identité
             - Justificatif d'identité France Identité
@@ -186,7 +186,7 @@ en:
           alt: Export the result as PDF or JSON
     docs:
         title: Supported documents
-        lead: Every VDS compliant with AFNOR XP Z42-101 to XP Z42-105 (2D-Doc included) and ISO 22376:2023, as well as ICAO VDS (Doc 9303 Part 13) and VDS-NC, including
+        lead: Every VDS compliant with AFNOR XP Z42-101 to XP Z42-105 (2D-Doc included) and ISO 22376:2023, as well as ICAO VDS (Doc 9303 Part 13, BSI TR-03137) and VDS-NC, including
         items:
             - French national ID card
             - France Identité identity proof
