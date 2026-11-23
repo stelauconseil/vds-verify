@@ -35,9 +35,9 @@ faq:
       Open VDS Verify and scan the 2D code printed on the identity proof. The app verifies the seal's electronic signature and displays the proof's data (names, date of birth, validity period, recipient). If the displayed data matches the document and the status is "Valid VDS", the proof is authentic.
   - q: How do I scan a paper document?
     a: |
-      Tap the **Document** tab, then **Scan with the camera**: your phone's document scanner opens. Snap the whole page, no need to aim at the code: VDS Verify finds the 2D-Doc (Datamatrix or QR Code) on the page and verifies it. Handy for an A4 document or a code too small to aim at up close.
+      Tap the **Document** tab, then **Scan a document**: your phone's document scanner opens. Snap the whole page, no need to aim at the code: VDS Verify finds the 2D-Doc (Datamatrix or QR Code) on the page and verifies it. Handy for an A4 document or a code too small to aim at up close.
 
-      Is the document already a photo or a file (a PDF received by email, a screenshot)? Tap **Document**, then **Choose a photo** (photo library) or **Import a file**: VDS Verify looks for the 2D-Doc in the image or in the pages of the PDF.
+      Is the document already a photo or a file (a PDF received by email, a screenshot)? Tap **Document**, then **Import from the photo library** or **Import from files**: VDS Verify looks for the 2D-Doc in the image or in the pages of the PDF.
   - q: How does VDS verification work?
     a: |
       To decode and verify a VDS, VDS Verify:

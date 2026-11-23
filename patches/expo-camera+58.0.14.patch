@@ -1,0 +1,114 @@
+diff --git a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/ExpoCameraView.kt b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/ExpoCameraView.kt
+index a676d64..70fc262 100644
+--- a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/ExpoCameraView.kt
++++ b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/ExpoCameraView.kt
+@@ -847,7 +847,8 @@ class ExpoCameraView(
+           type = BarcodeType.mapFormatToString(barcode.type),
+           cornerPoints = cornerPoints,
+           bounds = boundingBox,
+-          extra = barcode.extra
++          extra = barcode.extra,
++          rawBytes = barcode.rawBytes
+         )
+       )
+     }
+diff --git a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeAnalyzer.kt b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeAnalyzer.kt
+index bbe51c0..877bf3c 100644
+--- a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeAnalyzer.kt
++++ b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeAnalyzer.kt
+@@ -75,7 +75,8 @@ class BarcodeAnalyzer(
+               extra,
+               cornerPoints,
+               effectiveHeight,
+-              effectiveWidth
++              effectiveWidth,
++              barcode.rawBytes?.let { android.util.Base64.encodeToString(it, android.util.Base64.NO_WRAP) }
+             )
+           )
+         }
+diff --git a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeScannerResultSerializer.kt b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeScannerResultSerializer.kt
+index 119454d..a676772 100644
+--- a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeScannerResultSerializer.kt
++++ b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/analyzers/BarcodeScannerResultSerializer.kt
+@@ -11,6 +11,7 @@ object BarCodeScannerResultSerializer {
+     Bundle().apply {
+       putString("data", result.value)
+       putString("raw", result.raw)
++      result.rawBytes?.let { putString("rawBytes", it) }
+       putInt("type", result.type)
+       putBundle("extra", result.extra)
+       val cornerPointsAndBoundingBox = getCornerPointsAndBoundingBox(result.cornerPoints, result.boundingBox, density)
+@@ -33,7 +34,8 @@ object BarCodeScannerResultSerializer {
+     }
+ 
+     val extra = parseExtraDate(barcode)
+-    return BarCodeScannerResult(barcode.format, value, raw, extra, cornerPoints, inputImage?.height ?: 0, inputImage?.width ?: 0)
++    val rawBytes = barcode.rawBytes?.let { android.util.Base64.encodeToString(it, android.util.Base64.NO_WRAP) }
++    return BarCodeScannerResult(barcode.format, value, raw, extra, cornerPoints, inputImage?.height ?: 0, inputImage?.width ?: 0, rawBytes)
+   }
+ 
+   private fun getCornerPointsAndBoundingBox(
+diff --git a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/common/CommonEvents.kt b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/common/CommonEvents.kt
+index cf47511..2cab11a 100644
+--- a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/common/CommonEvents.kt
++++ b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/common/CommonEvents.kt
+@@ -13,7 +13,8 @@ class BarcodeScannedEvent(
+   @Field val type: String,
+   @Field val cornerPoints: ArrayList<Bundle>,
+   @Field val bounds: Bundle,
+-  @Field val extra: Bundle?
++  @Field val extra: Bundle?,
++  @Field val rawBytes: String? = null
+ ) : Record
+ 
+ @OptimizedRecord
+diff --git a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/utils/BarCodeScannerResult.kt b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/utils/BarCodeScannerResult.kt
+index 05a5cbf..e59f147 100644
+--- a/node_modules/expo-camera/android/src/main/java/expo/modules/camera/utils/BarCodeScannerResult.kt
++++ b/node_modules/expo-camera/android/src/main/java/expo/modules/camera/utils/BarCodeScannerResult.kt
+@@ -9,7 +9,9 @@ class BarCodeScannerResult(
+   val extra: Bundle,
+   var cornerPoints: MutableList<Int>,
+   var height: Int,
+-  var width: Int
++  var width: Int,
++  // ML Kit rawBytes in base64 (message bytes): the text loses binary content
++  val rawBytes: String? = null
+ ) {
+   data class BoundingBox(val x: Int, val y: Int, val width: Int, val height: Int)
+ 
+diff --git a/node_modules/expo-camera/ios/Current/BarcodeScannerUtils.swift b/node_modules/expo-camera/ios/Current/BarcodeScannerUtils.swift
+index 0502f8f..98c1042 100644
+--- a/node_modules/expo-camera/ios/Current/BarcodeScannerUtils.swift
++++ b/node_modules/expo-camera/ios/Current/BarcodeScannerUtils.swift
+@@ -1,4 +1,5 @@
+ import AVFoundation
++import CoreImage
+ import VisionKit
+ import Vision
+ 
+@@ -42,6 +43,11 @@ class BarcodeScannerUtils {
+       barcodeScannerResult.stringValue,
+       isEAN13: barcodeScannerResult.type == .ean13
+     )
++    // stringValue stops at the first 0x00 and mangles binary content: hand out the complete
++    // Data Matrix codewords as well, decoded on the JS side (vds-verify src/datamatrix.ts).
++    if let dataMatrix = barcodeScannerResult.descriptor as? CIDataMatrixCodeDescriptor {
++      result["dataMatrixCodewords"] = dataMatrix.errorCorrectedPayload.base64EncodedString()
++    }
+ 
+     if !barcodeScannerResult.corners.isEmpty {
+       result["cornerPoints"] = BarcodeUtils.cornerPoints(from: barcodeScannerResult.corners)
+diff --git a/node_modules/expo-camera/ios/Current/MetaDataDelegate.swift b/node_modules/expo-camera/ios/Current/MetaDataDelegate.swift
+index f8e087f..b80c274 100644
+--- a/node_modules/expo-camera/ios/Current/MetaDataDelegate.swift
++++ b/node_modules/expo-camera/ios/Current/MetaDataDelegate.swift
+@@ -51,7 +51,7 @@ class MetaDataDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate, AVCapt
+         }
+ 
+         if let codeMetadata {
+-          if codeMetadata.stringValue != nil && codeMetadata.type == barcodeType {
++          if (codeMetadata.stringValue != nil || codeMetadata.descriptor is CIDataMatrixCodeDescriptor) && codeMetadata.type == barcodeType {
+             self.responseHandler?.onScanningResult(BarcodeScannerUtils.avMetadataCodeObjectToDictionary(codeMetadata))
+           }
+         }

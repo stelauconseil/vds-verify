@@ -28,6 +28,7 @@ const label = {
         document_photo: "Importer depuis la galerie",
         document_file: "Importer depuis les documents",
         error_no_code_in_document: "Aucun 2D-Doc trouvé sur le document",
+        decoding: "Vérification du document en cours",
         error_file_locked: "Ce PDF est protégé par un mot de passe",
         error_file_unreadable: "Impossible de lire ce fichier",
         error_document_scanner_unavailable:
@@ -165,6 +166,7 @@ const label = {
         document_photo: "Import from the photo library",
         document_file: "Import from files",
         error_no_code_in_document: "No VDS found on the document",
+        decoding: "Verifying the document",
         error_file_locked: "This PDF is password-protected",
         error_file_unreadable: "This file can’t be read",
         error_document_scanner_unavailable:

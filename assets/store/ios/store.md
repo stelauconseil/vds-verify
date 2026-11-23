@@ -1,13 +1,13 @@
-# App Store — VDS Verify 2.7.3
+# App Store — VDS Verify 2.7.4
 
-Fiche App Store Connect de la version 2.7.3 (iPhone, iPad). Base : fiche publiée de la 2.7.2
-(récupérée le 16/11/2026), mise à jour pour la 2.7.3.
+Fiche App Store Connect de la version 2.7.4 (iPhone, iPad). Base : fiche de la 2.7.3,
+mise à jour pour la 2.7.4.
 
 ## Informations générales
 
 | Champ                        | Valeur                                                                                                           |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Version                      | 2.7.3                                                                                                            |
+| Version                      | 2.7.4                                                                                                            |
 | Identifiant Apple            | 6463440128                                                                                                       |
 | Bundle ID                    | com.stelau.vdsverify                                                                                             |
 | Vendeur                      | Stelau Conseil                                                                                                   |
@@ -33,21 +33,17 @@ Champs non publics, à reprendre depuis App Store Connect : sous-titre, mots-cl�
 ### FR
 
 ```
-• Nouvel onglet Document : photographiez la page entière d'un document papier, VDS Verify y trouve le 2D-Doc et le vérifie.
-• Onglet Document : importez aussi une photo de la photothèque ou un PDF de l'app Fichiers.
-• Prise en charge des VDS (ICAO Doc 9303 partie 13) et VDS-NC de l'OACI.
-• iPhone Duo : le scanner de documents utilise toute la hauteur de l'écran.
-• Libellés des données plus lisibles et corrections diverses.
+• Cachets VDS de l'OACI (ICAO Doc 9303 partie 13) : lecture fiable du Datamatrix, avec l'appareil photo comme sur un document scanné ou importé.
+• Onglet Document : un indicateur s'affiche pendant la vérification du document.
+• Corrections diverses.
 ```
 
 ### EN
 
 ```
-• New Document tab: snap the whole page of a paper document, VDS Verify finds its 2D-Doc and verifies it.
-• Document tab: also import a photo from your library or a PDF from the Files app.
-• Support for ICAO VDS (Doc 9303 Part 13) and VDS-NC.
-• iPhone Duo: the document scanner uses the full height of the screen.
-• Clearer data labels and bug fixes.
+• ICAO VDS seals (Doc 9303 Part 13): reliable Datamatrix reading, with the camera as well as on a scanned or imported document.
+• Document tab: a progress indicator shows while the document is being verified.
+• Bug fixes.
 ```
 
 ## Description

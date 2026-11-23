@@ -58,7 +58,7 @@ public class DocumentScanModule: Module {
             promise.resolve(nil)  // cancelled
           case .success(let images?):
             DispatchQueue.global(qos: .userInitiated).async {
-              promise.resolve(images.flatMap { image -> [String] in
+              promise.resolve(images.flatMap { image -> [ScannedCode] in
                 guard let ci = CIImage(image: image) else { return [] }
                 return (try? detectCodes(in: ci)) ?? []
               })
@@ -78,7 +78,7 @@ public class DocumentScanModule: Module {
     }.runOnQueue(.main)
 
     // Imported file (image or PDF), runs on the module's background queue.
-    AsyncFunction("detectCodesInFileAsync") { (url: URL) throws -> [String] in
+    AsyncFunction("detectCodesInFileAsync") { (url: URL) throws -> [ScannedCode] in
       do {
         return try detectCodes(inFile: url)
       } catch FileError.locked {

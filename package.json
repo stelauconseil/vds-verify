@@ -1,6 +1,6 @@
 {
     "name": "vds-verify",
-    "version": "2.7.3",
+    "version": "2.7.4",
     "license": "MIT",
     "main": "expo-router/entry",
     "scripts": {
@@ -14,7 +14,8 @@
         "screenshots:android": "node scripts/screenshots/run.mjs android",
         "screenshots:all": "node scripts/screenshots/run.mjs all",
         "screenshots:build:ios": "node scripts/screenshots/build.mjs ios",
-        "screenshots:build:android": "node scripts/screenshots/build.mjs android"
+        "screenshots:build:android": "node scripts/screenshots/build.mjs android",
+        "postinstall": "patch-package"
     },
     "dependencies": {
         "@expo/app-integrity": "~58.0.2",
@@ -73,6 +74,7 @@
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.1.1",
         "globals": "^17.9.0",
+        "patch-package": "^8.0.1",
         "prettier": "^3.8.4",
         "typescript": "~6.0.3",
         "typescript-eslint": "^8.66.0"
@@ -84,6 +86,13 @@
                     "buffer",
                     "crypto-js",
                     "prop-types"
+                ]
+            }
+        },
+        "autolinking": {
+            "android": {
+                "buildFromSource": [
+                    "expo-camera"
                 ]
             }
         }

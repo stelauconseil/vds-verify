@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Text,
     Pressable,
+    ActivityIndicator,
     type GestureResponderEvent,
     type LayoutRectangle,
     type ViewStyle,
@@ -16,6 +17,8 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import { Buffer } from "buffer";
+import { decodeDataMatrixCodewords } from "@/datamatrix";
+import { theme } from "@/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import {
@@ -23,7 +26,10 @@ import {
     useReservedRegions,
 } from "react-native-reserved-regions";
 
-import { useSettings } from "@/contexts/SettingsContext";
+import {
+    useEffectiveColorScheme,
+    useSettings,
+} from "@/contexts/SettingsContext";
 import ScannerView from "@/screens/ScannerView";
 import ScanDemo from "@/screens/ScanDemo";
 import { screenshotsEnabled, takeLaunchTarget } from "@/screenshots";
@@ -39,6 +45,8 @@ import {
     importDocumentAsync,
     importPhotoAsync,
     scanDocumentAsync,
+    toScannedCode,
+    type ScannedCode,
 } from "../../../modules/document-scan";
 
 // Server integrity rejections (APP_INTEGRITY_PLAN.md), keyed by HTTP status.
@@ -48,7 +56,10 @@ const INTEGRITY_ERRORS: Record<number, string> = {
 };
 
 // The "Document" tab: scan a paper document with the camera, or import a photo or a file.
-const DOCUMENT_SOURCES: Record<DocumentSource, () => Promise<string[] | null>> = {
+const DOCUMENT_SOURCES: Record<
+    DocumentSource,
+    () => Promise<ScannedCode[] | null>
+> = {
     camera: scanDocumentAsync,
     photo: importPhotoAsync,
     file: importDocumentAsync,
@@ -106,7 +117,11 @@ export default function ScanRoute() {
     const [zoomLevel, setZoomLevel] = useState<number>(0.1);
     const [torchEnabled, setTorchEnabled] = useState<boolean>(false);
     // The system document scanner needs the camera: release the live preview meanwhile.
-    const [documentScanning, setDocumentScanning] = useState(false);
+    // "choosing": source sheet or scanner/picker open; "decoding": reading the codes, then the API
+    const [documentScanning, setDocumentScanning] = useState<
+        false | "choosing" | "decoding"
+    >(false);
+    const colorScheme = useEffectiveColorScheme();
     const [permission, requestPermission, getCameraPermission] =
         useCameraPermissions();
     const insets = useSafeAreaInsets();
@@ -209,6 +224,10 @@ export default function ScanRoute() {
             );
         } else if (data.startsWith("vds")) {
             return Buffer.from(data.substring(6)).toString("base64");
+        } else if (data.charCodeAt(0) === 0xdc) {
+            // Binary ICAO 9303-13 seal (0xDC magic): the scanner hands its bytes
+            // back as a Latin-1 string; UTF-8 would turn 0xDC into C3 9C.
+            return Buffer.from(data, "latin1").toString("base64");
         } else {
             return Buffer.from(data).toString("base64");
         }
@@ -250,7 +269,8 @@ export default function ScanRoute() {
     );
 
     const processResult = useCallback(
-        async ({ data }: { data: string }) => {
+        // Data Matrix: exact content alongside the text (see modules/document-scan ScannedCode)
+        async ({ data, dataMatrixCodewords, messageBytes }: ScannedCode) => {
             if (
                 processingRef.current ||
                 decodedRef.current ||
@@ -261,7 +281,17 @@ export default function ScanRoute() {
             try {
                 const apiUrl = process.env.EXPO_PUBLIC_VDS_API_URL as string;
                 setScanned(true);
-                const b64encodedvds = parseData(data);
+                // The text loses binary content (cut at 0x00 on iOS); the exact bytes don't.
+                const raw = messageBytes
+                    ? Buffer.from(messageBytes, "base64")
+                    : dataMatrixCodewords &&
+                      decodeDataMatrixCodewords(
+                          Buffer.from(dataMatrixCodewords, "base64"),
+                      );
+                const b64encodedvds =
+                    raw && !/^(http|vds)/.test(data ?? "")
+                        ? Buffer.from(raw).toString("base64")
+                        : parseData(data ?? "");
                 if (b64encodedvds === null) {
                     showError("error_invalid_qr");
                     return;
@@ -326,11 +356,11 @@ export default function ScanRoute() {
     );
 
     const processCodes = useCallback(
-        async (codes: string[] | null) => {
+        async (codes: ScannedCode[] | null) => {
             if (!codes) return; // cancelled
             if (codes.length === 0) return showError("error_no_code_in_document");
             // ponytail: first code wins; add a picker if documents with several 2D-Docs show up.
-            await processResult({ data: codes[0] });
+            await processResult(codes[0]);
         },
         [processResult, showError],
     );
@@ -339,10 +369,12 @@ export default function ScanRoute() {
     const chooseDocumentSource = documentSourceSheet.choose;
     const scanDocument = useCallback(async () => {
         if (processingRef.current || decodedRef.current) return;
-        setDocumentScanning(true); // also keeps the live camera off while choosing
+        setDocumentScanning("choosing"); // also keeps the live camera off while choosing
         try {
             const source = await chooseDocumentSource();
             if (!source) return;
+            // Shown once the scanner or picker closes, instead of the black stopped camera.
+            setDocumentScanning("decoding");
             await processCodes(await DOCUMENT_SOURCES[source]());
         } catch (error: any) {
             showError(error?.message ?? "error");
@@ -495,7 +527,9 @@ export default function ScanRoute() {
                                         appStateRef.current === "active" &&
                                         isFocused
                                     ) {
-                                        void processResult(event);
+                                        void processResult(
+                                            toScannedCode(event),
+                                        );
                                     }
                                 }}
                                 style={StyleSheet.absoluteFill}
@@ -614,6 +648,22 @@ export default function ScanRoute() {
                             </>
                         )}
                     </>
+                ) : documentScanning === "decoding" ? (
+                    <View
+                        style={[
+                            styles.decoding,
+                            {
+                                backgroundColor:
+                                    theme.color.background[colorScheme],
+                            },
+                        ]}
+                    >
+                        <ActivityIndicator
+                            size="large"
+                            color={theme.color.text[colorScheme]}
+                            accessibilityLabel={getLabel("decoding", lang)}
+                        />
+                    </View>
                 ) : null}
             </ReservedRegionsProvider>
             {isFocused && permission && !permission.granted && (
@@ -693,6 +743,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#000",
+    },
+    decoding: {
+        ...StyleSheet.absoluteFill,
+        justifyContent: "center",
+        alignItems: "center",
     },
     content: {
         ...StyleSheet.absoluteFill,

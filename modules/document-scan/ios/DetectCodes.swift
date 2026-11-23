@@ -2,7 +2,7 @@ import CoreImage
 import Vision
 
 // Plain Vision/Core Image so it also builds on macOS for testing against sample pages.
-func detectCodes(in image: CIImage) throws -> [String] {
+func detectCodes(in image: CIImage) throws -> [ScannedCode] {
   let codes = try detect(image)
   // A full-resolution photo gains nothing from upscaling, only memory.
   if !codes.isEmpty || max(image.extent.width, image.extent.height) > 2000 { return codes }
@@ -14,16 +14,32 @@ func detectCodes(in image: CIImage) throws -> [String] {
   return try detect(upscaled)
 }
 
-private func detect(_ image: CIImage) throws -> [String] {
+// ["data": text, "dataMatrixCodewords": base64]. The text can mangle binary content (ICAO
+// seals); the Data Matrix codewords are exact and decoded in JS (src/datamatrix.ts), like
+// the camera's (patches/expo-camera).
+typealias ScannedCode = [String: String]
+
+private func detect(_ image: CIImage) throws -> [ScannedCode] {
   let request = VNDetectBarcodesRequest()
   request.symbologies = [.dataMatrix, .qr]
   try VNImageRequestHandler(ciImage: image, options: [:]).perform([request])
-  return (request.results ?? []).compactMap { $0.payloadStringValue }
+  return (request.results ?? []).compactMap { observation in
+    var code = ScannedCode()
+    code["data"] = observation.payloadStringValue
+    // Vision leaves barcodeDescriptor nil for Data Matrix; payloadData holds the codewords.
+    // Before iOS 17 the Latin-1 text is complete here (JS parseData rebuilds the bytes).
+    if #available(iOS 17.0, macOS 14.0, *), observation.symbology == .dataMatrix,
+      let codewords = observation.payloadData
+    {
+      code["dataMatrixCodewords"] = codewords.base64EncodedString()
+    }
+    return code.isEmpty ? nil : code
+  }
 }
 
 // Codes in an image or PDF file. PDF pages are rendered one by one, stopping at the first page
 // that carries a code (2D-Docs are almost always on the first page).
-func detectCodes(inFile url: URL) throws -> [String] {
+func detectCodes(inFile url: URL) throws -> [ScannedCode] {
   if let pdf = CGPDFDocument(url as CFURL) {
     guard !pdf.isEncrypted || pdf.unlockWithPassword("") else { throw FileError.locked }
     for index in 0..<pdf.numberOfPages {

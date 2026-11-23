@@ -1,13 +1,13 @@
-# Google Play — VDS Verify 2.7.3
+# Google Play — VDS Verify 2.7.4
 
-Fiche Play Console de la version 2.7.3 (téléphones Android). Base : fiche publiée de la 2.7.2
-(récupérée le 16/11/2026), mise à jour pour la 2.7.3.
+Fiche Play Console de la version 2.7.4 (téléphones Android). Base : fiche de la 2.7.3,
+mise à jour pour la 2.7.4.
 
 ## Informations générales
 
 | Champ                        | Valeur                                                                                                           |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Version                      | 2.7.3                                                                                                            |
+| Version                      | 2.7.4                                                                                                            |
 | Package                      | com.stelau.vdsverify                                                                                             |
 | Développeur                  | Stelau Conseil                                                                                                   |
 | Langues                      | Français, Anglais                                                                                                |
@@ -28,21 +28,17 @@ classification du contenu.
 ### FR
 
 ```
-• Nouvel onglet Document : photographiez la page entière, le 2D-Doc est trouvé et vérifié
-• Onglet Document : import d'une photo de la photothèque ou d'un PDF
-• Prise en charge des VDS (ICAO Doc 9303 partie 13) et VDS-NC de l'OACI
-• Affichage en portrait sur les téléphones
-• Corrections : retour du viseur après un scan de document, message d'accès à la caméra
+• Cachets VDS de l'OACI (ICAO Doc 9303 partie 13) : lecture fiable du Datamatrix, avec l'appareil photo comme sur un document scanné ou importé
+• Onglet Document : un indicateur s'affiche pendant la vérification du document
+• Corrections diverses
 ```
 
 ### EN
 
 ```
-• New Document tab: snap the whole page, the 2D-Doc is found and verified
-• Document tab: import a photo from your library or a PDF
-• Support for ICAO VDS (Doc 9303 Part 13) and VDS-NC
-• Portrait layout on phones
-• Fixes: viewfinder returns after a document scan, camera access message
+• ICAO VDS seals (Doc 9303 Part 13): reliable Datamatrix reading, with the camera as well as on a scanned or imported document
+• Document tab: a progress indicator shows while the document is being verified
+• Bug fixes
 ```
 
 ## Description complète (4000 caractères max.)
